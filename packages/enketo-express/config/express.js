@@ -23,7 +23,7 @@ for ( const item in config.server ) {
         app.set( item, app.get( item ) || config.server[ item ] );
     }
 }
-app.set( 'port', process.env.PORT || app.get( 'port' ) || 3000 );
+app.set( 'port', process.env.PORT || app.get( 'port' ) || 5000 );
 app.set( 'env', process.env.NODE_ENV || 'production' );
 app.set( 'authentication cookie name', '__enketo_' );
 
