@@ -26,11 +26,11 @@ ENV REACT_APP_HASURA_URL $REACT_APP_HASURA_URL
 
 
 #create a react production build
-RUN npm run build
+RUN npm run prod
 
 #get the latest alpine image from nginx registry
 FROM nginx:alpine
 
 #we copy the output from first stage that is our react build
 #into nginx html directory where it will serve our index file
-COPY --from=build-stage /app/build/ /usr/share/nginx/html
+COPY --from=build-stage /app/dist/ /usr/share/nginx/html

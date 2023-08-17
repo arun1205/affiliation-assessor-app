@@ -23,14 +23,14 @@ serviceWorkerRegistration.register();
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
 
-window.addEventListener('load', () =>
-  {
-   // registerSW();
-})
+// window.addEventListener('load', () =>
+//   {
+//    // registerSW();
+// })
 
 //serviceWorker.register();
 
-//registerServiceWorker();
+registerServiceWorker();
 
 async function registerSW(){
   if('serviceWorker' in navigator){
