@@ -1,6 +1,6 @@
 {
   "short_name": "React App",
-  "name": "Create React App Sample",
+  "name": "On Ground Assessor App ",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,12 +8,17 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "up_smf_logo-64_x_64.png",
+      "type": "image/png",
+      "sizes": "64x64"
+    },
+    {
+      "src": "up_smf_logo-192_x_192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "up_smf_logo-512_x_512.png",
       "type": "image/png",
       "sizes": "512x512"
     }

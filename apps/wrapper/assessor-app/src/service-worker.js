@@ -85,16 +85,29 @@ return data */
 }
 
 
- const cacheName = 'inspections';
-
 self.addEventListener('fetch', (event) => {
   console.log(event)
   ///
-  if (event.request.method ==='POST' && event.request.url.includes('Inspections' ))  {
-    event.respondWith(handleNonGetRequest(event.request));
-  }
+ 
+  if (event.request.method ==='POST') {
+    event.respondWith(handleNonGetRequests(event.request, event.request.url));
+  } 
 }); 
- async function handleNonGetRequest(request) {
+ async function handleNonGetRequests(request, url) {
+  console.log(url)
+  let cacheName="";
+
+  if( url.includes('Inspections')){
+    console.log('InspectionsInspectionsInspections')
+    cacheName = 'inspections';
+  } else if (url.includes('Course')){
+    console.log('coursescoursescourses')
+    cacheName = 'courses';
+  } else if(url.includes('Assessor')){
+    console.log('AssessorAssessorAssessor')
+    cacheName = 'assessor';
+  }
+
   // Use a cache specifically for non-GET requests
   const cache = await caches.open(cacheName);
   const cacheKey = generateCacheKey(request);
@@ -111,6 +124,7 @@ self.addEventListener('fetch', (event) => {
   return networkResponse;
 
 } 
+
 function generateCacheKey(request) {
   // This is a simplified example; customize it based on your needs
   return request.url + JSON.stringify(request.clone().body);
