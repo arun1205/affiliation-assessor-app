@@ -145,7 +145,7 @@ await cache.put(cacheKey, ars);
   
 } */
 
-self.addEventListener('install', event => {
+/* self.addEventListener('install', event => {
   event.waitUntil(
     caches.open('my-cache').then(cache => {
       return cache.addAll([
@@ -158,7 +158,7 @@ self.addEventListener('install', event => {
       ]);
     })
   );
-});
+}); */
 
  async function handleNonGetRequests(request, url) {
   console.log(url)
