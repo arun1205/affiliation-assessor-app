@@ -109,6 +109,7 @@ export const ManageFormsFilters = ({
     application_type: null,
     round: null,
     course_type: null,
+    course_level: null,
   });
   const handleChange = (name, value) => {
     setState((prevState) => ({
@@ -238,7 +239,7 @@ export const DesktopAnalysisFilters = ({
       delete filters?.condition[name];
       return;
     }
-    if (name === "course_type" || name === "application_type") {
+    if (name === "course_type" || name === "application_type" || name === "course_level") {
       setFilters({
         condition: {
           ...filters.condition,
@@ -338,6 +339,20 @@ export const DesktopAnalysisFilters = ({
           {/* <Option value="">Course Name</Option> */}
           <Option value="Nursing">Nursing</Option>
           <Option value="Paramedical">Paramedical</Option>
+        </Select>
+      </div>
+      <div className="flex">
+        <Select
+          name="course_level"
+          id="course_level"
+          label="Course Level"
+          value={state.course_level}
+          onChange={(value) => handleChange("course_level", value)}
+          className="bg-gray-50"
+        >
+          {/* <Option value="">Course Name</Option> */}
+          <Option value="Degree">Degree</Option>
+          <Option value="Diploma">Diploma</Option>
         </Select>
       </div>
       <div className="flex">
