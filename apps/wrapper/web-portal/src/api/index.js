@@ -565,3 +565,12 @@ export const getTransactionDetail = async (postData) => {
   );
   return res;
 };
+
+/* returns course mapping based on course type and course level */
+export const getCoursesByTypeAndLevel = async (postData) => {
+  const res = await adminCustomPost.post(
+    API_URL.manageForms.getCourses,
+    postData
+  )
+  return res;
+}

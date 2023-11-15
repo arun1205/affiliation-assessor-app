@@ -6,7 +6,7 @@ import Button from "../../components/Button";
 
 import { FaAngleRight } from "react-icons/fa";
 import UploadForm from "./UploadForm";
-import { convertODKtoXML, createForm, updateForms, viewForm } from "../../api";
+import { convertODKtoXML, createForm, updateForms, viewForm,getCoursesByTypeAndLevel } from "../../api";
 import { Label } from "../../components";
 import ADMIN_ROUTE_MAP from "../../routes/adminRouteMap";
 import { ContextAPI } from "../../utils/ContextAPI";
@@ -31,7 +31,20 @@ const CreateForm = () => {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
+      if(formData.course_type != undefined && formData.course_level != undefined) {
+        console.log(formData.course_type, formData.course_level);
+        const postData = {
+          course_type: formData.course_type,
+          course_level: formData.course_level
+        }
+        getCourses(postData);
+      }
   };
+
+  const getCourses = async (postData) => {
+    const response = await getCoursesByTypeAndLevel(postData);
+    console.log(response);
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -401,7 +414,31 @@ const CreateForm = () => {
                           <option value="Diploma">Diploma</option>
                         </select>
                       </div>
-
+                      {formData.course_level !== undefined && formData.course_type !== undefined && 
+                      <div className="sm:col-span-12">
+                        <Label
+                          required
+                          text="Course Name"
+                          htmlFor="course_name"
+                          moreClass="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
+                        />
+                      <select
+                          required
+                          value={formData.course_name}
+                          name="course_name"
+                          id="course_name"
+                          onChange={handleChange}
+                          disabled={
+                            formStatus == "Published" ||
+                            formStatus == "Unpublished"
+                          }
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        >
+                          <option value="">Select here</option>
+                          <option value="Degree">Degree</option>
+                          <option value="Diploma">Diploma</option>
+                        </select>
+                      </div>}
                       <div className="sm:col-span-3 ">
                         <Label
                           required
