@@ -651,7 +651,7 @@ export const ScheduleManagementFilters = ({
           {/* <Option value="">--Select Status--</Option> */}
           <Option value="Completed">Completed</Option>
           <Option value="Upcoming">Upcoming</Option>
-          <Option value="Closed">Closed</Option>
+          <Option value="Closed">Delayed</Option>
         </Select>
       </div>
       <div>
