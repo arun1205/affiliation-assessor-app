@@ -207,6 +207,7 @@ const AssessmentType = () => {
 
   const handleNavigateToForms = (formObj) => {
     console.log("formObj =>", formObj);
+    const component = 'assessment';
     if (formObj?.status !== "completed" || !formObj?.status) {
       let form_name = "";
       if (formObj.name.includes(".xml")) {
@@ -215,7 +216,7 @@ const AssessmentType = () => {
         form_name = formObj.path?.trim();
       }
 
-      navigate(`${ROUTE_MAP.otherforms_param_formName}${form_name}/${formObj?.form_id}`);
+      navigate(`${ROUTE_MAP.otherforms_param_formName}${form_name}/${component}/${formObj?.form_id}`);
     } else {
       setError("The form has already completed!");
       setTimeout(() => {

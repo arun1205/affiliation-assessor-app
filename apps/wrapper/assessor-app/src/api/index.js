@@ -502,7 +502,7 @@ export const editUserKeycloak = async (postData) => {
   return res;
 };
 
-export const getFormData = async (postData) => {
+export const getEnketoFormData = async (postData) => {
   const res = await customPost.post(
     APIS.groundAnalysis.viewForm,
     postData

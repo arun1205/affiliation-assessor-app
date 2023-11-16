@@ -107,7 +107,7 @@ function App() {
               }
             />
             <Route
-              path={`${ROUTE_MAP.otherforms_param_formName}:formName/:date?`}
+              path={`${ROUTE_MAP.otherforms_param_formName}:formName/:component/:date?`}
               element={
                 <PrivateRoute>
                   <GenericOdkForm

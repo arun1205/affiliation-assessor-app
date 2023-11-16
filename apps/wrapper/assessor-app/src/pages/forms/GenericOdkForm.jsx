@@ -12,11 +12,11 @@ import {
   saveFormSubmission,
   updateFormStatus,
   getPrefillXML,
-  getFormData,
+  getEnketoFormData,
 } from "../../api";
 import {
   getCookie,
-  // getFormData,
+  getFormData,
   handleFormEvents,
   updateFormData,
   removeItemFromLocalForage,
@@ -38,7 +38,8 @@ let previewFlag = false;
 
 const GenericOdkForm = (props) => {
   const user = getCookie("userData");
-  let { formName, date, formID } = useParams();
+  let { formName, component, date } = useParams();
+  console.log("name", formName, "component", component, "date", date);
   const scheduleId = useRef();
   const [isPreview, setIsPreview] = useState(false);
   const [surveyUrl, setSurveyUrl] = useState("");
@@ -142,13 +143,14 @@ const GenericOdkForm = (props) => {
 
     const postData = { form_id: date };
     try {
-      const res = await getFormData(postData);
+      const res = await getEnketoFormData(postData);
       formData = res.data.form_submissions[0];
       console.log("formData ===>", formData);
-
-      const postDataEvents = { id: formID };
+      if(component === 'pastSubmissions') {
+      const postDataEvents = { id: date };
       const events = await getStatusOfForms(postDataEvents);
       setFormStatus(events?.events);
+      }
       setFormDataFromApi(res.data.form_submissions[0]);
       await setToLocalForage(
         `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
@@ -233,7 +235,7 @@ const GenericOdkForm = (props) => {
           handleRenderPreview();
         } else {
           // For read-only forms, it will disable the Submit...
-          if (date) {
+          if (component === 'pastSubmissions' && date) {
             setErrorModal(true);
             return;
           }
@@ -319,7 +321,7 @@ const GenericOdkForm = (props) => {
     const iframeElem = document.getElementById("enketo-form");
     var iframeContent =
       iframeElem?.contentDocument || iframeElem?.contentWindow.document;
-    if (date) {
+    if (component === 'pastSubmissions' && date) {
       var section = iframeContent?.getElementsByClassName("or-group");
       if (!section) return;
       for (var i = 0; i < section?.length; i++) {
@@ -386,16 +388,16 @@ const GenericOdkForm = (props) => {
     getSurveyUrl();
     getDataFromLocal();
     getCourseFormDetails();
-    getFormData({
-      loading,
-      scheduleId,
-      formSpec,
-      startingForm,
-      formId,
-      setData,
-      setEncodedFormSpec,
-      setEncodedFormURI,
-    });
+    // getFormData({
+    //   loading,
+    //   scheduleId,
+    //   formSpec,
+    //   startingForm,
+    //   formId,
+    //   setData,
+    //   setEncodedFormSpec,
+    //   setEncodedFormURI,
+    // });
 
     setTimeout(() => {
       checkIframeLoaded();
