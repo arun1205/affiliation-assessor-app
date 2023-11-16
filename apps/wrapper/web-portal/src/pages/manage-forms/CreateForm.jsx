@@ -19,6 +19,7 @@ const CreateForm = () => {
   const [formStage, setFormStage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [xmlData, setXmlData] = useState(null);
+  const [courseMapping, setCourseMapping] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
   });
@@ -31,13 +32,13 @@ const CreateForm = () => {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
-      if(formData.course_type != undefined && formData.course_level != undefined) {
+      if((formData.course_type != undefined && formData.course_level != undefined) || (formData.course_type != undefined && e.target.name === 'course_level') || (formData.course_level != undefined && e.target.name === 'course_type') ) {
         console.log(formData.course_type, formData.course_level);
         const postData = {
           course_type: formData.course_type,
           course_level: formData.course_level
         }
-        getCourses(postData);
+        // getCourses(postData);
       }
   };
 
@@ -414,19 +415,19 @@ const CreateForm = () => {
                           <option value="Diploma">Diploma</option>
                         </select>
                       </div>
-                      {formData.course_level !== undefined && formData.course_type !== undefined && 
-                      <div className="sm:col-span-12">
+                      {courseMapping !== null && 
+                      <div className="sm:col-span-3">
                         <Label
                           required
                           text="Course Name"
-                          htmlFor="course_name"
+                          htmlFor="course_mapping"
                           moreClass="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
                         />
                       <select
                           required
-                          value={formData.course_name}
-                          name="course_name"
-                          id="course_name"
+                          value={formData.course_mapping}
+                          name="course_mapping"
+                          id="course_mapping"
                           onChange={handleChange}
                           disabled={
                             formStatus == "Published" ||
@@ -439,7 +440,7 @@ const CreateForm = () => {
                           <option value="Diploma">Diploma</option>
                         </select>
                       </div>}
-                      <div className="sm:col-span-3 ">
+                      <div className="sm:col-span-3">
                         <Label
                           required
                           text="Form labels"
