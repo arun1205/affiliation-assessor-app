@@ -266,7 +266,9 @@ export const getFormData = async ({
 
     // let prefilledForm = await getPrefillXML(...prefillXMLArgs);
     // setEncodedFormURI(prefilledForm);
-  } else setData(null);
+  } else {
+    setData(null);
+  }
   loading.current = false;
 };
 

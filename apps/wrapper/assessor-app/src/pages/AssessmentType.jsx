@@ -216,7 +216,7 @@ const AssessmentType = () => {
         form_name = formObj.path?.trim();
       }
 
-      navigate(`${ROUTE_MAP.otherforms_param_formName}${form_name}/${component}/${formObj?.form_id}`);
+      navigate(`${ROUTE_MAP.otherforms_param_formName}${form_name}`);
     } else {
       setError("The form has already completed!");
       setTimeout(() => {

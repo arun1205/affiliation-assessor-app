@@ -12,7 +12,7 @@ import {
   saveFormSubmission,
   updateFormStatus,
   getPrefillXML,
-  getEnketoFormData,
+  getEnketoFormData
 } from "../../api";
 import {
   getCookie,
@@ -38,11 +38,13 @@ let previewFlag = false;
 
 const GenericOdkForm = (props) => {
   const user = getCookie("userData");
-  let { formName, component, date } = useParams();
-  console.log("name", formName, "component", component, "date", date);
+  let { formName, date } = useParams();
   const scheduleId = useRef();
   const [isPreview, setIsPreview] = useState(false);
   const [surveyUrl, setSurveyUrl] = useState("");
+  const userId = user?.userRepresentation?.id;
+  const [formDataFromApi, setFormDataFromApi] = useState();
+  const [formStatus, setFormStatus] = useState("");
   let formSpec = {
     forms: {
       [formName]: {
@@ -92,11 +94,6 @@ const GenericOdkForm = (props) => {
   const [errorModal, setErrorModal] = useState(false);
   const [previewModal, setPreviewModal] = useState(false);
   const { state } = useContext(StateContext);
-  const userDetails = getCookie("userData");
-  const userId = userDetails?.userRepresentation?.id;
-  const [formDataFromApi, setFormDataFromApi] = useState();
-  const [formStatus, setFormStatus] = useState("");
-  const [onSubmit, setOnSubmit] = useState(false);
   let courseObj = undefined;
 
   const loading = useRef(false);
@@ -110,15 +107,13 @@ const GenericOdkForm = (props) => {
     longitude: null,
   });
 
+
   const getDataFromLocal = async () => {
     const id = user?.userRepresentation?.id;
     let formData = await getFromLocalForage(
       `${formName}_${new Date().toISOString().split("T")[0]}`
     );
-    if(formData == null) {
-      fetchFormData();
-    }
-    else {
+
     let fileGCPPath = GCP_URL + formName + ".xml";
 
     let formURI = await getPrefillXML(
@@ -129,28 +124,66 @@ const GenericOdkForm = (props) => {
     );
 
     setEncodedFormURI(formURI);
-    }
   };
+  //   let formData = {};
+  //   let filePath =
+  //     process.env.REACT_APP_GCP_AFFILIATION_LINK + formName + ".xml";
+  //     const storedData = await getSpecificDataFromForage("required_data");
+  //     let data = await getFromLocalForage(
+  //       `${userId}_${formName}_${new Date().toISOString().split("T")[0]}`
+  //     );
+  //   const postData = { form_id: storedData?.applicant_form_id };
+  //   try {
+  //     const res = await getEnketoFormData(postData);
+  //     formData = res.data.form_submissions[0];
+  //     console.log("formData ===>", formData);
+  //     // if(component === 'pastSubmissions') {
+  //     // const postDataEvents = { id: date };
+  //     // const events = await getStatusOfForms(postDataEvents);
+  //     // setFormStatus(events?.events);
+  //     // }
+  //     setFormDataFromApi(res.data.form_submissions[0]);
+  //     await setToLocalForage(
+  //       `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
+  //       {
+  //         formData: formData?.form_data,
+  //         imageUrls: { ...data?.imageUrls },
+  //       }
+  //     );
+
+  //     let formURI = await getPrefillXML(
+  //       `${filePath}`,
+  //       formSpec.onSuccess,
+  //       formData?.form_data,
+  //       formData?.imageUrls
+  //     );
+  //     setEncodedFormURI(formURI);
+  //     console.log("formURI", formURI);
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     // setSpinner(false);
+  //   }
+  // };
 
   const fetchFormData = async () => {
     let formData = {};
     let filePath =
       process.env.REACT_APP_GCP_AFFILIATION_LINK + formName + ".xml";
-
+      const storedData = await getSpecificDataFromForage("required_data");
     let data = await getFromLocalForage(
       `${userId}_${formName}_${new Date().toISOString().split("T")[0]}`
     );
 
-    const postData = { form_id: date };
+    const postData = { form_id: storedData?.applicant_form_id };
     try {
-      const res = await getEnketoFormData(postData);
+      const res = await getFormData(postData);
       formData = res.data.form_submissions[0];
-      console.log("formData ===>", formData);
-      if(component === 'pastSubmissions') {
-      const postDataEvents = { id: date };
-      const events = await getStatusOfForms(postDataEvents);
-      setFormStatus(events?.events);
-      }
+
+      // setPaymentStatus(formData?.payment_status);
+      const postDataEvents = { id: storedData?.applicant_form_id };
+      // const events = await getStatus(postDataEvents);
+      // setFormStatus(events?.events);
       setFormDataFromApi(res.data.form_submissions[0]);
       await setToLocalForage(
         `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
@@ -235,7 +268,7 @@ const GenericOdkForm = (props) => {
           handleRenderPreview();
         } else {
           // For read-only forms, it will disable the Submit...
-          if (component === 'pastSubmissions' && date) {
+          if (date) {
             setErrorModal(true);
             return;
           }
@@ -318,24 +351,20 @@ const GenericOdkForm = (props) => {
     if (window.location.host.includes("localhost")) {
       return;
     }
+
     const iframeElem = document.getElementById("enketo-form");
     var iframeContent =
       iframeElem?.contentDocument || iframeElem?.contentWindow.document;
-    if (component === 'pastSubmissions' && date) {
+    if (date) {
       var section = iframeContent?.getElementsByClassName("or-group");
       if (!section) return;
       for (var i = 0; i < section?.length; i++) {
-        console.log(section[i]);
         var inputElements = section[i].querySelectorAll("input");
         inputElements.forEach((input) => {
           input.disabled = true;
-          // hide admin remarks and label in assessor form
-          if(input.name.toLowercase().includes('admin')) {
-            input.previousSibling.style.display = 'none';
-            input.style.display = 'none';
-          }
         });
       }
+
       iframeContent.getElementById("submit-form").style.display = "none";
       iframeContent.getElementById("save-draft").style.display = "none";
     }
@@ -347,7 +376,6 @@ const GenericOdkForm = (props) => {
   };
 
   const handleRenderPreview = () => {
-    alert("1");
     setPreviewModal(true);
     previewFlag = true;
 
@@ -386,18 +414,18 @@ const GenericOdkForm = (props) => {
   useEffect(() => {
     bindEventListener();
     getSurveyUrl();
-    getDataFromLocal();
     getCourseFormDetails();
-    // getFormData({
-    //   loading,
-    //   scheduleId,
-    //   formSpec,
-    //   startingForm,
-    //   formId,
-    //   setData,
-    //   setEncodedFormSpec,
-    //   setEncodedFormURI,
-    // });
+    fetchFormData();
+    getFormData({
+      loading,
+      scheduleId,
+      formSpec,
+      startingForm,
+      formId,
+      setData,
+      setEncodedFormSpec,
+      setEncodedFormURI,
+    });
 
     setTimeout(() => {
       checkIframeLoaded();
@@ -438,7 +466,7 @@ const GenericOdkForm = (props) => {
       >
         {!isPreview && (
           <div className="flex flex-col items-center">
-            {encodedFormURI && assData && date && (
+            {encodedFormURI && assData && date!== undefined && (
               <>
                 <iframe
                   title="form"
@@ -451,7 +479,7 @@ const GenericOdkForm = (props) => {
           </div>
         )}
 
-        {surveyUrl && !date && (
+        {surveyUrl && date == undefined && (
           <>
             <iframe
               id="offline-enketo-form"
@@ -510,12 +538,14 @@ const GenericOdkForm = (props) => {
           </div>
           <div className="flex flex-col justify-center w-full py-4">
             {surveyUrl && (
+              <>
               <iframe
                 title="form"
                 id="preview-enketo-form"
                 src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
                 style={{ height: "80vh", width: "100%", marginTop: "20px" }}
               />
+              </>
             )}
           </div>
         </CommonModal>

@@ -17,7 +17,7 @@ const PastSubmittedForms = () => {
     navigate(
       `${
         ROUTE_MAP.otherforms_param_formName +
-        formObj?.form_name.trim() + "/" + "pastSubmissions" + 
+        formObj?.form_name.trim() +
         "/" +
         date
       }`
