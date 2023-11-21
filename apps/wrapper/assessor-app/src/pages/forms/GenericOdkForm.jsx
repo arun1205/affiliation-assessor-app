@@ -125,63 +125,24 @@ const GenericOdkForm = (props) => {
 
     setEncodedFormURI(formURI);
   };
-  //   let formData = {};
-  //   let filePath =
-  //     process.env.REACT_APP_GCP_AFFILIATION_LINK + formName + ".xml";
-  //     const storedData = await getSpecificDataFromForage("required_data");
-  //     let data = await getFromLocalForage(
-  //       `${userId}_${formName}_${new Date().toISOString().split("T")[0]}`
-  //     );
-  //   const postData = { form_id: storedData?.applicant_form_id };
-  //   try {
-  //     const res = await getEnketoFormData(postData);
-  //     formData = res.data.form_submissions[0];
-  //     console.log("formData ===>", formData);
-  //     // if(component === 'pastSubmissions') {
-  //     // const postDataEvents = { id: date };
-  //     // const events = await getStatusOfForms(postDataEvents);
-  //     // setFormStatus(events?.events);
-  //     // }
-  //     setFormDataFromApi(res.data.form_submissions[0]);
-  //     await setToLocalForage(
-  //       `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
-  //       {
-  //         formData: formData?.form_data,
-  //         imageUrls: { ...data?.imageUrls },
-  //       }
-  //     );
 
-  //     let formURI = await getPrefillXML(
-  //       `${filePath}`,
-  //       formSpec.onSuccess,
-  //       formData?.form_data,
-  //       formData?.imageUrls
-  //     );
-  //     setEncodedFormURI(formURI);
-  //     console.log("formURI", formURI);
-  //   } catch (error) {
-  //     console.log(error);
-  //   } finally {
-  //     // setSpinner(false);
-  //   }
-  // };
-
+  /* fetch form data from API */
   const fetchFormData = async () => {
     let formData = {};
     let filePath =
       process.env.REACT_APP_GCP_AFFILIATION_LINK + formName + ".xml";
-      const storedData = await getSpecificDataFromForage("required_data");
+    const storedData = await getSpecificDataFromForage("required_data");
     let data = await getFromLocalForage(
       `${userId}_${formName}_${new Date().toISOString().split("T")[0]}`
     );
-
+      console.log(storedData?.applicant_form_id);
     const postData = { form_id: storedData?.applicant_form_id };
     try {
-      const res = await getFormData(postData);
+      const res = await getEnketoFormData(postData);
       formData = res.data.form_submissions[0];
-
+      console.log("formData ====>", formData);
       // setPaymentStatus(formData?.payment_status);
-      const postDataEvents = { id: storedData?.applicant_form_id };
+      // const postDataEvents = { id: storedData?.applicant_form_id };
       // const events = await getStatus(postDataEvents);
       // setFormStatus(events?.events);
       setFormDataFromApi(res.data.form_submissions[0]);
@@ -189,7 +150,7 @@ const GenericOdkForm = (props) => {
         `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
         {
           formData: formData?.form_data,
-          imageUrls: { ...data?.imageUrls },
+          imageUrls: { ...formData?.imageUrls },
         }
       );
 
@@ -416,6 +377,7 @@ const GenericOdkForm = (props) => {
     getSurveyUrl();
     getCourseFormDetails();
     fetchFormData();
+    getDataFromLocal();
     getFormData({
       loading,
       scheduleId,
@@ -466,7 +428,7 @@ const GenericOdkForm = (props) => {
       >
         {!isPreview && (
           <div className="flex flex-col items-center">
-            {encodedFormURI && assData && date!== undefined && (
+            {encodedFormURI && assData && (
               <>
                 <iframe
                   title="form"
@@ -478,8 +440,8 @@ const GenericOdkForm = (props) => {
             )}
           </div>
         )}
-
-        {surveyUrl && date == undefined && (
+        
+        {surveyUrl && date === undefined && !assData && (
           <>
             <iframe
               id="offline-enketo-form"
@@ -539,6 +501,7 @@ const GenericOdkForm = (props) => {
           <div className="flex flex-col justify-center w-full py-4">
             {surveyUrl && (
               <>
+              <p>Hieee2</p>
               <iframe
                 title="form"
                 id="preview-enketo-form"
