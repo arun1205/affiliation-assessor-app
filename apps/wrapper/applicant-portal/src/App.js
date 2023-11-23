@@ -73,7 +73,7 @@ function App() {
         <Toast toastMsg={toast.toastMsg} toastType={toast.toastType} />
       )}
 
-      <BrowserRouter basename={'/app'}>
+      <BrowserRouter>
         <Routes>
           <Route path={APPLICANT_ROUTE_MAP.auth} element={<Authenticate />}>
             <Route

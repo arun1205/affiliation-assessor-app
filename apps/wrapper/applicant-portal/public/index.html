@@ -69,11 +69,6 @@
         console = console || {};
         console.log = function () { };
       }
-      (() => {
-      if (location.pathname === '/') {
-        window.location.href = location.origin + '/app';
-      }
-    })();
     </script>
     <div id="backdrop" className="api_spinner">
       <div
