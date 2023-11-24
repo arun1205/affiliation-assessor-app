@@ -23,7 +23,7 @@ import AdminSingUp from "./login/AdminSignUp";
 import LoginEnterOtp from "./login/LoginEnterOtp";
 
 // Dashboard pages...
-import DashboardLandingPage from "./pages/DashboardLandingPage";
+import DashboardLandingPage from "./pages/dashboard/DashboardLandingPage";
 import GroundInspectionAnalysis from "./pages/ground-analysis/GroundInspectionAnalysis";
 import GroundInspectionListForms from "./pages/ground-analysis/GroundInspectionListForms";
 import GroundInspectionViewForm from "./pages/ground-analysis/GroundInspectionViewForm";
@@ -54,6 +54,7 @@ import { getCookie, getLocalTimeInISOFormat } from "./utils";
 import Toast from "./components/Toast";
 
 function App() {
+  console.log("Good afternoon Sharath !!!!!!!")
   const loggedInUser = getCookie("regulator")?.[0];
   const [spinner, setSpinner] = useState(false);
   const [toast, setToast] = useState({
@@ -63,7 +64,7 @@ function App() {
   });
 
   const messaging = getMessaging(fireBaseApp);
-  const onMessageListener = (async () => {
+   const onMessageListener = (async () => {
     const messagingResolve = await messaging;
     if (messagingResolve) {
       onMessage(messagingResolve, (payload) => {
@@ -76,7 +77,7 @@ function App() {
         }));
       });
     }
-  })();
+  })(); 
 
   useEffect(() => {
     getPermissionForToken();
@@ -84,13 +85,14 @@ function App() {
 
   useEffect(() => {
     if (toast) {
-      setTimeout(() => {
+    /*   setTimeout(() => {
         setToast({
           toastOpen: false,
           toastMsg: "",
           toastType: "",
         });
-      }, 3000);
+      }, 3000); */
+      
     }
   }, [toast]);
 
@@ -104,7 +106,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             {/* Default landing page */}
-            <Route path="/" element={<Navigate to="/auth/login" />} />
+          {   <Route path="/" element={<Navigate to="/auth/login" />} /> }
 
             {/* Register and Login Routes */}
             <Route path={ADMIN_ROUTE_MAP.auth} element={<Authenticate />}>
@@ -124,12 +126,6 @@ function App() {
 
             {/* Dashboard routing starts here */}
             <Route
-              path={ADMIN_ROUTE_MAP.adminModule.dashboard}
-              element={
-                <PrivateRoute>
-                  <DashboardLandingPage />
-                </PrivateRoute>
-              }
             >
               {loggedInUser?.role === "Super-Admin" && (
                 <Route
@@ -210,6 +206,13 @@ function App() {
               >
                 <Route index element={<ScheduleManagementList />}></Route>
               </Route>
+              <Route path={ADMIN_ROUTE_MAP.adminModule.dashboard.home}
+              element={
+                <PrivateRoute>
+                  <DashboardLandingPage />
+                </PrivateRoute>
+              }
+              ></Route>
               <Route
                 path="*"
                 element={

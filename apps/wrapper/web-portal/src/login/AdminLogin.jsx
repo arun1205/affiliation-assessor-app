@@ -26,6 +26,7 @@ const AdminLogin = () => {
   } = useForm();
 
   useEffect(() => {
+    console.log("checking login ........")
     // Check if user is already logged in (e.g., using your authentication logic)
     const checkLoggedInStatus = () => {
       const isAuthenticated = getCookie("userData");

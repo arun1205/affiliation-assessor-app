@@ -57,6 +57,13 @@ export default function Nav() {
                   Schedule Management
                 </NavLink>
               </li>
+           {   <li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
+                <NavLink
+                  to={ADMIN_ROUTE_MAP.adminModule.dashboard.home}
+                >
+                  Dashboard
+                </NavLink>
+              </li>}
             </ul>
           </div>
         </div>
