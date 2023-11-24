@@ -63,7 +63,7 @@ const DesktopAnalysisList = () => {
       accessor: "application_type",
     },
     {
-      Header: "Course Type",
+      Header: "Course",
       accessor: "course_name",
     },
     {
@@ -197,6 +197,7 @@ const DesktopAnalysisList = () => {
         ...prevState,
         totalCount: res.data.form_submissions_aggregate.aggregate.totalCount,
       }));
+      console.log(res?.data?.form_submissions);
       setFormsList(res?.data?.form_submissions);
     } catch (error) {
       console.log("error - ", error);
@@ -291,6 +292,7 @@ const DesktopAnalysisList = () => {
   };
 
   formsList?.forEach((e) => {
+    console.log("e =>", e);
     let applicationType = e?.course?.application_type?.replace("_", " ");
     var formsData = {
       form_title: (
@@ -305,7 +307,9 @@ const DesktopAnalysisList = () => {
       application_type:
         applicationType?.charAt(0).toUpperCase() +
         applicationType?.substring(1).toLowerCase(),
-      course_name: e?.course_type || "NA",
+      course_name: `${e?.course_type} - ${e?.course_level}` || "NA",
+      // course_name: `${e?.course?.course_type} - ${e?.course?.course_level}` || "NA",
+      
       published_on: readableDate(e?.submitted_on),
       id: e.form_id,
       status: e?.form_status || "NA",
@@ -413,7 +417,19 @@ const DesktopAnalysisList = () => {
                       : ""
                   }`}
                 >
-                  New
+                  New Forms Submitted
+                </a>
+              </li>
+              <li className="" onClick={() => handleSelectMenu("Returned")}>
+                <a
+                  href="#"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
+                    state.menu_selected === "Returned"
+                      ? "text-blue-600 border-b-2 border-blue-600"
+                      : ""
+                  }`}
+                >
+                  Returned to institute
                 </a>
               </li>
               <li className="" onClick={() => handleSelectMenu("Resubmitted")}>
@@ -425,7 +441,7 @@ const DesktopAnalysisList = () => {
                       : ""
                   }`}
                 >
-                  Resubmitted
+                  Resubmitted for DA
                 </a>
               </li>
               <li className="" onClick={() => handleSelectMenu("DA Completed")}>
@@ -453,7 +469,7 @@ const DesktopAnalysisList = () => {
                       : ""
                   }`}
                 >
-                  Sent for Inspection
+                  On-ground Inspection Scheduled
                 </a>
               </li>
               <li className="" onClick={() => handleSelectMenu("Rejected")}>
@@ -466,21 +482,10 @@ const DesktopAnalysisList = () => {
                   }`}
                   aria-current="page"
                 >
-                  Rejected
+                  Application Rejected
                 </a>
               </li>{" "}
-              <li className="" onClick={() => handleSelectMenu("Returned")}>
-                <a
-                  href="#"
-                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
-                    state.menu_selected === "Returned"
-                      ? "text-blue-600 border-b-2 border-blue-600"
-                      : ""
-                  }`}
-                >
-                  Returned to institute
-                </a>
-              </li>
+             
             </ul>
 
             {/* table creation starts here */}
