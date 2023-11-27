@@ -59,17 +59,16 @@ export const makeDataForPrefill = (prev, xmlDoc, key, finalObj, formName) => {
   }
 };
 
-export const updateFormData = async (startingForm) => {
+export const updateFormData = async (startingForm, formData, fileURLs) => {
   try {
     let data = await getFromLocalForage(
       `${startingForm}_${new Date().toISOString().split("T")[0]}`
     );
-
     const GCP_form_url = `${GCP_URL}${startingForm}.xml`;
     let prefilledForm = await getSubmissionXML(
       GCP_form_url,
-      data.formData,
-      data.imageUrls
+      formData,
+      fileURLs
     );
     return prefilledForm;
   } catch (err) {}

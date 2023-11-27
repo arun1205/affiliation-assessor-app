@@ -9,10 +9,10 @@ import { StateContext } from "../../App";
 import {
   getStatusOfForms,
   registerEvent,
-  saveFormSubmission,
   updateFormStatus,
   getPrefillXML,
-  getEnketoFormData
+  getEnketoFormData,
+  updateFormSubmissions
 } from "../../api";
 import {
   getCookie,
@@ -135,16 +135,14 @@ const GenericOdkForm = (props) => {
     let data = await getFromLocalForage(
       `${userId}_${formName}_${new Date().toISOString().split("T")[0]}`
     );
-      console.log(storedData?.applicant_form_id);
     const postData = { form_id: storedData?.applicant_form_id };
     try {
       const res = await getEnketoFormData(postData);
       formData = res.data.form_submissions[0];
-      console.log("formData ====>", formData);
       // setPaymentStatus(formData?.payment_status);
-      // const postDataEvents = { id: storedData?.applicant_form_id };
-      // const events = await getStatus(postDataEvents);
-      // setFormStatus(events?.events);
+      const postDataEvents = { id: storedData?.applicant_form_id };
+      const events = await getStatusOfForms(postDataEvents);
+      setFormStatus(events?.events);
       setFormDataFromApi(res.data.form_submissions[0]);
       await setToLocalForage(
         `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
@@ -222,7 +220,7 @@ const GenericOdkForm = (props) => {
     const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
 
     try {
-      const { nextForm, formData, onSuccessData, onFailureData } = data;
+      const { nextForm, formDataXml, onSuccessData, onFailureData } = data;
       if (data?.state === "ON_FORM_SUCCESS_COMPLETED") {
         if (!previewFlag) {
           await getDataFromLocal();
@@ -233,26 +231,27 @@ const GenericOdkForm = (props) => {
             setErrorModal(true);
             return;
           }
-          const updatedFormData = await updateFormData(formSpec.start);
+          const updatedFormData = await updateFormData(formSpec.start, data?.formDataXml, data?.fileURLs);
           const storedData = await getSpecificDataFromForage("required_data");
 
-          const res = await saveFormSubmission({
-            schedule_id: scheduleId.current,
+          const requestData = {
+            form_id: storedData?.applicant_form_id,
             form_data: updatedFormData,
-            assessment_type: "assessor",
             form_name: formSpec.start,
             submission_status: saveFlag === "draft" ? false : true,
+            form_status: saveFlag === "draft" ? "" : "In Progress",
             assessor_id: storedData?.assessor_user_id,
             applicant_id: storedData?.institute_id,
-            submitted_on: new Date().toJSON().slice(0, 10),
             applicant_form_id: courseObj["applicant_form_id"],
-            round: courseObj["round"],
-            form_status: saveFlag === "draft" ? "" : "In Progress",
             course_id: courseObj["course_id"],
-          });
+            submitted_on: new Date().toJSON().slice(0, 10),
+            schedule_id: scheduleId.current,
+          }
 
-          console.log("res - ", res);
-          if (res?.data?.insert_form_submissions) {
+          
+          
+          const res = await updateFormSubmissions(requestData);
+          if (res?.data?.update_form_submissions) {
             updateSubmissionForms(courseObj["course_id"]);
 
             // Delete the data from the Local Forage
@@ -501,7 +500,6 @@ const GenericOdkForm = (props) => {
           <div className="flex flex-col justify-center w-full py-4">
             {surveyUrl && (
               <>
-              <p>Hieee2</p>
               <iframe
                 title="form"
                 id="preview-enketo-form"

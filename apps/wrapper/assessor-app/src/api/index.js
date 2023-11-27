@@ -509,3 +509,27 @@ export const getEnketoFormData = async (postData) => {
   );
   return res;
 };
+
+// export const updateFormSubmissions = async (data) => {
+//   const res = await customPost.post(
+//     APIS.FORM.UPDATE_FORM, data
+//   )
+//   return res;
+// }
+
+export const updateFormSubmissions = (data) => {
+  const query = {
+    query: `
+    mutation ($form_id: Int, $form_data: jsonb, $form_name: String, $submission_status: Boolean, $form_status: String, $assessor_id: String, $applicant_id:Int, $applicant_form_id:Int, $course_id:Int, $submitted_on: date, $schedule_id: Int) {
+      update_form_submissions(where: {form_id: {_eq: $form_id}}, _set: {form_data: $form_data, form_name: $form_name, submission_status: $submission_status, form_status: $form_status, assessor_id: $assessor_id, applicant_id:$applicant_id, applicant_form_id:$applicant_form_id, course_id:$course_id, submitted_on:$submitted_on, schedule_id: $schedule_id}) {
+        returning {
+          form_id
+          form_data
+        }
+      }
+    }
+      `,
+    variables: { ...data },
+  };
+  return makeHasuraCalls(query);
+}
