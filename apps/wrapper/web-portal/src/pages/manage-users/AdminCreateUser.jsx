@@ -91,6 +91,7 @@ export default function AdminCreateUser() {
       user.phonenumber.length > 10 ||
       user.phonenumber.length < 10
     ) {
+    //  setErrMsg("Please fill in valid information");
       return false;
     } else return true;
   };
@@ -424,8 +425,9 @@ if(value === '' || re.test(value)){
                       className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     >
                       <option value="">Select role</option>
-                      <option value="Assessor">Assessor</option>
+                      <option value="Assessor">On Ground Assessor</option>
                       <option value="Desktop-Admin">Admin</option>
+                      <option value="Desktop-Assessor">Desktop Assessor</option>
                     </select>
                   </div>
                 </div>
@@ -439,7 +441,6 @@ if(value === '' || re.test(value)){
                     moreClass="border border-gray-200 bg-white text-blue-600 w-[120px]"
                     text="Cancel"
                   ></Button>
-
                   <Button
                     moreClass="border text-white w-[120px]"
                     text={!userId ? "Submit" : "Save"}

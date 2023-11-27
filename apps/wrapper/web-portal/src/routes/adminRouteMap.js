@@ -1,4 +1,5 @@
 let ADMIN_ROUTE_MAP = {};
+export const DA_ROUTE_MAP = {};
 let MANAGE_USERS = "manage-users";
 let CERTIFICATE_MANAGEMENT = "certificate-management"
 let GROUND_INSPECTION = "ground-inspection";

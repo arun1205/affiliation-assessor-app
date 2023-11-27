@@ -889,6 +889,23 @@ export default function ManageUsersList({
                     Admin
                   </a>
                 </li>
+
+                <li
+                  className="mr-2"
+                  onClick={() => handleSelectMenu("Desktop-Assessor")}
+                >
+                  <a
+                    href="#"
+                    className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
+                      state.menu_selected === "Desktop-Assessor"
+                        ? "text-blue-600 border-b-2 border-blue-600"
+                        : ""
+                    }`}
+                    aria-current="page"
+                  >
+                    Desktop Assessor
+                  </a>
+                </li>
               </ul>
               {/* filtering table here */}
               {state.menu_selected === "Assessor" && (
