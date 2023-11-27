@@ -113,11 +113,15 @@ const AdminLogin = () => {
         user_id: user_details?.id,
       });
       const role = loginRes?.data?.userRepresentation?.attributes?.Role?.[0];
+      setCookie("userData", loginRes.data);
+      setCookie("regulator", adminDetailsRes.data.regulator);
       if (role === "Super-Admin" || role === "Desktop-Admin") {
-        setCookie("userData", loginRes.data);
-        setCookie("regulator", adminDetailsRes.data.regulator);
         navigate(ADMIN_ROUTE_MAP.adminModule.manageUsers.home);
-      } else {
+      } 
+      else if(role === "Desktop-Assessor"){
+        navigate(ADMIN_ROUTE_MAP.adminModule.desktopAnalysis.home);
+      }
+      else {
         setToast((prevState) => ({
           ...prevState,
           toastOpen: true,

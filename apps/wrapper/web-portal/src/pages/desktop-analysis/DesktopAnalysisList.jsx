@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { Select, Option } from "@material-tailwind/react";
 
 import FilteringTable from "../../components/table/FilteringTable";
-import Card from "../../components/Card";
 import Nav from "../../components/Nav";
+import { getCookie } from "../../utils";
 import { ContextAPI } from "../../utils/ContextAPI";
 
 import {
@@ -36,6 +36,8 @@ const DesktopAnalysisList = () => {
     limit: 10,
     totalCount: 0,
   });
+  const loggedInUserRole = getCookie("userData").userRepresentation.attributes.Role[0];
+  console.log(loggedInUserRole)
   const [paymentModal, setPaymentModal] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -313,7 +315,7 @@ const DesktopAnalysisList = () => {
         <div
           className={`px-6 text-primary-600 pl-0`}
           onClick={
-            e?.payment_status === "Paid" ? () => handleViewPayment(e) : () => {}
+            e?.payment_status === "Paid" ? () => handleViewPayment(e) : () => { }
           }
         >
           {e?.payment_status === "Paid"
@@ -407,11 +409,10 @@ const DesktopAnalysisList = () => {
               >
                 <a
                   href="#"
-                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
-                    state.menu_selected === "Application Submitted"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${state.menu_selected === "Application Submitted"
                       ? "text-blue-600 border-b-2 border-blue-600"
                       : ""
-                  }`}
+                    }`}
                 >
                   New
                 </a>
@@ -419,11 +420,10 @@ const DesktopAnalysisList = () => {
               <li className="" onClick={() => handleSelectMenu("Resubmitted")}>
                 <a
                   href="#"
-                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
-                    state.menu_selected === "Resubmitted"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${state.menu_selected === "Resubmitted"
                       ? "text-blue-600 border-b-2 border-blue-600"
                       : ""
-                  }`}
+                    }`}
                 >
                   Resubmitted
                 </a>
@@ -431,39 +431,39 @@ const DesktopAnalysisList = () => {
               <li className="" onClick={() => handleSelectMenu("DA Completed")}>
                 <a
                   href="#"
-                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
-                    state.menu_selected === "DA Completed"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${state.menu_selected === "DA Completed"
                       ? "text-blue-600 border-b-2 border-blue-600"
                       : ""
-                  }`}
+                    }`}
                   aria-current="page"
                 >
                   DA Completed
                 </a>
               </li>
-              <li
-                className=""
-                onClick={() => handleSelectMenu("Inspection Scheduled")}
-              >
-                <a
-                  href="#"
-                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
-                    state.menu_selected === "Inspection Scheduled"
-                      ? "text-blue-600 border-b-2 border-blue-600"
-                      : ""
-                  }`}
+
+              {loggedInUserRole != "Desktop-Assessor" && (
+                < li
+                  className=""
+                  onClick={() => handleSelectMenu("Inspection Scheduled")}
                 >
-                  Sent for Inspection
-                </a>
-              </li>
+                  <a
+                    href="#"
+                    className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${state.menu_selected === "Inspection Scheduled"
+                        ? "text-blue-600 border-b-2 border-blue-600"
+                        : ""
+                      }`}
+                  >
+                    Sent for Inspection
+                  </a>
+                </li>
+              )}
               <li className="" onClick={() => handleSelectMenu("Rejected")}>
                 <a
                   href="#"
-                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
-                    state.menu_selected === "Rejected"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${state.menu_selected === "Rejected"
                       ? "text-blue-600 border-b-2 border-blue-600"
                       : ""
-                  }`}
+                    }`}
                   aria-current="page"
                 >
                   Rejected
@@ -472,11 +472,10 @@ const DesktopAnalysisList = () => {
               <li className="" onClick={() => handleSelectMenu("Returned")}>
                 <a
                   href="#"
-                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
-                    state.menu_selected === "Returned"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${state.menu_selected === "Returned"
                       ? "text-blue-600 border-b-2 border-blue-600"
                       : ""
-                  }`}
+                    }`}
                 >
                   Returned to institute
                 </a>
@@ -489,10 +488,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={COLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -508,10 +507,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={COLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -527,10 +526,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={COLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -546,10 +545,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={COLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -565,10 +564,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={NEWCOLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -584,10 +583,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={COLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -612,7 +611,7 @@ const DesktopAnalysisList = () => {
       {paymentModal && (
         <PaymentModal
           closeViewSchedulesModal={setPaymentModal}
-          // scheduleUserData={scheduleUserData}
+        // scheduleUserData={scheduleUserData}
         ></PaymentModal>
       )}
     </>
