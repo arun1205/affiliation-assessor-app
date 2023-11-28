@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { Select, Option } from "@material-tailwind/react";
 
 import FilteringTable from "../../components/table/FilteringTable";
-import Card from "../../components/Card";
 import Nav from "../../components/Nav";
+import { getCookie } from "../../utils";
 import { ContextAPI } from "../../utils/ContextAPI";
 
 import {
@@ -36,6 +36,8 @@ const DesktopAnalysisList = () => {
     limit: 10,
     totalCount: 0,
   });
+  const loggedInUserRole = getCookie("userData").userRepresentation.attributes.Role[0];
+
   const [paymentModal, setPaymentModal] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -63,7 +65,7 @@ const DesktopAnalysisList = () => {
       accessor: "application_type",
     },
     {
-      Header: "Course",
+      Header: "Course Name",
       accessor: "course_name",
     },
     {
@@ -317,7 +319,7 @@ const DesktopAnalysisList = () => {
         <div
           className={`px-6 text-primary-600 pl-0`}
           onClick={
-            e?.payment_status === "Paid" ? () => handleViewPayment(e) : () => {}
+            e?.payment_status === "Paid" ? () => handleViewPayment(e) : () => { }
           }
         >
           {e?.payment_status === "Paid"
@@ -457,21 +459,23 @@ const DesktopAnalysisList = () => {
                   DA Completed
                 </a>
               </li>
-              <li
-                className=""
-                onClick={() => handleSelectMenu("Inspection Scheduled")}
-              >
-                <a
-                  href="#"
-                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
-                    state.menu_selected === "Inspection Scheduled"
-                      ? "text-blue-600 border-b-2 border-blue-600"
-                      : ""
-                  }`}
+            
+              {loggedInUserRole !== "Desktop-Assessor" && (
+                < li
+                  className=""
+                  onClick={() => handleSelectMenu("Inspection Scheduled")}
                 >
-                  On-ground Inspection Scheduled
-                </a>
-              </li>
+                  <a
+                    href="#"
+                    className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${state.menu_selected === "Inspection Scheduled"
+                        ? "text-blue-600 border-b-2 border-blue-600"
+                        : ""
+                      }`}
+                  >
+                    On-ground Inspection Scheduled
+                  </a>
+                </li>
+              )}
               <li className="" onClick={() => handleSelectMenu("Rejected")}>
                 <a
                   href="#"
@@ -485,6 +489,7 @@ const DesktopAnalysisList = () => {
                   Application Rejected
                 </a>
               </li>{" "}
+            
              
             </ul>
 
@@ -494,10 +499,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={COLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -513,10 +518,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={COLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -532,10 +537,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={COLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -551,10 +556,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={COLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -570,10 +575,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={NEWCOLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -589,10 +594,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={COLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -617,7 +622,7 @@ const DesktopAnalysisList = () => {
       {paymentModal && (
         <PaymentModal
           closeViewSchedulesModal={setPaymentModal}
-          // scheduleUserData={scheduleUserData}
+        // scheduleUserData={scheduleUserData}
         ></PaymentModal>
       )}
     </>

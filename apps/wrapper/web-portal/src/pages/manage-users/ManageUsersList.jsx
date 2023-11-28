@@ -15,6 +15,7 @@ import {
   handleInctiveUser,
   handleDeleteUser,
   getAllRegulators,
+  fetchAllDeskTopAssessors,
 } from "../../api";
 
 import { userService } from "../../api/userService";
@@ -517,6 +518,33 @@ export default function ManageUsersList({
       setUsersList(res?.data?.regulator);
       const data = res?.data?.regulator;
       data.forEach(setAdminTableData);
+      const newData = resUserData.filter(user => user.role === "Admin");
+      setUserTableList(newData);
+    } catch (error) {
+      console.log("error - ", error);
+    } finally {
+      setSpinner(false);
+    }
+  };
+
+  const getAllDeskTopAssessors = async () => {
+    const pagination = {
+      offsetNo: paginationInfo.offsetNo,
+      limit: paginationInfo.limit,
+      role: 'Desktop-Assessor'
+    };
+    try {
+      setSpinner(true);
+      const res = await fetchAllDeskTopAssessors(pagination);
+      setPaginationInfo((prevState) => ({
+        ...prevState,
+        totalCount: res.data.regulator_aggregate.aggregate.totalCount,
+      }));
+      console.log(res?.data?.regulator)
+      setUsersList(res?.data?.regulator);
+      const data = res?.data?.regulator;
+      data.forEach(setTableData);
+      console.log(resUserData);
       setUserTableList(resUserData);
     } catch (error) {
       console.log("error - ", error);
@@ -544,6 +572,15 @@ export default function ManageUsersList({
         data.forEach(setTableData);
       }
       if (state.menu_selected === "Desktop-Admin") {
+        setPaginationInfo((prevState) => ({
+          ...prevState,
+          totalCount: res.data.regulator_aggregate.aggregate.totalCount,
+        }));
+        setUsersList(res?.data?.regulator);
+        const data = res?.data?.regulator;
+        data.forEach(setAdminTableData);
+      }
+      if (state.menu_selected === "Desktop-Assessor") {
         setPaginationInfo((prevState) => ({
           ...prevState,
           totalCount: res.data.regulator_aggregate.aggregate.totalCount,
@@ -615,6 +652,9 @@ export default function ManageUsersList({
       }
       if (state.menu_selected === "Desktop-Admin") {
         await fetchAllRegulators();
+      }
+      if (state.menu_selected === "Desktop-Assessor") {
+        await getAllDeskTopAssessors();
       }
       setDeleteFlag(false);
       setSelectedUserId([]);
@@ -774,6 +814,9 @@ export default function ManageUsersList({
       if (state.menu_selected === "Desktop-Admin") {
         fetchAllRegulators();
       }
+      if (state.menu_selected === "Desktop-Assessor") {
+        getAllDeskTopAssessors();
+      }
     }
   }, [paginationInfo.offsetNo, paginationInfo.limit, state.menu_selected]);
 
@@ -784,6 +827,9 @@ export default function ManageUsersList({
       }
       if (state.menu_selected === "Desktop-Admin") {
         fetchAllRegulators();
+      }
+      if (state.menu_selected === "Desktop-Assessor") {
+        getAllDeskTopAssessors();
       }
     }
     setUsersCreated(false);
@@ -930,6 +976,27 @@ export default function ManageUsersList({
                 </div>
               )}
               {state.menu_selected === "Desktop-Admin" && (
+                <div className="flex flex-col gap-3">
+                  <FilteringTable
+                    dataList={userTableList}
+                    columns={ADMIN_COLUMN}
+                    navigateFunc={() => {}}
+                    showCheckbox={true}
+                    paginationInfo={paginationInfo}
+                    setPaginationInfo={setPaginationInfo}
+                    setOnRowSelect={() => {}}
+                    setSelectedRows={setSelectedRows}
+                    showFilter={false}
+                    showSearch={true}
+                    pagination={true}
+                    filterApiCall={filterApiCall}
+                    searchApiCall={searchApiCall}
+                    setIsSearchOpen={setIsSearchOpen}
+                    setIsFilterOpen={setIsFilterOpen}
+                  />
+                </div>
+              )}
+               {state.menu_selected === "Desktop-Assessor" && (
                 <div className="flex flex-col gap-3">
                   <FilteringTable
                     dataList={userTableList}
