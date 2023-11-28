@@ -144,7 +144,7 @@ const GlobalFilter = ({
               //On-Ground Inspection Analysis
               case ADMIN_ROUTE_MAP.adminModule.onGroundInspection.home:
                 return (
-                  <OnGroundInspectionFilters
+                  <DesktopAnalysisFilters
                     filterApiCall={filterApiCall}
                     paginationInfo={paginationInfo}
                     setIsFilterOpen={setIsFilterOpen}

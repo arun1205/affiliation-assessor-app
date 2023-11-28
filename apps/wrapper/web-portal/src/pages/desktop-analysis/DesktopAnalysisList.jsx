@@ -65,7 +65,7 @@ const DesktopAnalysisList = () => {
       accessor: "application_type",
     },
     {
-      Header: "Course",
+      Header: "Course Name",
       accessor: "course_name",
     },
     {
@@ -199,6 +199,7 @@ const DesktopAnalysisList = () => {
         ...prevState,
         totalCount: res.data.form_submissions_aggregate.aggregate.totalCount,
       }));
+      console.log(res?.data?.form_submissions);
       setFormsList(res?.data?.form_submissions);
     } catch (error) {
       console.log("error - ", error);
@@ -293,6 +294,7 @@ const DesktopAnalysisList = () => {
   };
 
   formsList?.forEach((e) => {
+    console.log("e =>", e);
     let applicationType = e?.course?.application_type?.replace("_", " ");
     var formsData = {
       form_title: (
@@ -488,6 +490,7 @@ const DesktopAnalysisList = () => {
                 </a>
               </li>{" "}
             
+             
             </ul>
 
             {/* table creation starts here */}
