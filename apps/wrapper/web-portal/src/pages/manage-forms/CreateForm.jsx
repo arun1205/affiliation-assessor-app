@@ -32,13 +32,13 @@ const CreateForm = () => {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
-      if((formData.course_type != undefined && formData.course_level != undefined) || (formData.course_type != undefined && e.target.name === 'course_level') || (formData.course_level != undefined && e.target.name === 'course_type') ) {
+      if((formData.course_type !== undefined && formData.course_level !== undefined) || (formData.course_type != undefined && e.target.name === 'course_level') || (formData.course_level != undefined && e.target.name === 'course_type') ) {
         console.log(formData.course_type, formData.course_level);
         const postData = {
           course_type: formData.course_type,
           course_level: formData.course_level
         }
-        // getCourses(postData);
+        getCourses(postData);
       }
   };
 
