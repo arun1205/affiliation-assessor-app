@@ -47,6 +47,7 @@ const API_URL = {
   manageUsers: {
     getAllAssessors: `${rest}getAllAssessors`,
     getAllRegulators: `${rest}getAllRegulators`,
+    getRegulatorsByRole: `${rest}filterRegulatorByRole`,
     specificUser: `${rest}getSpecificUser`,
     filterUsers: `${rest}filterUsers`,
     setActivate: `${rest}setValid`,

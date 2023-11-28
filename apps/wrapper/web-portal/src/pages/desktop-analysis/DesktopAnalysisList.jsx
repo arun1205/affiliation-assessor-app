@@ -37,7 +37,7 @@ const DesktopAnalysisList = () => {
     totalCount: 0,
   });
   const loggedInUserRole = getCookie("userData").userRepresentation.attributes.Role[0];
-  console.log(loggedInUserRole)
+
   const [paymentModal, setPaymentModal] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -65,7 +65,7 @@ const DesktopAnalysisList = () => {
       accessor: "application_type",
     },
     {
-      Header: "Course Type",
+      Header: "Course",
       accessor: "course_name",
     },
     {
@@ -307,7 +307,9 @@ const DesktopAnalysisList = () => {
       application_type:
         applicationType?.charAt(0).toUpperCase() +
         applicationType?.substring(1).toLowerCase(),
-      course_name: e?.course_type || "NA",
+      course_name: `${e?.course_type} - ${e?.course_level}` || "NA",
+      // course_name: `${e?.course?.course_type} - ${e?.course?.course_level}` || "NA",
+      
       published_on: readableDate(e?.submitted_on),
       id: e.form_id,
       status: e?.form_status || "NA",
@@ -409,39 +411,54 @@ const DesktopAnalysisList = () => {
               >
                 <a
                   href="#"
-                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${state.menu_selected === "Application Submitted"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
+                    state.menu_selected === "Application Submitted"
                       ? "text-blue-600 border-b-2 border-blue-600"
                       : ""
-                    }`}
+                  }`}
                 >
-                  New
+                  New Forms Submitted
+                </a>
+              </li>
+              <li className="" onClick={() => handleSelectMenu("Returned")}>
+                <a
+                  href="#"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
+                    state.menu_selected === "Returned"
+                      ? "text-blue-600 border-b-2 border-blue-600"
+                      : ""
+                  }`}
+                >
+                  Returned to institute
                 </a>
               </li>
               <li className="" onClick={() => handleSelectMenu("Resubmitted")}>
                 <a
                   href="#"
-                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${state.menu_selected === "Resubmitted"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
+                    state.menu_selected === "Resubmitted"
                       ? "text-blue-600 border-b-2 border-blue-600"
                       : ""
-                    }`}
+                  }`}
                 >
-                  Resubmitted
+                  Resubmitted for DA
                 </a>
               </li>
               <li className="" onClick={() => handleSelectMenu("DA Completed")}>
                 <a
                   href="#"
-                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${state.menu_selected === "DA Completed"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
+                    state.menu_selected === "DA Completed"
                       ? "text-blue-600 border-b-2 border-blue-600"
                       : ""
-                    }`}
+                  }`}
                   aria-current="page"
                 >
                   DA Completed
                 </a>
               </li>
-
-              {loggedInUserRole != "Desktop-Assessor" && (
+            
+              {loggedInUserRole !== "Desktop-Assessor" && (
                 < li
                   className=""
                   onClick={() => handleSelectMenu("Inspection Scheduled")}
@@ -453,33 +470,24 @@ const DesktopAnalysisList = () => {
                         : ""
                       }`}
                   >
-                    Sent for Inspection
+                    On-ground Inspection Scheduled
                   </a>
                 </li>
               )}
               <li className="" onClick={() => handleSelectMenu("Rejected")}>
                 <a
                   href="#"
-                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${state.menu_selected === "Rejected"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
+                    state.menu_selected === "Rejected"
                       ? "text-blue-600 border-b-2 border-blue-600"
                       : ""
-                    }`}
+                  }`}
                   aria-current="page"
                 >
-                  Rejected
+                  Application Rejected
                 </a>
               </li>{" "}
-              <li className="" onClick={() => handleSelectMenu("Returned")}>
-                <a
-                  href="#"
-                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${state.menu_selected === "Returned"
-                      ? "text-blue-600 border-b-2 border-blue-600"
-                      : ""
-                    }`}
-                >
-                  Returned to institute
-                </a>
-              </li>
+            
             </ul>
 
             {/* table creation starts here */}
