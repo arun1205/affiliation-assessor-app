@@ -141,8 +141,8 @@ const GenericOdkForm = (props) => {
       formData = res.data.form_submissions[0];
       // setPaymentStatus(formData?.payment_status);
       const postDataEvents = { id: storedData?.applicant_form_id };
-      const events = await getStatusOfForms(postDataEvents);
-      setFormStatus(events?.events);
+      // const events = await getStatusOfForms(postDataEvents);
+      // setFormStatus(events?.events);
       setFormDataFromApi(res.data.form_submissions[0]);
       await setToLocalForage(
         `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
