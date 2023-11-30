@@ -43,6 +43,7 @@ const API_URL = {
     filterForms: `${rest}filterForms`,
     createCourses: `${rest}createCourse`,
     updateForms: `${rest}updateForms`,
+    getCourses: `${rest}getCourseMapping`
   },
   manageUsers: {
     getAllAssessors: `${rest}getAllAssessors`,
