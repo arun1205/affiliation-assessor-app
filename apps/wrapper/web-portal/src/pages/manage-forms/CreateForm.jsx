@@ -84,7 +84,6 @@ const CreateForm = () => {
   };
   const handleSaveUpdateDraft = async (action) => {
     let postData = new FormData();
-    console.log("formData ===>", formData);
     Object.keys(formData).forEach((key) => postData.append(key, formData[key]));
 
     const user = getCookie("regulator");
@@ -175,8 +174,6 @@ const CreateForm = () => {
               path: formDetail?.path,
               file_name: formDetail?.file_name,
             });
-          
-        // }); 
       }
     } catch (error) {
       console.log("error - ", error);
