@@ -19,6 +19,10 @@ const API_URL = {
     getApplicantDeviceId: `${rest}getApplicantDeviceId`,
     emailNotify: `email/notify`,
   },
+  dashboard:{
+    home:`${rest}filterFormSubmissionsByRound`,
+    search:`${rest}filterFormSubmissionsByRound`
+  },
   groundAnalysis: {
     viewForm: `${rest}getFormData`,
     list: `${rest}getOGIA`,

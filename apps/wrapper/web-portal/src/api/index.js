@@ -546,6 +546,28 @@ export const getApplicantDeviceId = async (postData) => {
   return res;
 };
 
+//Dashboard apis
+
+
+export const getDashBoardData = async (postData) => {
+  console.log(postData)
+  const res = await adminCustomPost.post(
+    API_URL.dashboard.home,
+    postData
+  );
+  return res;
+};
+
+export const searchDashBoard = async (postData) => {
+  const res = await adminCustomPost.post(
+    API_URL.dashboard.search,
+    postData
+  );
+  return res;
+};
+
+
+
 //other common APIs
 export const updateFormStatus = async (postData) => {
   const res = await adminCustomPost.put(API_URL.common.updateForm, postData);
