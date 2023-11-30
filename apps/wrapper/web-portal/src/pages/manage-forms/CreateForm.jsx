@@ -6,7 +6,13 @@ import Button from "../../components/Button";
 
 import { FaAngleRight } from "react-icons/fa";
 import UploadForm from "./UploadForm";
-import { convertODKtoXML, createForm, updateForms, viewForm,getCoursesByTypeAndLevel } from "../../api";
+import {
+  convertODKtoXML,
+  createForm,
+  updateForms,
+  viewForm,
+  getCoursesByTypeAndLevel,
+} from "../../api";
 import { Label } from "../../components";
 import ADMIN_ROUTE_MAP from "../../routes/adminRouteMap";
 import { ContextAPI } from "../../utils/ContextAPI";
@@ -20,6 +26,7 @@ const CreateForm = () => {
   const [loading, setLoading] = useState(false);
   const [xmlData, setXmlData] = useState(null);
   const [courseMapping, setCourseMapping] = useState(null);
+  let requestData = {courseType: '', courseLevel: ''};
   const [formData, setFormData] = useState({
     title: "",
   });
@@ -32,20 +39,36 @@ const CreateForm = () => {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
-      if((formData.course_type !== undefined && formData.course_level !== undefined) || (formData.course_type != undefined && e.target.name === 'course_level') || (formData.course_level != undefined && e.target.name === 'course_type') ) {
-        console.log(formData.course_type, formData.course_level);
-        const postData = {
-          course_type: formData.course_type,
-          course_level: formData.course_level
-        }
-        getCourses(postData);
-      }
   };
+
+  const handleCourseTypeChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+    requestData.courseType = e.target.value;
+    requestData.courseLevel = formData.course_level;
+    if((requestData.courseType !== undefined && requestData.courseLevel !== undefined) && (requestData.courseLevel !== "" && requestData.courseType !== "")) {
+      getCourses(requestData);
+    } 
+  }
+
+  const handleCourseLevelChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+    requestData.courseType = formData.course_type;
+    requestData.courseLevel =  e.target.value;
+    if((requestData.courseType !== undefined && requestData.courseLevel !== undefined) && (requestData.courseLevel !== "" && requestData.courseType !== "")) {
+      getCourses(requestData);
+    } 
+  }
 
   const getCourses = async (postData) => {
     const response = await getCoursesByTypeAndLevel(postData);
-    console.log(response);
-  }
+    setCourseMapping(response?.data?.course_mapping);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -61,12 +84,12 @@ const CreateForm = () => {
   };
   const handleSaveUpdateDraft = async (action) => {
     let postData = new FormData();
+    console.log("formData ===>", formData);
     Object.keys(formData).forEach((key) => postData.append(key, formData[key]));
 
     const user = getCookie("regulator");
     postData.append("user_id", user?.[0]?.user_id);
     postData.append("form_status", "Draft");
-
     try {
       setSpinner(true);
       setLoading(true);
@@ -133,19 +156,28 @@ const CreateForm = () => {
       const response = await viewForm(formData);
       const formDetail = response.data.forms[0];
       setFormStatus(formDetail?.form_status);
-
-      setFormData({
-        application_type: formDetail?.application_type,
-        form_desc: formDetail.form_desc,
-        assignee: formDetail?.assignee,
-        course_type: formDetail?.course_type,
-        course_level: formDetail?.course_level,
-        labels: formDetail?.labels,
-        round_no: formDetail?.round,
-        title: formDetail?.title,
-        path: formDetail?.path,
-        file_name: formDetail?.file_name,
-      });
+      if(formDetail) {
+        const req = {
+          courseType: formDetail?.course_type,
+          courseLevel: formDetail?.course_level,
+        }
+        getCourses(req);
+            setFormData({
+              application_type: formDetail?.application_type,
+              form_desc: formDetail.form_desc,
+              assignee: formDetail?.assignee,
+              course_type: formDetail?.course_type,
+              course_level: formDetail?.course_level,
+              course_mapping: formDetail?.course_mapping,
+              labels: formDetail?.labels,
+              round_no: formDetail?.round,
+              title: formDetail?.title,
+              path: formDetail?.path,
+              file_name: formDetail?.file_name,
+            });
+          
+        // }); 
+      }
     } catch (error) {
       console.log("error - ", error);
       setToast((prevState) => ({
@@ -203,27 +235,27 @@ const CreateForm = () => {
                 />
                 <Button
                   moreClass={`${
-                    Object.values(formData).length !== 10
+                    Object.values(formData).length !== 11
                       ? "text-gray-500 bg-white border border-gray-300 cursor-not-allowed"
                       : "text-white border"
                   } px-6`}
                   text="Update"
                   onClick={() => handleSaveUpdateDraft("update")}
                   otherProps={{
-                    disabled: Object.values(formData).length !== 10,
+                    disabled: Object.values(formData).length !== 11,
                     style: { display: formStatus !== "Draft" ? "none" : "" },
                   }}
                 />
                 <Button
                   moreClass={`${
-                    Object.values(formData).length !== 10
+                    Object.values(formData).length !== 11
                       ? "text-gray-500 bg-white border border-gray-300 cursor-not-allowed"
                       : "text-white border"
                   } px-6`}
                   text="Save as draft"
                   onClick={() => handleSaveUpdateDraft("save")}
                   otherProps={{
-                    disabled: Object.values(formData).length !== 10,
+                    disabled: Object.values(formData).length !== 11,
                     style: {
                       display:
                         formStatus === "Published" ||
@@ -378,7 +410,7 @@ const CreateForm = () => {
                           value={formData.course_type}
                           name="course_type"
                           id="course_type"
-                          onChange={handleChange}
+                          onChange={handleCourseTypeChange}
                           disabled={
                             formStatus == "Published" ||
                             formStatus == "Unpublished"
@@ -403,7 +435,7 @@ const CreateForm = () => {
                           value={formData.course_level}
                           name="course_level"
                           id="course_level"
-                          onChange={handleChange}
+                          onChange={handleCourseLevelChange}
                           disabled={
                             formStatus == "Published" ||
                             formStatus == "Unpublished"
@@ -415,31 +447,35 @@ const CreateForm = () => {
                           <option value="Diploma">Diploma</option>
                         </select>
                       </div>
-                      {courseMapping !== null && 
-                      <div className="sm:col-span-3">
-                        <Label
-                          required
-                          text="Course Name"
-                          htmlFor="course_mapping"
-                          moreClass="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
-                        />
-                      <select
-                          required
-                          value={formData.course_mapping}
-                          name="course_mapping"
-                          id="course_mapping"
-                          onChange={handleChange}
-                          disabled={
-                            formStatus == "Published" ||
-                            formStatus == "Unpublished"
-                          }
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        >
-                          <option value="">Select here</option>
-                          <option value="Degree">Degree</option>
-                          <option value="Diploma">Diploma</option>
-                        </select>
-                      </div>}
+                      {courseMapping !== null && (
+                        <div className="sm:col-span-3">
+                          <Label
+                            required
+                            text="Course Name"
+                            htmlFor="course_mapping"
+                            moreClass="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
+                          />
+                          <select
+                            required
+                            value={formData.course_mapping}
+                            name="course_mapping"
+                            id="course_mapping"
+                            onChange={handleChange}
+                            disabled={
+                              formStatus == "Published" ||
+                              formStatus == "Unpublished"
+                            }
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
+                            <option value="">Select Here</option>
+                            {courseMapping.map((obj, index) => (
+                              <>
+                            <option key={index} value={obj.course}>{obj.course}</option>
+                              </>
+                              ))}
+                          </select>
+                        </div>
+                      )}
                       <div className="sm:col-span-3">
                         <Label
                           required
