@@ -200,6 +200,15 @@ export const getAllRegulators = async (postData) => {
   return res;
 };
 
+export const fetchAllDeskTopAssessors = async (postData) => {
+  const res = await adminCustomPost.post(
+    API_URL.manageUsers.getRegulatorsByRole,
+    postData
+  );
+  return res;
+};
+
+
 export const getUsersForScheduling = async (postData) => {
   const res = await adminCustomPost.post(
     API_URL.desktopAnalysis.getUsersForSchedulingAssessment,
