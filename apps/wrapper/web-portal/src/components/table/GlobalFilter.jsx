@@ -144,7 +144,7 @@ const GlobalFilter = ({
               //On-Ground Inspection Analysis
               case ADMIN_ROUTE_MAP.adminModule.onGroundInspection.home:
                 return (
-                  <OnGroundInspectionFilters
+                  <DesktopAnalysisFilters
                     filterApiCall={filterApiCall}
                     paginationInfo={paginationInfo}
                     setIsFilterOpen={setIsFilterOpen}
@@ -154,6 +154,16 @@ const GlobalFilter = ({
                 );
               //Schedule Management
               case ADMIN_ROUTE_MAP.adminModule.scheduleManagement.home:
+                return (
+                  <ScheduleManagementFilters
+                    filterApiCall={filterApiCall}
+                    paginationInfo={paginationInfo}
+                    setIsFilterOpen={setIsFilterOpen}
+                    setPaginationInfo={setPaginationInfo}
+                  />
+                );
+                // Dashboard
+              case ADMIN_ROUTE_MAP.adminModule.dashboard.home:
                 return (
                   <ScheduleManagementFilters
                     filterApiCall={filterApiCall}

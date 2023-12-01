@@ -200,6 +200,15 @@ export const getAllRegulators = async (postData) => {
   return res;
 };
 
+export const fetchAllDeskTopAssessors = async (postData) => {
+  const res = await adminCustomPost.post(
+    API_URL.manageUsers.getRegulatorsByRole,
+    postData
+  );
+  return res;
+};
+
+
 export const getUsersForScheduling = async (postData) => {
   const res = await adminCustomPost.post(
     API_URL.desktopAnalysis.getUsersForSchedulingAssessment,
@@ -537,6 +546,28 @@ export const getApplicantDeviceId = async (postData) => {
   return res;
 };
 
+//Dashboard apis
+
+
+export const getDashBoardData = async (postData) => {
+  console.log(postData)
+  const res = await adminCustomPost.post(
+    API_URL.dashboard.home,
+    postData
+  );
+  return res;
+};
+
+export const searchDashBoard = async (postData) => {
+  const res = await adminCustomPost.post(
+    API_URL.dashboard.search,
+    postData
+  );
+  return res;
+};
+
+
+
 //other common APIs
 export const updateFormStatus = async (postData) => {
   const res = await adminCustomPost.put(API_URL.common.updateForm, postData);
@@ -565,3 +596,12 @@ export const getTransactionDetail = async (postData) => {
   );
   return res;
 };
+
+/* returns course mapping based on course type and course level */
+export const getCoursesByTypeAndLevel = async (postData) => {
+  const res = await adminCustomPost.post(
+    API_URL.manageForms.getCourses,
+    postData
+  )
+  return res;
+}

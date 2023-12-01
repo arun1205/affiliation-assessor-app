@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { Select, Option } from "@material-tailwind/react";
 
 import FilteringTable from "../../components/table/FilteringTable";
-import Card from "../../components/Card";
 import Nav from "../../components/Nav";
+import { getCookie } from "../../utils";
 import { ContextAPI } from "../../utils/ContextAPI";
 
 import {
@@ -36,6 +36,8 @@ const DesktopAnalysisList = () => {
     limit: 10,
     totalCount: 0,
   });
+  const loggedInUserRole = getCookie("userData").userRepresentation.attributes.Role[0];
+
   const [paymentModal, setPaymentModal] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -63,7 +65,7 @@ const DesktopAnalysisList = () => {
       accessor: "application_type",
     },
     {
-      Header: "Course Type",
+      Header: "Course Name",
       accessor: "course_name",
     },
     {
@@ -83,6 +85,36 @@ const DesktopAnalysisList = () => {
       accessor: "schedule",
     },
   ];
+  const REJECTEDCOLUMNS = [
+    {
+      Header: "Form title",
+      accessor: "form_title",
+    },
+    {
+      Header: "Application type",
+      accessor: "application_type",
+    },
+    {
+      Header: "Course Name",
+      accessor: "course_name",
+    },
+    {
+      Header: "Date",
+      accessor: "reviewed_on",
+    },
+    {
+      Header: "Status",
+      accessor: "status",
+    },
+    // {
+    //   Header: "Payment status",
+    //   accessor: "payment_status",
+    // },
+    {
+      Header: "",
+      accessor: "schedule",
+    },
+  ]
   const NEWCOLUMNS = [
     {
       Header: "Form title",
@@ -197,6 +229,7 @@ const DesktopAnalysisList = () => {
         ...prevState,
         totalCount: res.data.form_submissions_aggregate.aggregate.totalCount,
       }));
+      console.log(res?.data?.form_submissions);
       setFormsList(res?.data?.form_submissions);
     } catch (error) {
       console.log("error - ", error);
@@ -291,6 +324,7 @@ const DesktopAnalysisList = () => {
   };
 
   formsList?.forEach((e) => {
+    console.log("e =>", e);
     let applicationType = e?.course?.application_type?.replace("_", " ");
     var formsData = {
       form_title: (
@@ -305,15 +339,18 @@ const DesktopAnalysisList = () => {
       application_type:
         applicationType?.charAt(0).toUpperCase() +
         applicationType?.substring(1).toLowerCase(),
-      course_name: e?.course_type || "NA",
+      course_name: `${e?.course_type} - ${e?.course_level}` || "NA",
+      // course_name: `${e?.course?.course_type} - ${e?.course?.course_level}` || "NA",
+      
       published_on: readableDate(e?.submitted_on),
+      reviewed_on: readableDate(e?.reviewed_on),
       id: e.form_id,
       status: e?.form_status || "NA",
       payment_status: (
         <div
           className={`px-6 text-primary-600 pl-0`}
           onClick={
-            e?.payment_status === "Paid" ? () => handleViewPayment(e) : () => {}
+            e?.payment_status === "Paid" ? () => handleViewPayment(e) : () => { }
           }
         >
           {e?.payment_status === "Paid"
@@ -413,7 +450,19 @@ const DesktopAnalysisList = () => {
                       : ""
                   }`}
                 >
-                  New
+                  New Forms Submitted
+                </a>
+              </li>
+              <li className="" onClick={() => handleSelectMenu("Returned")}>
+                <a
+                  href="#"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
+                    state.menu_selected === "Returned"
+                      ? "text-blue-600 border-b-2 border-blue-600"
+                      : ""
+                  }`}
+                >
+                  Returned to institute
                 </a>
               </li>
               <li className="" onClick={() => handleSelectMenu("Resubmitted")}>
@@ -425,7 +474,7 @@ const DesktopAnalysisList = () => {
                       : ""
                   }`}
                 >
-                  Resubmitted
+                  Resubmitted for DA
                 </a>
               </li>
               <li className="" onClick={() => handleSelectMenu("DA Completed")}>
@@ -441,21 +490,23 @@ const DesktopAnalysisList = () => {
                   DA Completed
                 </a>
               </li>
-              <li
-                className=""
-                onClick={() => handleSelectMenu("Inspection Scheduled")}
-              >
-                <a
-                  href="#"
-                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
-                    state.menu_selected === "Inspection Scheduled"
-                      ? "text-blue-600 border-b-2 border-blue-600"
-                      : ""
-                  }`}
+            
+              {loggedInUserRole !== "Desktop-Assessor" && (
+                < li
+                  className=""
+                  onClick={() => handleSelectMenu("Inspection Scheduled")}
                 >
-                  Sent for Inspection
-                </a>
-              </li>
+                  <a
+                    href="#"
+                    className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${state.menu_selected === "Inspection Scheduled"
+                        ? "text-blue-600 border-b-2 border-blue-600"
+                        : ""
+                      }`}
+                  >
+                    On-ground Inspection Scheduled
+                  </a>
+                </li>
+              )}
               <li className="" onClick={() => handleSelectMenu("Rejected")}>
                 <a
                   href="#"
@@ -466,21 +517,11 @@ const DesktopAnalysisList = () => {
                   }`}
                   aria-current="page"
                 >
-                  Rejected
+                  Application Rejected
                 </a>
               </li>{" "}
-              <li className="" onClick={() => handleSelectMenu("Returned")}>
-                <a
-                  href="#"
-                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
-                    state.menu_selected === "Returned"
-                      ? "text-blue-600 border-b-2 border-blue-600"
-                      : ""
-                  }`}
-                >
-                  Returned to institute
-                </a>
-              </li>
+            
+             
             </ul>
 
             {/* table creation starts here */}
@@ -489,10 +530,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={COLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -508,10 +549,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={COLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -527,10 +568,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={COLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -546,10 +587,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
-                  columns={COLUMNS}
+                  navigateFunc={() => { }}
+                  columns={REJECTEDCOLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -565,10 +606,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={NEWCOLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -584,10 +625,10 @@ const DesktopAnalysisList = () => {
                 <FilteringTable
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
-                  navigateFunc={() => {}}
+                  navigateFunc={() => { }}
                   columns={COLUMNS}
                   pagination={true}
-                  onRowSelect={() => {}}
+                  onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
                   showFilter={true}
                   showSearch={true}
@@ -612,7 +653,7 @@ const DesktopAnalysisList = () => {
       {paymentModal && (
         <PaymentModal
           closeViewSchedulesModal={setPaymentModal}
-          // scheduleUserData={scheduleUserData}
+        // scheduleUserData={scheduleUserData}
         ></PaymentModal>
       )}
     </>
