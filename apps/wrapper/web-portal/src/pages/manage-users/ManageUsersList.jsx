@@ -34,7 +34,7 @@ import {
 } from "@material-tailwind/react";
 import { ContextAPI } from "../../utils/ContextAPI";
 import ViewScheduleModal from "./ViewScheduleModal";
-import data from "../../assets/json-files/mail-body.json";
+import data from "../../assets/json-files/messages.json";
 
 export default function ManageUsersList({
   closeDeleteUsersModal,
