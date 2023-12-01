@@ -162,6 +162,16 @@ const GlobalFilter = ({
                     setPaginationInfo={setPaginationInfo}
                   />
                 );
+                // Dashboard
+              case ADMIN_ROUTE_MAP.adminModule.dashboard.home:
+                return (
+                  <ScheduleManagementFilters
+                    filterApiCall={filterApiCall}
+                    paginationInfo={paginationInfo}
+                    setIsFilterOpen={setIsFilterOpen}
+                    setPaginationInfo={setPaginationInfo}
+                  />
+                );
             }
           })()}
         </div>

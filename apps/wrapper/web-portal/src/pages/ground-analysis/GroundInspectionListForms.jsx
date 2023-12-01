@@ -36,6 +36,8 @@ export default function OnGroundInspectionAnalysis() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const { setSpinner } = useContext(ContextAPI);
 
+  const [ogaFormsCount, setOgaFormsCount] = useState(0);
+
   const COLUMN_OGA_COMPLETED = [
     {
       Header: "Form name",
@@ -205,6 +207,8 @@ export default function OnGroundInspectionAnalysis() {
         ...prevState,
         totalCount: res?.data?.form_submissions_aggregate.aggregate.totalCount,
       }));
+      console.log(res?.data?.form_submissions_aggregate.aggregate.totalCount)
+     // setOgaFormsCount(res?.data?.form_submissions_aggregate.aggregate.totalCount)
       setFormsList(res?.data?.form_submissions);
     } catch (error) {
       console.log("error - ", error);
@@ -392,6 +396,7 @@ export default function OnGroundInspectionAnalysis() {
                 >
                   OGA Completed
                 </a>
+                {/* <span>{ogaFormsCount}</span> */}
               </li>
               <li
                 className="gap-3"
