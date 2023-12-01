@@ -15,6 +15,7 @@ import {
   handleInctiveUser,
   handleDeleteUser,
   getAllRegulators,
+  sendEmailNotification,
   fetchAllDeskTopAssessors,
 } from "../../api";
 
@@ -33,6 +34,7 @@ import {
 } from "@material-tailwind/react";
 import { ContextAPI } from "../../utils/ContextAPI";
 import ViewScheduleModal from "./ViewScheduleModal";
+import data from "../../assets/json-files/messages.json";
 
 export default function ManageUsersList({
   closeDeleteUsersModal,
@@ -227,6 +229,9 @@ export default function ManageUsersList({
       });
       console.log("data", resUserData);
       setUserTableList(resUserData);
+      if (response?.data?.update_assessors?.returning[0]) {
+        sendActivationStatusNotification(response.data.update_assessors.returning[0], 'inactive');
+      }
     } catch (error) {
       const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage;
       setToast((prevState) => ({
@@ -317,6 +322,9 @@ export default function ManageUsersList({
         }
       });
       setUserTableList(resUserData);
+      if (validResponse?.data?.update_assessors?.returning[0]) {
+        sendActivationStatusNotification(validResponse.data.update_assessors.returning[0], 'active');
+      }
     } catch (error) {
       console.log("error - ", error);
       const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage
@@ -330,6 +338,19 @@ export default function ManageUsersList({
       setSpinner(false);
     }
   };
+
+  const sendActivationStatusNotification = async (userDetails, status) => {
+    // let mailBody = require('./json-files/mail-body.json');
+    if (userDetails.email) {
+      const emailBody = status === 'active' ? data.ACTIVATION_MAIL : data.INACTIVATION_MAIL;
+      const emailData = {
+        recipientEmail: [`${userDetails.email}`],
+        emailSubject: `${emailBody.SUBJECT}`,
+        emailBody:  `${emailBody.BODY}`
+      };
+      sendEmailNotification(emailData)
+    }
+  }
 
   const handleUserDelete = (e) => {
     setSelectedUserId(e.user_id);
