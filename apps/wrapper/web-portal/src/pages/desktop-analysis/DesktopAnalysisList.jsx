@@ -85,6 +85,36 @@ const DesktopAnalysisList = () => {
       accessor: "schedule",
     },
   ];
+  const REJECTEDCOLUMNS = [
+    {
+      Header: "Form title",
+      accessor: "form_title",
+    },
+    {
+      Header: "Application type",
+      accessor: "application_type",
+    },
+    {
+      Header: "Course Name",
+      accessor: "course_name",
+    },
+    {
+      Header: "Date",
+      accessor: "reviewed_on",
+    },
+    {
+      Header: "Status",
+      accessor: "status",
+    },
+    // {
+    //   Header: "Payment status",
+    //   accessor: "payment_status",
+    // },
+    {
+      Header: "",
+      accessor: "schedule",
+    },
+  ]
   const NEWCOLUMNS = [
     {
       Header: "Form title",
@@ -313,6 +343,7 @@ const DesktopAnalysisList = () => {
       // course_name: `${e?.course?.course_type} - ${e?.course?.course_level}` || "NA",
       
       published_on: readableDate(e?.submitted_on),
+      reviewed_on: readableDate(e?.reviewed_on),
       id: e.form_id,
       status: e?.form_status || "NA",
       payment_status: (
@@ -557,7 +588,7 @@ const DesktopAnalysisList = () => {
                   dataList={formsDataList}
                   // navigateFunc={navigateToView}
                   navigateFunc={() => { }}
-                  columns={COLUMNS}
+                  columns={REJECTEDCOLUMNS}
                   pagination={true}
                   onRowSelect={() => { }}
                   filterApiCall={filterApiCall}
