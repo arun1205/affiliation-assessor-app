@@ -9,6 +9,7 @@ import {
   ManageUsersFilters,
   OnGroundInspectionFilters,
   ScheduleManagementFilters,
+  DashboardFilters
 } from "./Filters";
 import { searchUsers } from "../../api";
 
@@ -165,9 +166,10 @@ const GlobalFilter = ({
                 // Dashboard
               case ADMIN_ROUTE_MAP.adminModule.dashboard.home:
                 return (
-                  <ScheduleManagementFilters
+                  <DashboardFilters
                     filterApiCall={filterApiCall}
                     paginationInfo={paginationInfo}
+                    selectedRound={selectedRound}
                     setIsFilterOpen={setIsFilterOpen}
                     setPaginationInfo={setPaginationInfo}
                   />
