@@ -21,7 +21,8 @@ const API_URL = {
   },
   dashboard:{
     home:`${rest}filterFormSubmissionsByRound`,
-    search:`${rest}filterFormSubmissionsByRound`
+    search:`${rest}searchDashboardForms`,
+    filter:`${rest}filterSubmittedFormByRound`
   },
   groundAnalysis: {
     viewForm: `${rest}getFormData`,

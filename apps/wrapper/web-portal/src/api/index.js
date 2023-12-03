@@ -566,6 +566,16 @@ export const searchDashBoard = async (postData) => {
   return res;
 };
 
+export const filterDashBoardData = async (postData) => {
+  const res = await adminCustomPost.post(
+    API_URL.dashboard.filter,
+    postData
+  );
+  return res;
+};
+
+
+
 
 
 //other common APIs
