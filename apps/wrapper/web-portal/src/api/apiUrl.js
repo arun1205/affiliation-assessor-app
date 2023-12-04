@@ -22,7 +22,10 @@ const API_URL = {
   dashboard:{
     home:`${rest}filterFormSubmissionsByRound`,
     search:`${rest}searchDashboardForms`,
-    filter:`${rest}filterSubmittedFormByRound`
+    filter:`${rest}filterSubmittedFormByRound`,
+    progresscount:`${rest}getInProgressSubmissionCount`,
+    approvedcount:`${rest}getApprovedSubmissionCount`,
+    rejectedcount:`${rest}getRejectedSubmissionsCount`
   },
   groundAnalysis: {
     viewForm: `${rest}getFormData`,

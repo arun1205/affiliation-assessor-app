@@ -574,7 +574,30 @@ export const filterDashBoardData = async (postData) => {
   return res;
 };
 
+export const getInProgressCount = async (postData) => {
+  const res = await adminCustomPost.post(
+    API_URL.dashboard.progresscount,
+    postData
+  );
+  return res;
+};
 
+export const getApprovedCount = async (postData) => {
+  console.log(postData)
+  const res = await adminCustomPost.post(
+    API_URL.dashboard.approvedcount,
+    postData
+  );
+  return res;
+};
+
+export const getRejectedCount = async (postData) => {
+  const res = await adminCustomPost.post(
+    API_URL.dashboard.rejectedcount,
+    postData
+  );
+  return res;
+};
 
 
 

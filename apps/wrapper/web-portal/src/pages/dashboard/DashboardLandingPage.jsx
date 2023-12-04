@@ -8,7 +8,10 @@ import { Option, Select } from "@material-tailwind/react";
 import {
   getDashBoardData,
   filterDashBoardData,
-  searchDashBoard
+  searchDashBoard,
+  getInProgressCount,
+  getApprovedCount,
+  getRejectedCount
 } from "../../api";
 
 const DashboardLandingPage = (props) => {
@@ -25,10 +28,14 @@ const DashboardLandingPage = (props) => {
   });
 
   const [pageFilters, setPageFilters] = useState({
-      "round": {
-        "_eq": 1
-      }
+    "round": {
+      "_eq": 1
+    }
   });
+  const [inProgressCount, setInProgressCount] = useState(0);
+  const [approvedCount, setApprovedCount] = useState(0);
+  const [rejectedCount, setRejectedCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
 
   const formsDataList = [];
 
@@ -69,12 +76,7 @@ const DashboardLandingPage = (props) => {
 
   ];
 
-
   useEffect(() => {
-    /* if (!isSearchOpen && !isFilterOpen) {
-     fetchDashBoardData(round);
-
-    } */
     filterApiCall();
   }, [
     paginationInfo.offsetNo,
@@ -82,30 +84,67 @@ const DashboardLandingPage = (props) => {
     round
   ]);
 
+  useEffect(() => {
+    fetchInProgressCount();
+  }, [
+    round
+  ]);
 
-  const fetchDashBoardData = async (round) => {
-    console.log(round)
+  
+  useEffect(() => {
+    setTotalCount(inProgressCount + approvedCount + rejectedCount)
+  }, [
+    inProgressCount,approvedCount,rejectedCount
+  ]);
+
+
+  const fetchInProgressCount = async () => {
     const postData = {
-      offsetNo: paginationInfo.offsetNo,
-      limit: paginationInfo.limit,
       round: round
     };
     try {
-      setSpinner(true);
-      const res = await getDashBoardData(postData);
-      setPaginationInfo((prevState) => ({
-        ...prevState,
-        totalCount: res?.data?.form_submissions_aggregate.aggregate.totalCount,
-      }));
-      // console.log(res?.data?.form_submissions_aggregate.aggregate.totalCount)
-      //   setOgaFormsCount(res?.data?.form_submissions_aggregate.aggregate.totalCount)
-      setFormsList(res?.data?.form_submissions);
+      const res = await getInProgressCount(postData);
+      setInProgressCount(res?.data?.form_submissions_aggregate.aggregate.count)
+    } catch (error) {
+      console.log("error - ", error);
+    } finally {
+     
+      fetchApprovedCount();
+      setSpinner(false);
+    }
+  };
+  const fetchApprovedCount = async () => {
+    console.log(round)
+    const postData = {
+      round: round
+    };
+    try {
+      const res = await getApprovedCount(postData);
+       console.log(res?.data?.form_submissions_aggregate.aggregate.count)
+      setApprovedCount(res?.data?.form_submissions_aggregate.aggregate.count)
+    } catch (error) {
+      console.log("error - ", error);
+    } finally {
+      fetchRejectedCount();
+      setSpinner(false);
+     
+    }
+  };
+  const fetchRejectedCount = async () => {
+    const postData = {
+      round: round
+    };
+    try {
+      const res = await getRejectedCount(postData);
+      setRejectedCount(res?.data?.form_submissions_aggregate.aggregate.count);
     } catch (error) {
       console.log("error - ", error);
     } finally {
       setSpinner(false);
+   
     }
   };
+
 
   const filterApiCall = (filters) => {
 
@@ -115,14 +154,14 @@ const DashboardLandingPage = (props) => {
       }
     };
 
-    if(filters !== 'cleared'){
-       payload = {
+    if (filters !== 'cleared') {
+      payload = {
         ...pageFilters,
         "round": {
           "_eq": round
         }
       };
-    } 
+    }
 
     if (filters?.status) {
       payload.form_status = { "_eq": filters.status }
@@ -161,6 +200,7 @@ const DashboardLandingPage = (props) => {
         ...prevState,
         totalCount: res.data.form_submissions_aggregate.aggregate.totalCount,
       }));
+//      setTotalCount(res.data.form_submissions_aggregate.aggregate.totalCount)
       setFormsList(res?.data?.form_submissions);
     } catch (error) {
       console.log("error - ", error);
@@ -211,7 +251,7 @@ const DashboardLandingPage = (props) => {
     // setRound(round).then;
     setRound(round)
     //fetchDashBoardData(round);
-    filterApiCall();
+    //filterApiCall();
   }
 
   return (
@@ -219,7 +259,7 @@ const DashboardLandingPage = (props) => {
       <Header />
 
       <Nav />
-
+    
       <div
         className={`container ; m-auto min-h-[calc(100vh-148px)] px-3 py-12`}
       >
@@ -227,16 +267,38 @@ const DashboardLandingPage = (props) => {
 
           <div className="flex flex-col gap-4">
 
-            <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
-              <div className="sm:col-span-3">
-                <div className="w-72 bg-white rounded-[8px]">
-
-                </div>
+            <div className="flex justify-end">
+              <div className="  mr-12 ">
+                <span>
+                <span className="   mr-5">
+                <label>
+                    Total Applications: <span className="w-72   mr-5"  > <b>{totalCount}</b> </span>
+                  </label>
+                </span>
+                  <span className="mr-5" style={{ backgroundColor: "yellow"}}>
+                  <label>
+                    In-Progress Applications: <span className="w-72   mr-5"  ><b> {inProgressCount}</b></span>
+                  </label>
+                  </span>
+                  <span className="mr-5" style={{ backgroundColor: "green" }}>
+                  <label>
+                    Approved Applications:<span className="w-72   mr-5" > <b>{approvedCount}</b> </span>  
+                  </label>
+                  </span>
+                  <span className="mr-5" style={{ backgroundColor: "red" }}>
+                  <label>
+                    Rejected Applications:<span className="w-72   mr-5"> <b>{rejectedCount}</b>  </span>
+                  </label>
+                  </span>
+                </span>
               </div>
             </div>
 
+          
+
             <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
               <div className="sm:col-span-3">
+               
                 <div className="w-72 bg-white rounded-[8px]">
                   <Select
                     value={round}
@@ -254,7 +316,9 @@ const DashboardLandingPage = (props) => {
                     <Option value={1}>Round one</Option>
                     <Option value={2}>Round two</Option>
                   </Select>
+                 
                 </div>
+               
               </div>
             </div>
           </div>
