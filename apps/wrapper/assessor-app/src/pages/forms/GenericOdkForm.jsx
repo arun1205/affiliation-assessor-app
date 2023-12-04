@@ -245,7 +245,7 @@ const GenericOdkForm = (props) => {
             applicant_form_id: courseObj["applicant_form_id"],
             course_id: courseObj["course_id"],
             submitted_on: new Date().toJSON().slice(0, 10),
-            schedule_id: scheduleId.current,
+            schedule_id: storedData?.schedule_id,
           }
 
           
