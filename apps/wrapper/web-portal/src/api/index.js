@@ -42,6 +42,16 @@ export const fetchOGAFormsList = async (postData) => {
   return res;
 };
 
+export const getOGAFormsCount = async (postData) => {
+  const res = await adminCustomPost.post(
+    API_URL.groundAnalysis.OGAFormsCount,
+    postData
+  );
+  return res;
+};
+
+
+
 export const getAcceptApplicantNoc = async (postData) => {
   const res = await adminCustomPost.put(
     API_URL.groundAnalysis.acceptApplicantNoc,
@@ -549,15 +559,6 @@ export const getApplicantDeviceId = async (postData) => {
 
 //Dashboard apis
 
-
-export const getDashBoardData = async (postData) => {
-  console.log(postData)
-  const res = await adminCustomPost.post(
-    API_URL.dashboard.home,
-    postData
-  );
-  return res;
-};
 
 export const searchDashBoard = async (postData) => {
   const res = await adminCustomPost.post(

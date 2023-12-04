@@ -20,7 +20,6 @@ const API_URL = {
     emailNotify: `email/notify`,
   },
   dashboard:{
-    home:`${rest}filterFormSubmissionsByRound`,
     search:`${rest}searchDashboardForms`,
     filter:`${rest}filterSubmittedFormByRound`,
     progresscount:`${rest}getInProgressSubmissionCount`,
@@ -37,6 +36,7 @@ const API_URL = {
     rejectApplicant: `${rest}rejectForm`,
     getGroundInspectionAnalysis: `${rest}getGroundInspectionAnalysis`,
     filterOGA: `${rest}filterOGA`,
+    OGAFormsCount:`${rest}getOGAFormsCountByRoundAndFormStatus`
   },
   manageForms: {
     getForms: `${rest}getForms`,

@@ -6,7 +6,6 @@ import FilteringTable from "../../components/table/FilteringTable";
 import { ContextAPI } from "../../utils/ContextAPI";
 import { Option, Select } from "@material-tailwind/react";
 import {
-  getDashBoardData,
   filterDashBoardData,
   searchDashBoard,
   getInProgressCount,
