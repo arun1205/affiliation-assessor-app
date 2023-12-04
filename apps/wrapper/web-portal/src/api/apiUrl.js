@@ -19,6 +19,11 @@ const API_URL = {
     getApplicantDeviceId: `${rest}getApplicantDeviceId`,
     emailNotify: `email/notify`,
   },
+  dashboard:{
+    home:`${rest}filterFormSubmissionsByRound`,
+    search:`${rest}searchDashboardForms`,
+    filter:`${rest}filterSubmittedFormByRound`
+  },
   groundAnalysis: {
     viewForm: `${rest}getFormData`,
     list: `${rest}getOGIA`,
@@ -43,10 +48,12 @@ const API_URL = {
     filterForms: `${rest}filterForms`,
     createCourses: `${rest}createCourse`,
     updateForms: `${rest}updateForms`,
+    getCourses: `${rest}getCourseMapping`
   },
   manageUsers: {
     getAllAssessors: `${rest}getAllAssessors`,
     getAllRegulators: `${rest}getAllRegulators`,
+    getRegulatorsByRole: `${rest}filterRegulatorByRole`,
     specificUser: `${rest}getSpecificUser`,
     filterUsers: `${rest}filterUsers`,
     setActivate: `${rest}setValid`,

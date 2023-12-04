@@ -16,9 +16,11 @@ import {
   editUserHasura,
   editUserKeycloak,
   getSpecificUser,
+  sendEmailNotification
 } from "./../../api";
 import { userService } from "../../api/userService";
 import { getCookie, removeCookie, setCookie } from "../../utils";
+import messages from "../../assets/json-files/messages.json";
 
 export default function AdminCreateUser() {
   let { userId } = useParams();
@@ -91,6 +93,7 @@ export default function AdminCreateUser() {
       user.phonenumber.length > 10 ||
       user.phonenumber.length < 10
     ) {
+      //  setErrMsg("Please fill in valid information");
       return false;
     } else return true;
   };
@@ -102,11 +105,11 @@ export default function AdminCreateUser() {
     }
   }
 
-  const handleNumbersOnly =(value, nameFlag) =>{
-const re = /^[0-9\b]+$/;
-if(value === '' || re.test(value)){
-  handleChange(nameFlag,value)
-}
+  const handleNumbersOnly = (value, nameFlag) => {
+    const re = /^[0-9\b]+$/;
+    if (value === '' || re.test(value)) {
+      handleChange(nameFlag, value)
+    }
   }
 
   const submitUserData = async (e) => {
@@ -198,10 +201,7 @@ if(value === '' || re.test(value)){
       // for create user
       let postDataKeyCloak = {};
 
-      let postDataHasura = {
-        assessors: [],
-        regulators: [],
-      };
+
 
       try {
         setSpinner(true);
@@ -231,61 +231,96 @@ if(value === '' || re.test(value)){
 
         if (keycloakRes?.status !== 200) {
           errorFlag = true;
+        } else {
+          createHasuraUser(keycloakRes)
         }
 
-        //Hasura API call
-        if (keycloakRes.data) {
-          if (user.role === "Assessor") {
-            postDataHasura["assessors"].push({
-              code: `${Math.floor(1000 + Math.random() * 9000)}`,
-              user_id: keycloakRes.data,
-              email: user.email,
-              name: user.firstname + " " + user.lastname,
-              phonenumber: user.phonenumber,
-              fname: user.firstname,
-              lname: user.lastname,
-              role: user.role,
-            });
-          }
-          if (user.role === "Desktop-Admin") {
-            postDataHasura["regulators"].push({
-              user_id: keycloakRes.data,
-              email: user.email,
-              full_name: user.firstname + " " + user.lastname,
-              phonenumber: user.phonenumber,
-              fname: user.firstname,
-              lname: user.lastname,
-              role: user.role,
-            });
-          }
-        }
-        const hasuraRes = await createBulkUserHasura(postDataHasura);
-        if (hasuraRes.status !== 200) {
-          errorFlag = true;
-        }
-        if (!errorFlag) {
-          setToast((prevState) => ({
-            ...prevState,
-            toastOpen: true,
-            toastMsg: "User created successfully!",
-            toastType: "success",
-          }));
-          navigation(ADMIN_ROUTE_MAP.adminModule.manageUsers.home);
-        }
       } catch (error) {
-        const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage
+        console.log(error)
+       // const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage
         setToast((prevState) => ({
           ...prevState,
           toastOpen: true,
-          toastMsg: errorMessage,
+          toastMsg: error.message,
           toastType: "error",
         }));
       } finally {
         setSpinner(false);
       }
     }
-    removeCookie("access_token");
+
   };
+
+  const createHasuraUser = (async (keycloakRes) => {
+    let postDataHasura = {
+      assessors: [],
+      regulators: [],
+    };
+    try {
+      //Hasura API call
+      if (keycloakRes.data) {
+        if (user.role === "Assessor") {
+          postDataHasura["assessors"].push({
+            code: `${Math.floor(1000 + Math.random() * 9000)}`,
+            user_id: keycloakRes.data,
+            email: user.email,
+            name: user.firstname + " " + user.lastname,
+            phonenumber: user.phonenumber,
+            fname: user.firstname,
+            lname: user.lastname,
+            role: user.role,
+          });
+        }
+        if (user.role === "Desktop-Admin" || user.role === "Desktop-Assessor") {
+          postDataHasura["regulators"].push({
+            user_id: keycloakRes.data,
+            email: user.email,
+            full_name: user.firstname + " " + user.lastname,
+            phonenumber: user.phonenumber,
+            fname: user.firstname,
+            lname: user.lastname,
+            role: user.role,
+          });
+        }
+      }
+      const hasuraRes = await createBulkUserHasura(postDataHasura);
+      if (hasuraRes.status === 200) {
+        setToast((prevState) => ({
+          ...prevState,
+          toastOpen: true,
+          toastMsg: "User created successfully!",
+          toastType: "success",
+        }));
+        sendAccountCreationNotification(user)
+        navigation(ADMIN_ROUTE_MAP.adminModule.manageUsers.home);
+        removeCookie("access_token");;
+      }
+
+
+    } catch (error) {
+      const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage
+      setToast((prevState) => ({
+        ...prevState,
+        toastOpen: true,
+        toastMsg: errorMessage,
+        toastType: "error",
+      }));
+    }
+
+  }
+  )
+
+  const sendAccountCreationNotification = async (userDetails) => {
+    if (userDetails.email) {
+      const emailBody = messages.ACCOUNT_CREATED_MAIL;
+      const emailData = {
+        recipientEmail: [`${userDetails.email}`],
+        emailSubject: `${emailBody.SUBJECT}`,
+        emailBody:  `${emailBody.BODY}`
+      };
+      sendEmailNotification(emailData)
+    }
+  }
 
   useEffect(() => {
     if (userId) {
@@ -361,7 +396,7 @@ if(value === '' || re.test(value)){
                           handleAlphaOnly(e.target.value, "lastname")
                         }
                         className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        // disabled={userId?true:false}
+                      // disabled={userId?true:false}
                       />
                     </div>
                   </div>
@@ -424,8 +459,9 @@ if(value === '' || re.test(value)){
                       className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     >
                       <option value="">Select role</option>
-                      <option value="Assessor">Assessor</option>
+                      <option value="Assessor">On Ground Assessor</option>
                       <option value="Desktop-Admin">Admin</option>
+                      <option value="Desktop-Assessor">Desktop Assessor</option>
                     </select>
                   </div>
                 </div>
@@ -439,7 +475,6 @@ if(value === '' || re.test(value)){
                     moreClass="border border-gray-200 bg-white text-blue-600 w-[120px]"
                     text="Cancel"
                   ></Button>
-
                   <Button
                     moreClass="border text-white w-[120px]"
                     text={!userId ? "Submit" : "Save"}
