@@ -16,9 +16,11 @@ import {
   editUserHasura,
   editUserKeycloak,
   getSpecificUser,
+  sendEmailNotification
 } from "./../../api";
 import { userService } from "../../api/userService";
 import { getCookie, removeCookie, setCookie } from "../../utils";
+import messages from "../../assets/json-files/messages.json";
 
 export default function AdminCreateUser() {
   let { userId } = useParams();
@@ -289,6 +291,7 @@ export default function AdminCreateUser() {
           toastMsg: "User created successfully!",
           toastType: "success",
         }));
+        sendAccountCreationNotification(user)
         navigation(ADMIN_ROUTE_MAP.adminModule.manageUsers.home);
         removeCookie("access_token");;
       }
@@ -306,6 +309,18 @@ export default function AdminCreateUser() {
 
   }
   )
+
+  const sendAccountCreationNotification = async (userDetails) => {
+    if (userDetails.email) {
+      const emailBody = messages.ACCOUNT_CREATED_MAIL;
+      const emailData = {
+        recipientEmail: [`${userDetails.email}`],
+        emailSubject: `${emailBody.SUBJECT}`,
+        emailBody:  `${emailBody.BODY}`
+      };
+      sendEmailNotification(emailData)
+    }
+  }
 
   useEffect(() => {
     if (userId) {
