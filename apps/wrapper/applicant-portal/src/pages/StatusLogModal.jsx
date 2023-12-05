@@ -1,27 +1,26 @@
 import React, { useContext, useEffect, useState } from "react";
 import { getStatus,
-  exportToExcel } from "../../api";
-import { readableDate } from "../../utils/common";
-import { Button } from "../../components";
-import { ContextAPI } from "../../utils/ContextAPI";
+  exportToExcel } from "../api";
+import { readableDate } from "../utils/common";
+import { Button } from "../components";
+// import { ContextAPI } from "../utils/contextAPI";
 import { useParams} from "react-router-dom";
 
 function StatusLogModal({ closeStatusModal, formId }) {
   const [formStatus, setFormStatus] = useState([]);
-  const { setSpinner } = useContext(ContextAPI);
+  // const { setSpinner } = useContext(ContextAPI);
   let { formName } = useParams();
   useEffect(() => {
     async function fetchData() {
       const postData = { id: formId };
       try {
-        setSpinner(true);
+        // setSpinner(true);
         const res = await getStatus(postData);
-        console.log("res", res);
         setFormStatus(res.events);
       } catch (error) {
         console.log(error);
       } finally {
-        setSpinner(false);
+         //setSpinner(false);
       }
     }
     fetchData();

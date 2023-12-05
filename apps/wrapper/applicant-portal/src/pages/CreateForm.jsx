@@ -36,6 +36,7 @@ import {
 import { generate_uuidv4 } from "../utils";
 import { applicantService } from "../services";
 import { ContextAPI } from "../utils/contextAPI";
+import StatusLogModal from "./StatusLogModal"
 
 const ENKETO_URL = process.env.REACT_APP_ENKETO_URL;
 let previewFlag = false;
@@ -71,6 +72,7 @@ const CreateForm = (props) => {
   const { userRepresentation } = getCookie("userData");
   const userId = userRepresentation?.id;
   const instituteDetails = getCookie("institutes");
+  const [openStatusModel, setOpenStatusModel] = useState(false);
 
   let formData = {};
 
@@ -394,8 +396,15 @@ const CreateForm = (props) => {
               onClick={handleGoBack}
               className="bg-gray-100 py-2 mb-8 font-medium rounded-[4px] px-2 text-blue-900 border border-gray-500 flex flex-row items-center gap-3"
             >
-              Back to my application
+              Back to my application done
             </button>
+
+            <button
+                onClick={() => setOpenStatusModel(true)}
+                className="bg-gray-100 py-2 mb-8 font-medium rounded-[4px] px-2 text-blue-900 border border-gray-500 flex flex-row items-center gap-3"
+              >
+                View status log
+              </button>
 
             <button
               onClick={handleDownloadNocOrCertificate}
@@ -410,6 +419,12 @@ const CreateForm = (props) => {
             </button>
           </div>
         </div>
+        {openStatusModel && (
+            <StatusLogModal
+              closeStatusModal={setOpenStatusModel}
+              formId={formId}
+            />
+          )}
 
         <Card moreClass="shadow-md">
           <div className="flex flex-col gap-5">

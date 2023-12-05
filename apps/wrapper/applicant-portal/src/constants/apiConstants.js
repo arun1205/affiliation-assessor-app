@@ -54,5 +54,8 @@ export const APIS = {
   PAYMENT:{
     GENERATE_LINK: `payment/generatelink`,
     UPDATE_PAYMENT_STATUS: `rest/updatePaymentStatus`
-  }
+  },
+  viewStatus: {
+    getViewStatus: `rest/getEvents`,
+  },
 };

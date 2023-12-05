@@ -1,6 +1,7 @@
 import { APIS } from "../constants";
 import customPost from "./customPost";
 import axios from 'axios';
+import { utils, writeFile } from 'xlsx';
 
 export const getFormData = async (postData) => {
 
@@ -37,3 +38,31 @@ export const registerEvent = async (postData) => {
   );
   return res;
 }
+
+export const getStatus = async (postData) => {
+  const res = await customPost.post(
+    APIS.viewStatus.getViewStatus,
+    postData
+  );
+  return res.data;
+};
+
+//#region (xlsx)
+
+//#region (json to xlsx)
+export const exportToExcel = async (downloadObjects) => {
+  if (downloadObjects && downloadObjects.objectsList) {
+    const workbook = utils.book_new();
+    downloadObjects.objectsList.forEach((element) => {
+      const sheetName = element.sheetName ? element.sheetName : `Sheet ${workbook.SheetNames.length + 1}`
+      const worksheet = utils.json_to_sheet([]);
+      utils.sheet_add_aoa(worksheet, [element.headers])
+      utils.book_append_sheet(workbook, worksheet, sheetName);
+      utils.sheet_add_json(worksheet, element.downloadObject, { origin: 'A2', skipHeader: true });
+    });
+    writeFile(workbook, downloadObjects.fileName ? downloadObjects.fileName : 'data.xlsx');
+  }
+}
+//#endregion
+
+//#endregion
