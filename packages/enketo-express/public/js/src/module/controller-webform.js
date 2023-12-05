@@ -353,7 +353,7 @@ function _submitRecord(survey) {
         })
         .then(() => {
             // this event is used in communicating back to iframe parent window
-            document.dispatchEvent(events.SubmissionSuccess());
+            document.dispatchEvent(events.SubmissionSuccess()); //Arun
 
             let heading = '';
             if (level === 'success') {
@@ -514,6 +514,9 @@ function _saveRecord(survey, draft = true, recordName, confirmed, errorMsg) {
             const saveMethod = form.recordName ? 'update' : 'set';
 
             console.log("saving")
+            console.log(record)
+            document.dispatchEvent(events.SaveSuccess(record)); //Arun
+
             return records.save(saveMethod, record);
         })
         .then(() => {
@@ -722,6 +725,7 @@ function _setEventHandlers(survey) {
         document.addEventListener(events.SubmissionSuccess().type, postEventAsMessageToParentWindow);
         document.addEventListener(events.Edited().type, postEventAsMessageToParentWindow);
         document.addEventListener(events.Close().type, postEventAsMessageToParentWindow);
+        document.addEventListener(events.Save().type, postEventAsMessageToParentWindow);//arun
     }
 
     document.addEventListener(events.QueueSubmissionSuccess().type, event => {
