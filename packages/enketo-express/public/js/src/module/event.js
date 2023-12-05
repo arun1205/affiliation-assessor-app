@@ -8,6 +8,10 @@ events.SubmissionSuccess = function() {
     return new CustomEvent( 'submissionsuccess', { bubbles: true } );
 };
 
+events.Save = function(detail) {
+    return new CustomEvent( 'save', { detail, bubbles: true } );
+};
+
 events.Close = function() {
     return new CustomEvent( 'close', { bubbles: true } );
 };
