@@ -516,8 +516,10 @@ function _saveRecord(survey, draft = true, recordName, confirmed, errorMsg) {
             console.log("saving")
             console.log(record)
             console.log(record.xml)
-            document.dispatchEvent(events.Save(record)); //Arun
-
+            //document.dispatchEvent(events.Save()); //Arun
+            window.parent.postMessage(JSON.stringify({
+                formData: record.xml,
+            }), '*');
             return records.save(saveMethod, record);
         })
         .then(() => {
