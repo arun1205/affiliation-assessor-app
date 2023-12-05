@@ -13,6 +13,7 @@ import {
   getOnGroundAssessorData,
   markReviewStatus,
   searchOGA,
+  getOGAFormsCount
 } from "../../api";
 import ADMIN_ROUTE_MAP from "../../routes/adminRouteMap";
 import { ContextAPI } from "../../utils/ContextAPI";
@@ -36,7 +37,9 @@ export default function OnGroundInspectionAnalysis() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const { setSpinner } = useContext(ContextAPI);
 
-  const [ogaFormsCount, setOgaFormsCount] = useState(0);
+  const [ogaFormsCompletedCount, setOgaFormsCompletedCount] = useState(0);
+  const [ogaFormsApprovedCount, setOgaFormsApprovedCount] = useState(0);
+  const [ogaFormsRejectedCount, setOgaFormsRejectedCount] = useState(0);
 
   const COLUMN_OGA_COMPLETED = [
     {
@@ -183,6 +186,12 @@ export default function OnGroundInspectionAnalysis() {
   };
 
   useEffect(() => {
+      fetchOGAFormsCount("OGA Completed");
+      fetchOGAFormsCount("Approved");
+      fetchOGAFormsCount("Rejected");
+  }, [round]);
+
+  useEffect(() => {
     if (!isSearchOpen && !isFilterOpen) {
       fetchOnGroundAssessorData();
     }
@@ -193,7 +202,50 @@ export default function OnGroundInspectionAnalysis() {
     round,
   ]);
 
-  const fetchOnGroundAssessorData = async () => {
+
+  const fetchOGAFormsCount = async (formStatus) => {
+    const postData = {
+      formStatus: formStatus,
+      round: round
+    };
+    try {
+      setSpinner(true);
+      const res = await getOGAFormsCount(postData);
+      switch (formStatus) {
+        case "OGA Completed":
+          res?.data?.form_submissions_aggregate.aggregate.totalCount < 10
+          ? setOgaFormsCompletedCount('0'+res?.data?.form_submissions_aggregate.aggregate.totalCount)
+          :  setOgaFormsCompletedCount(res?.data?.form_submissions_aggregate.aggregate.totalCount)
+          
+          break;
+
+        case "Approved":
+          res?.data?.form_submissions_aggregate.aggregate.totalCount < 10
+         ? setOgaFormsApprovedCount('0'+res?.data?.form_submissions_aggregate.aggregate.totalCount)
+         :  setOgaFormsApprovedCount(res?.data?.form_submissions_aggregate.aggregate.totalCount)
+         
+          break;
+
+        case "Rejected":
+          res?.data?.form_submissions_aggregate.aggregate.totalCount < 10
+          ? setOgaFormsRejectedCount('0'+res?.data?.form_submissions_aggregate.aggregate.totalCount)
+          :  setOgaFormsRejectedCount(res?.data?.form_submissions_aggregate.aggregate.totalCount)
+          
+          break;
+
+        default:
+          break;
+      }
+   
+    } catch (error) {
+      console.log("error - ", error);
+    } finally {
+      setSpinner(false);
+    }
+  };
+
+  const fetchOnGroundAssessorData
+   = async () => {
     const postData = {
       offsetNo: paginationInfo.offsetNo,
       limit: paginationInfo.limit,
@@ -208,7 +260,6 @@ export default function OnGroundInspectionAnalysis() {
         totalCount: res?.data?.form_submissions_aggregate.aggregate.totalCount,
       }));
       console.log(res?.data?.form_submissions_aggregate.aggregate.totalCount)
-     // setOgaFormsCount(res?.data?.form_submissions_aggregate.aggregate.totalCount)
       setFormsList(res?.data?.form_submissions);
     } catch (error) {
       console.log("error - ", error);
@@ -385,6 +436,7 @@ export default function OnGroundInspectionAnalysis() {
                 className="gap-3"
                 onClick={() => handleSelectMenu("OGA Completed")}
               >
+                <span>
                 <a
                   href="#"
                   className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
@@ -394,9 +446,11 @@ export default function OnGroundInspectionAnalysis() {
                   }`}
                   aria-current="page"
                 >
-                  OGA Completed
+                  OGA Completed      <span class="counter count-indicator-completed">  {ogaFormsCompletedCount}</span>
                 </a>
-                {/* <span>{ogaFormsCount}</span> */}
+               
+                </span>
+               
               </li>
               <li
                 className="gap-3"
@@ -411,7 +465,7 @@ export default function OnGroundInspectionAnalysis() {
                   }`}
                   aria-current="page"
                 >
-                  Approved
+                  Approved   <span class="counter count-indicator-approved">{ogaFormsApprovedCount}</span>
                 </a>
               </li>
               <li
@@ -426,7 +480,8 @@ export default function OnGroundInspectionAnalysis() {
                       : ""
                   }`}
                 >
-                  Rejected
+                  Rejected  <span class="counter count-indicator-rejected">{ogaFormsRejectedCount}</span>
+               
                 </a>
               </li>
             </ul>

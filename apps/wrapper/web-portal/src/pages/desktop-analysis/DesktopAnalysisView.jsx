@@ -62,6 +62,8 @@ export default function DesktopAnalysisView() {
   const [onSubmit, setOnSubmit] = useState(false);
   const [rejectStatus, setRejectStatus] = useState(false);
 
+  const loggedInUserRole = getCookie("userData").userRepresentation.attributes.Role[0];
+
   const formSpec = {
     skipOnSuccessMessage: true,
     prefill: {},
@@ -499,7 +501,7 @@ export default function DesktopAnalysisView() {
                 )}
               {paymentStatus?.toLowerCase() === "paid" &&
                 formDataFromApi?.form_status?.toLowerCase() ===
-                  "da completed" && (
+                  "da completed" && loggedInUserRole !== "Desktop-Assessor" && (
                   <button
                     onClick={() => setOpenSheduleInspectionModel(true)}
                     className="flex flex-wrap items-center justify-center gap-2 border border-gray-500 bg-white text-gray-500 w-fit h-fit p-2 font-semibold rounded-[4px]"
