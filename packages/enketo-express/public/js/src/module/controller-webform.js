@@ -515,7 +515,8 @@ function _saveRecord(survey, draft = true, recordName, confirmed, errorMsg) {
 
             console.log("saving")
             console.log(record)
-            document.dispatchEvent(events.SaveSuccess(record)); //Arun
+            console.log(record.xml)
+            document.dispatchEvent(events.Save(record)); //Arun
 
             return records.save(saveMethod, record);
         })
