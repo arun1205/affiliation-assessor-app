@@ -203,6 +203,8 @@ const AssessmentType = () => {
   };
 
   const handleNavigateToForms = (formObj) => {
+    console.log("formObj =>", formObj);
+    const component = 'assessment';
     if (formObj?.status !== "completed" || !formObj?.status) {
       let form_name = "";
       if (formObj.name.includes(".xml")) {

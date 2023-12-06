@@ -9,9 +9,10 @@ import { StateContext } from "../../App";
 import {
   getStatusOfForms,
   registerEvent,
-  saveFormSubmission,
   updateFormStatus,
   getPrefillXML,
+  getEnketoFormData,
+  updateFormSubmissions
 } from "../../api";
 import {
   getCookie,
@@ -41,6 +42,9 @@ const GenericOdkForm = (props) => {
   const scheduleId = useRef();
   const [isPreview, setIsPreview] = useState(false);
   const [surveyUrl, setSurveyUrl] = useState("");
+  const userId = user?.userRepresentation?.id;
+  const [formDataFromApi, setFormDataFromApi] = useState();
+  const [formStatus, setFormStatus] = useState("");
   let formSpec = {
     forms: {
       [formName]: {
@@ -103,6 +107,7 @@ const GenericOdkForm = (props) => {
     longitude: null,
   });
 
+
   const getDataFromLocal = async () => {
     const id = user?.userRepresentation?.id;
     let formData = await getFromLocalForage(
@@ -119,6 +124,46 @@ const GenericOdkForm = (props) => {
     );
 
     setEncodedFormURI(formURI);
+  };
+
+  /* fetch form data from API */
+  const fetchFormData = async () => {
+    let formData = {};
+    let filePath =
+      process.env.REACT_APP_GCP_AFFILIATION_LINK + formName + ".xml";
+    const storedData = await getSpecificDataFromForage("required_data");
+    let data = await getFromLocalForage(
+      `${userId}_${formName}_${new Date().toISOString().split("T")[0]}`
+    );
+    const postData = { form_id: storedData?.applicant_form_id };
+    try {
+      const res = await getEnketoFormData(postData);
+      formData = res.data.form_submissions[0];
+      // setPaymentStatus(formData?.payment_status);
+      const postDataEvents = { id: storedData?.applicant_form_id };
+      // const events = await getStatusOfForms(postDataEvents);
+      // setFormStatus(events?.events);
+      setFormDataFromApi(res.data.form_submissions[0]);
+      await setToLocalForage(
+        `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
+        {
+          formData: formData?.form_data,
+          imageUrls: { ...formData?.imageUrls },
+        }
+      );
+
+      let formURI = await getPrefillXML(
+        `${filePath}`,
+        formSpec.onSuccess,
+        formData?.form_data,
+        formData?.imageUrls
+      );
+      setEncodedFormURI(formURI);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      // setSpinner(false);
+    }
   };
 
   const updateSubmissionForms = async (course_id) => {
@@ -175,7 +220,7 @@ const GenericOdkForm = (props) => {
     const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
 
     try {
-      const { nextForm, formData, onSuccessData, onFailureData } = data;
+      const { nextForm, formDataXml, onSuccessData, onFailureData } = data;
       if (data?.state === "ON_FORM_SUCCESS_COMPLETED") {
         if (!previewFlag) {
           await getDataFromLocal();
@@ -186,26 +231,27 @@ const GenericOdkForm = (props) => {
             setErrorModal(true);
             return;
           }
-          const updatedFormData = await updateFormData(formSpec.start);
+          const updatedFormData = await updateFormData(formSpec.start, data?.formDataXml, data?.fileURLs);
           const storedData = await getSpecificDataFromForage("required_data");
 
-          const res = await saveFormSubmission({
-            schedule_id: scheduleId.current,
+          const requestData = {
+            form_id: storedData?.applicant_form_id,
             form_data: updatedFormData,
-            assessment_type: "assessor",
             form_name: formSpec.start,
             submission_status: saveFlag === "draft" ? false : true,
+            form_status: saveFlag === "draft" ? "" : "In Progress",
             assessor_id: storedData?.assessor_user_id,
             applicant_id: storedData?.institute_id,
-            submitted_on: new Date().toJSON().slice(0, 10),
             applicant_form_id: courseObj["applicant_form_id"],
-            round: courseObj["round"],
-            form_status: saveFlag === "draft" ? "" : "In Progress",
             course_id: courseObj["course_id"],
-          });
+            submitted_on: new Date().toJSON().slice(0, 10),
+            schedule_id: storedData?.schedule_id,
+          }
 
-          console.log("res - ", res);
-          if (res?.data?.insert_form_submissions) {
+          
+          
+          const res = await updateFormSubmissions(requestData);
+          if (res?.data?.update_form_submissions) {
             updateSubmissionForms(courseObj["course_id"]);
 
             // Delete the data from the Local Forage
@@ -329,6 +375,8 @@ const GenericOdkForm = (props) => {
     bindEventListener();
     getSurveyUrl();
     getCourseFormDetails();
+    fetchFormData();
+    getDataFromLocal();
     getFormData({
       loading,
       scheduleId,
@@ -379,7 +427,7 @@ const GenericOdkForm = (props) => {
       >
         {!isPreview && (
           <div className="flex flex-col items-center">
-            {encodedFormURI && assData && date && (
+            {encodedFormURI && assData && (
               <>
                 <iframe
                   title="form"
@@ -391,8 +439,8 @@ const GenericOdkForm = (props) => {
             )}
           </div>
         )}
-
-        {surveyUrl && !date && (
+        
+        {surveyUrl && date === undefined && !assData && (
           <>
             <iframe
               id="offline-enketo-form"
@@ -451,12 +499,14 @@ const GenericOdkForm = (props) => {
           </div>
           <div className="flex flex-col justify-center w-full py-4">
             {surveyUrl && (
+              <>
               <iframe
                 title="form"
                 id="preview-enketo-form"
                 src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
                 style={{ height: "80vh", width: "100%", marginTop: "20px" }}
               />
+              </>
             )}
           </div>
         </CommonModal>
