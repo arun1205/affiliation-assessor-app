@@ -17,6 +17,8 @@ import {
   getAllRegulators,
   sendEmailNotification,
   fetchAllDeskTopAssessors,
+  handleActiveRegulatorUser,
+  handleInctiveRegulatorUser
 } from "../../api";
 
 import { userService } from "../../api/userService";
@@ -137,6 +139,10 @@ export default function ManageUsersList({
       accessor: "role",
     },
     {
+      Header: "Account Status",
+      accessor: "status",
+    },
+    {
       Header: "",
       accessor: "more_actions",
     },
@@ -159,11 +165,15 @@ export default function ManageUsersList({
   const handleUsersetInvalid = async (user) => {
     const userId = user?.user_id;
     const formData = new FormData();
-    formData.append("assessorId", userId);
+    if (state.menu_selected === 'Assessor') {
+      formData.append("assessorId", userId);
+    } else {
+      formData.append("requlatorId", userId);
+    }
     let e = user;
     try {
       setSpinner(true);
-      const response = await handleInctiveUser(formData);
+      const response = state.menu_selected === 'Assessor' ? await handleInctiveUser(formData) : await handleInctiveRegulatorUser(formData);
       e["workingstatus"] = "Invalid";
       resUserData.forEach((item) => {
         if (item.id === userId) {
@@ -229,8 +239,9 @@ export default function ManageUsersList({
       });
       console.log("data", resUserData);
       setUserTableList(resUserData);
-      if (response?.data?.update_assessors?.returning[0]) {
-        sendActivationStatusNotification(response.data.update_assessors.returning[0], 'inactive');
+      const userDetails = response?.data?.update_assessors?.returning[0] ? response?.data?.update_assessors?.returning[0] : response?.data?.update_regulator?.returning[0]
+      if (userDetails) {
+        sendActivationStatusNotification(userDetails, 'inactive');
       }
     } catch (error) {
       const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage;
@@ -253,11 +264,15 @@ export default function ManageUsersList({
   const handleUserSetValid = async (user) => {
     const userId = user?.user_id;
     const formData = new FormData();
-    formData.append("assessorId", userId);
+    if (state.menu_selected === 'Assessor') {
+      formData.append("assessorId", userId);
+    } else {
+      formData.append("requlatorId", userId);
+    }
     let e = user;
     try {
       setSpinner(true);
-      const validResponse = await handleActiveUser(formData);
+      const validResponse = state.menu_selected === 'Assessor' ? await handleActiveUser(formData) : await handleActiveRegulatorUser(formData);
       e["workingstatus"] = "Valid";
       resUserData.forEach((item) => {
         if (item.id === userId) {
@@ -322,8 +337,9 @@ export default function ManageUsersList({
         }
       });
       setUserTableList(resUserData);
-      if (validResponse?.data?.update_assessors?.returning[0]) {
-        sendActivationStatusNotification(validResponse.data.update_assessors.returning[0], 'active');
+      const userDetails = validResponse?.data?.update_assessors?.returning[0] ? validResponse?.data?.update_assessors?.returning[0] : validResponse?.data?.update_regulator?.returning[0]
+      if (userDetails) {
+        sendActivationStatusNotification(userDetails, 'active');
       }
     } catch (error) {
       console.log("error - ", error);
@@ -480,6 +496,26 @@ export default function ManageUsersList({
                   </div>
                   <div className="text-semibold">
                     <span>Edit</span>
+                  </div>
+                </div>{" "}
+              </MenuItem>
+              <MenuItem
+                onClick={() =>
+                  e?.workingstatus === "Invalid"
+                    ? handleUserSetValid(e)
+                    : handleUsersetInvalid(e)
+                }
+              >
+                <div className="flex flex-row gap-4 p-1">
+                  <div>
+                    <MdSwapHoriz />
+                  </div>
+                  <div className="text-semibold">
+                    <span>
+                      {e?.workingstatus === "Invalid"
+                        ? "Activate"
+                        : "Deactivate"}
+                    </span>
                   </div>
                 </div>{" "}
               </MenuItem>
