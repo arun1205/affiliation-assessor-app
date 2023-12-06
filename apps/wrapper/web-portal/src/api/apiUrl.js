@@ -58,6 +58,8 @@ const API_URL = {
     filterUsers: `${rest}filterUsers`,
     setActivate: `${rest}setValid`,
     setDeactive: `${rest}setInvalid`,
+    setRegulatorActive: `${rest}regulator/activate`,
+    setRegulatorDeactive: `${rest}regulator/deactivate`,
     addUsers: `${rest}addUsers`,
     deleteUser: `${rest}deleteUser`,
     editUser: `${rest}editUser`,

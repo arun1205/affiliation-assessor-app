@@ -225,6 +225,14 @@ export const handleActiveUser = async (postData) => {
   return res;
 };
 
+export const handleActiveRegulatorUser = async (postData) => {
+  const res = await adminCustomPost.put(
+    API_URL.manageUsers.setRegulatorActive,
+    postData
+  );
+  return res;
+};
+
 export const handleDeleteUser = async (postData) => {
   return await adminCustomPost.delete(API_URL.manageUsers.deleteUser, {
     data: postData,
@@ -234,6 +242,14 @@ export const handleDeleteUser = async (postData) => {
 export const handleInctiveUser = async (postData) => {
   const res = await adminCustomPost.put(
     API_URL.manageUsers.setDeactive,
+    postData
+  );
+  return res;
+};
+
+export const handleInctiveRegulatorUser = async (postData) => {
+  const res = await adminCustomPost.put(
+    API_URL.manageUsers.setRegulatorDeactive,
     postData
   );
   return res;
