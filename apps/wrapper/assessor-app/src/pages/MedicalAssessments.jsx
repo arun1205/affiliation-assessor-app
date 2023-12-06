@@ -68,6 +68,7 @@ const MedicalAssessments = () => {
     const postData = {
       date: new Date().toJSON().slice(0, 10),
       assessor_id: assessor_user_id,
+      applicant_form_status: "Inspection Scheduled"
     };
 
     const res = await getTodaysAssessment(postData);
