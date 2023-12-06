@@ -315,21 +315,20 @@ const GenericOdkForm = (props) => {
     const iframeElem = document.getElementById("enketo-form");
     var iframeContent =
       iframeElem?.contentDocument || iframeElem?.contentWindow.document;
-      
-    if (date) {
       var section = iframeContent?.getElementsByClassName("or-group");
       if (!section) return;
       for (var i = 0; i < section?.length; i++) {
         var inputElements = section[i].querySelectorAll("input");
         inputElements.forEach((input) => {
+          if(date !== undefined) {
           input.disabled = true;
-          // hide admin remarks in assessor form
+          }
+          // hide admin remarks
           if(input.name.toLowercase().includes('admin')) {
             input.previousSibling.style.display = 'none';
             input.style.display = 'none';
           }
         });
-      }
 
       iframeContent.getElementById("submit-form").style.display = "none";
       iframeContent.getElementById("save-draft").style.display = "none";
