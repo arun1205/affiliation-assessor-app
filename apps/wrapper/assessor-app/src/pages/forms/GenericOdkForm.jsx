@@ -315,6 +315,7 @@ const GenericOdkForm = (props) => {
     const iframeElem = document.getElementById("enketo-form");
     var iframeContent =
       iframeElem?.contentDocument || iframeElem?.contentWindow.document;
+      
     if (date) {
       var section = iframeContent?.getElementsByClassName("or-group");
       if (!section) return;
@@ -322,6 +323,11 @@ const GenericOdkForm = (props) => {
         var inputElements = section[i].querySelectorAll("input");
         inputElements.forEach((input) => {
           input.disabled = true;
+          // hide admin remarks in assessor form
+          if(input.name.toLowercase().includes('admin')) {
+            input.previousSibling.style.display = 'none';
+            input.style.display = 'none';
+          }
         });
       }
 
