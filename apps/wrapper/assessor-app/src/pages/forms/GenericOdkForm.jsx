@@ -322,6 +322,8 @@ const GenericOdkForm = (props) => {
         inputElements.forEach((input) => {
           if(date !== undefined) {
           input.disabled = true;
+          iframeContent.getElementById("submit-form").style.display = "none";
+          iframeContent.getElementById("save-draft").style.display = "none";
           }
           // hide admin remarks
           if(input.name.toLowerCase().includes('admin')) {
@@ -330,8 +332,8 @@ const GenericOdkForm = (props) => {
           }
         });
 
-      iframeContent.getElementById("submit-form").style.display = "none";
-      iframeContent.getElementById("save-draft").style.display = "none";
+      // iframeContent.getElementById("submit-form").style.display = "none";
+      // iframeContent.getElementById("save-draft").style.display = "none";
     }
 
     var draftButton = iframeContent.getElementById("save-draft");
