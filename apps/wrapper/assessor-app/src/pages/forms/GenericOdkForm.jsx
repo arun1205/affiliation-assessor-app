@@ -324,7 +324,7 @@ const GenericOdkForm = (props) => {
           input.disabled = true;
           }
           // hide admin remarks
-          if(input.name.toLowercase().includes('admin')) {
+          if(input.name.toLowerCase().includes('admin')) {
             input.previousSibling.style.display = 'none';
             input.style.display = 'none';
           }
