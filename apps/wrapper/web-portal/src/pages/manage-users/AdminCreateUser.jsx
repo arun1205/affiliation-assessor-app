@@ -312,12 +312,22 @@ export default function AdminCreateUser() {
 
   const sendAccountCreationNotification = async (userDetails) => {
     if (userDetails.email) {
-      const emailBody = messages.ACCOUNT_CREATED_MAIL;
-      const emailData = {
-        recipientEmail: [`${userDetails.email}`],
-        emailSubject: `${emailBody.SUBJECT}`,
-        emailBody:  `${emailBody.BODY}`
-      };
+      let emailData = {}
+      if(userDetails.role === 'Assessor') {
+        const emailBody = messages.ACCOUNT_CREATED_OTP_BASED_LOGIN_MAIL;
+        emailData = {
+          recipientEmail: [`${userDetails.email}`],
+          emailSubject: `${emailBody.SUBJECT}`,
+          emailBody:  `${emailBody.BODY.part1}${userDetails.firstname} ${userDetails.lastname}${emailBody.BODY.part2}${userDetails.email}${emailBody.BODY.part3}${userDetails.phonenumber}${emailBody.BODY.part4}`
+        };
+      } else {
+        const emailBody = messages.ACCOUNT_CREATED_PASSWORD_BASED_LOGIN_MAIL;
+        emailData = {
+          recipientEmail: [`${userDetails.email}`],
+          emailSubject: `${emailBody.SUBJECT}`,
+          emailBody:  `${emailBody.BODY.part1}${userDetails.firstname} ${userDetails.lastname}${emailBody.BODY.part2}${userDetails.email}${emailBody.BODY.part3}${userDetails.phonenumber}${emailBody.BODY.part4}`
+        };
+      }
       sendEmailNotification(emailData)
     }
   }
