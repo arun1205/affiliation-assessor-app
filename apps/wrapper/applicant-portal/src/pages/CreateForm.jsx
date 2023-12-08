@@ -53,6 +53,7 @@ const CreateForm = (props) => {
   let [onFormFailureData, setOnFormFailureData] = useState(undefined);
   let [isDownloading, setIsDownloading] = useState(false);
   let [previewModal, setPreviewModal] = useState(false);
+  let [formLoaded, setFormLoaded] = useState(false);
   const { setToast } = useContext(ContextAPI);
 
   // Spinner Element
@@ -255,7 +256,10 @@ const CreateForm = (props) => {
   };
 
   const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
-    console.log("Event =====>", e);
+    if(typeof e.data === 'string' && e.data.includes('formLoad')) {
+      setFormLoaded(true);
+      return;
+    }
     if (typeof e.data === "string" && e.data.includes("webpackHot")) {
       return;
     }
@@ -369,6 +373,12 @@ const CreateForm = (props) => {
       window.removeEventListener("message", handleEventTrigger);
     };
   }, []);
+
+  useEffect(() => {
+    if(formLoaded === true) {
+    checkIframeLoaded();
+    }
+  }, [formLoaded]);
 
   return (
     <div>
