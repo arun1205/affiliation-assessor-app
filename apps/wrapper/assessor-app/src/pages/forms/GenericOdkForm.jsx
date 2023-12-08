@@ -94,6 +94,7 @@ const GenericOdkForm = (props) => {
   const [errorModal, setErrorModal] = useState(false);
   const [previewModal, setPreviewModal] = useState(false);
   const { state } = useContext(StateContext);
+  const [formLoaded, setFormLoaded] = useState(false);
   let courseObj = undefined;
 
   const loading = useRef(false);
@@ -295,8 +296,16 @@ const GenericOdkForm = (props) => {
     }
   }
 
+  const handleFormLoadEvents = (e) => {
+    if(typeof e.data === 'string' && e.data.includes('formLoad')) {
+      setFormLoaded(true);
+      return;
+    }
+  }
+
   const handleEventTrigger = async (e) => {
     handleFormEvents(startingForm, afterFormSubmit, e);
+    handleFormLoadEvents(e);
   };
 
   const bindEventListener = () => {
@@ -319,6 +328,14 @@ const GenericOdkForm = (props) => {
       if (!section) return;
       for (var i = 0; i < section?.length; i++) {
         var inputElements = section[i].querySelectorAll("input");
+        var buttonElements = section[i].querySelectorAll("button");
+        buttonElements.forEach((button) => {
+          if(date !== undefined) {
+          button.disabled = true;
+          iframeContent.getElementById("submit-form").style.display = "none";
+          iframeContent.getElementById("save-draft").style.display = "none";
+          }
+        });
         inputElements.forEach((input) => {
           if(date !== undefined) {
           input.disabled = true;
@@ -394,17 +411,18 @@ const GenericOdkForm = (props) => {
       setEncodedFormSpec,
       setEncodedFormURI,
     });
-
-    setTimeout(() => {
-      checkIframeLoaded();
-    }, 2500);
-
     return () => {
       detachEventBinding();
       setData(null);
       setPrefilledFormData(null);
     };
   }, []);
+
+  useEffect(() => {
+    if(formLoaded === true) {
+      checkIframeLoaded();
+    }
+  }, [formLoaded])
 
   /* 
   async function fetchIframeResources(iframeUrl) {
@@ -439,6 +457,7 @@ const GenericOdkForm = (props) => {
                 <iframe
                   title="form"
                   id="enketo-form"
+                  onLoad={checkIframeLoaded}
                   src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
                   style={{ height: "80vh", width: "100%" }}
                 />
@@ -509,6 +528,7 @@ const GenericOdkForm = (props) => {
               <>
               <iframe
                 title="form"
+                onLoad={checkIframeLoaded}
                 id="preview-enketo-form"
                 src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
                 style={{ height: "80vh", width: "100%", marginTop: "20px" }}

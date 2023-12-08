@@ -61,6 +61,7 @@ export default function DesktopAnalysisView() {
   const [formStatus, setFormStatus] = useState("");
   const [onSubmit, setOnSubmit] = useState(false);
   const [rejectStatus, setRejectStatus] = useState(false);
+  const [formLoaded, setFormLoaded] = useState(false);
 
   const loggedInUserRole = getCookie("userData").userRepresentation.attributes.Role[0];
 
@@ -278,6 +279,10 @@ export default function DesktopAnalysisView() {
   };
 
   const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
+    if(typeof e.data === 'string' && e.data.includes('formLoad')) {
+      setFormLoaded(true);
+      return;
+    }
     if (typeof e.data === "string" && e.data.includes("webpackHot")) {
       return;
     }
@@ -417,6 +422,10 @@ export default function DesktopAnalysisView() {
         if (!section) return;
         for (var i = 0; i < section?.length; i++) {
           var inputElements = section[i].querySelectorAll("input");
+          var buttonElements = section[i].querySelectorAll("button");
+          buttonElements.forEach((button) => {
+            button.disabled = true;
+          });
           inputElements.forEach((input) => {
             input.disabled = true;
           });
@@ -447,10 +456,10 @@ export default function DesktopAnalysisView() {
   }, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      checkIframeLoaded();
-    }, 2500);
-  }, [formDataFromApi]);
+   if(formLoaded === true) {
+    checkIframeLoaded();
+   }
+  }, [formLoaded]);
 
   return (
     <StrictMode>
@@ -594,6 +603,7 @@ export default function DesktopAnalysisView() {
                 <iframe
                   id="enketo_DA_preview"
                   title="form"
+                  onLoad={checkIframeLoaded}
                   src={`${ENKETO_URL}/preview?formSpec=${encodeURI(
                     JSON.stringify(formSpec)
                   )}&xform=${encodedFormURI}&userId=${userId}`}
