@@ -882,8 +882,11 @@ function setLogoutLinkVisibility() {
  */
 function inIframe() {
     try {
-        document.dispatchEvent(events.InstanceFirstLoad());
+        // document.dispatchEvent(events.InstanceFirstLoad());
         // window.parent.postMessage('xFormLoaded');
+        window.parent.postMessage(JSON.stringify({
+            formData: 'empty'
+        }), '*');
         return window.self !== window.top;
     } catch (e) {
         return true;
