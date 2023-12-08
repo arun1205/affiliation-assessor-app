@@ -255,6 +255,7 @@ const CreateForm = (props) => {
   };
 
   const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
+    console.log("Event =====>", e);
     if (typeof e.data === "string" && e.data.includes("webpackHot")) {
       return;
     }
@@ -290,6 +291,7 @@ const CreateForm = (props) => {
   };
 
   const handleEventTrigger = async (e) => {
+    console.log("Instance Load event =>", e);
     handleFormEvents(startingForm, afterFormSubmit, e);
   };
 
