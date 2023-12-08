@@ -102,6 +102,7 @@ const CreateForm = (props) => {
   const [encodedFormSpec, setEncodedFormSpec] = useState(
     encodeURI(JSON.stringify(formSpec?.formId))
   );
+  const iframeRef = useRef(null);
 
   const fetchFormData = async () => {
     let formData = {};
@@ -358,9 +359,6 @@ const CreateForm = (props) => {
       spinner.style.display = "flex";
     }
 
-    setTimeout(() => {
-      checkIframeLoaded();
-    }, 1500);
 
     // To clean all variables
     return () => {
@@ -444,6 +442,8 @@ const CreateForm = (props) => {
               <iframe
                 id="enketo-applicant-form"
                 title="form"
+                ref={iframeRef}
+                onLoad={checkIframeLoaded}
                 src={`${ENKETO_URL}/preview?formSpec=${encodeURI(
                   JSON.stringify(formSpec)
                 )}&xform=${encodedFormURI}&userId=${userId}`}
