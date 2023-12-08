@@ -1,6 +1,7 @@
 export const APIS = {
   APPLICATIONS: {
     STATUS_LIST: "/rest/getApplicationStatus",
+    OTHER_VALID_FORMS:"/rest/applicantApplicationStatus"
   },
   COMMON: {
     REGISTER_EVENT: `/rest/addEvents`,

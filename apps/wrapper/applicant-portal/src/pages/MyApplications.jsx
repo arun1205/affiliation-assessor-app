@@ -12,13 +12,89 @@ const MyApplications = () => {
   const [loadingForms, setLoadingForms] = useState(false);
   const [applications, setApplications] = useState([]);
   const [availableForms, setAvailableForms] = useState([]);
+  const [availableFormsToShow, setAvailableFormsToShow] = useState([]);
+  
   const instituteDetails = getCookie("institutes");
   const navigate = useNavigate();
 
   useEffect(() => {
     getApplications();
     getAvailableForms();
+    checkAvailableFormsToShow();
   }, []);
+
+  useEffect(() => {
+    console.log(availableForms.length)  
+  }, [availableForms]);
+
+
+  const checkAvailableFormsToShow = async ()=>{
+
+    if (!instituteDetails || !instituteDetails?.length) {
+      return;
+    }
+
+    setLoadingApplications(true);
+    const requestPayload =    {
+      "round": 1,
+      "applicant_id": instituteDetails?.[0].id,
+      "noc_path": true 
+/*    "noc_path"=  true returns the forms for which
+       no noc is generated for this applicant_id for given round */
+  }
+   // const requestPayload = { applicant_id: instituteDetails?.[0].id || 11 };
+    const formsToOmitResp = await applicationService.formsToOmit(
+      requestPayload
+    );
+
+    console.log("formsToOmit--------") 
+    console.log(formsToOmitResp?.data?.form_submissions[0].course.form.form_id)  
+
+    console.log("available forma--------") 
+    console.log(availableForms[0]?.form?.form_id) 
+    const formsToOmit = formsToOmitResp?.data?.form_submissions
+   if (formsToOmitResp?.data?.form_submissions) {
+    
+    /*   for(let i=0;i<formsToOmit?.data?.form_submissions.length;i++){
+        console.log(formsToOmit?.data?.form_submissions[i].course?.form.form_id )
+     
+         const validAvailableForms = availableForms.filter(el =>
+            el.form.form_id === formsToOmit?.data?.form_submissions[i].course.form.form_id
+         )
+
+        } */
+       
+         console.log(availableForms.length);
+         let a = formsToOmit.filter((ra)=> {
+          console.log("rrararararaa")
+          console.log(ra)
+          availableForms.filter((sa)=> {
+            console.log("sasasasasasa")
+            console.log(sa)
+
+              return sa.form.form_id !== ra.course.form.form_id;
+          })
+          console.log(availableForms.length)
+          // setAvailableForms();
+      });
+      console.log(a.length);
+        // setAvailableForms(validForms);
+   
+
+   /*    const arr = [{"course":{"form":{"form_id":588}}},{"course":{"form":{"form_id":619}}}]
+
+      for(let i=0;i<arr.length;i++){
+      const newArr = arr.filter(object => {
+        return object.id !== arr[i].course.form.form_id;
+      });
+
+      console.log(newArr) //
+
+    } */
+      setLoadingApplications(false);
+    }//arun
+  }
+
 
   const getApplications = async () => {
     if (!instituteDetails || !instituteDetails?.length) {
@@ -31,9 +107,11 @@ const MyApplications = () => {
       requestPayload
     );
 
+   // console.log(applicationsResponse)
+
     if (applicationsResponse?.data?.form_submissions) {
       setApplications(applicationsResponse?.data?.form_submissions);
-    }
+    }//arun
     setLoadingApplications(false);
   };
 
@@ -52,7 +130,7 @@ const MyApplications = () => {
 
     const formsResponse = await formService.getData(requestPayload);
     if (formsResponse?.data?.courses) {
-      setAvailableForms(formsResponse?.data?.courses.slice(0, 4));
+      setAvailableForms(formsResponse?.data?.courses) ;
     }
     setLoadingForms(false);
   };
@@ -115,12 +193,10 @@ const MyApplications = () => {
                 <div className="flex flex-col gap-3">
                   <div className="text-xl font-semibold">Application form</div>
                   {!loadingForms && availableForms.length === 0 && (
-                    <div className="text-sm">There is no form available</div>
-                  )}
-                  {!loadingForms && availableForms.length > 0 && (
-                    <div className="text-sm">
-                      These are the available forms for you to apply. Click on
-                      any of them to start filling
+                    <div className="text-sm">There is no form available 
+                    <br/>
+                    These are the available forms for you to apply. Click on
+                    any of them to start filling
                     </div>
                   )}
                 </div>
