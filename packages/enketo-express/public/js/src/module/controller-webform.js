@@ -518,7 +518,7 @@ function _saveRecord(survey, draft = true, recordName, confirmed, errorMsg) {
             console.log(record.xml)
             //document.dispatchEvent(events.Save()); //Arun
             window.parent.postMessage(JSON.stringify({
-                formData: record.xml,
+                formData: record,
             }), '*');
             return records.save(saveMethod, record);
         })
@@ -729,6 +729,8 @@ function _setEventHandlers(survey) {
         document.addEventListener(events.Edited().type, postEventAsMessageToParentWindow);
         document.addEventListener(events.Close().type, postEventAsMessageToParentWindow);
         document.addEventListener(events.Save().type, postEventAsMessageToParentWindow);//arun
+        document.addEventListener(events.InstanceFirstLoad().type, postEventAsMessageToParentWindow); // roopa
+
     }
 
     document.addEventListener(events.QueueSubmissionSuccess().type, event => {
@@ -880,6 +882,21 @@ function setLogoutLinkVisibility() {
  */
 function inIframe() {
     try {
+        // document.dispatchEvent(events.InstanceFirstLoad());
+        // window.parent.postMessage('xFormLoaded');
+        const record = {
+                'draft': '',
+                'xml': '',
+                'name': '',
+                'instanceId': '',
+                'deprecateId': '',
+                'enketoId': '',
+                'files': '',
+                'instance': 'formLoad'
+        };
+        window.parent.postMessage(JSON.stringify({
+            formData: record
+        }), '*');
         return window.self !== window.top;
     } catch (e) {
         return true;

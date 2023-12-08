@@ -53,6 +53,7 @@ const CreateForm = (props) => {
   let [onFormFailureData, setOnFormFailureData] = useState(undefined);
   let [isDownloading, setIsDownloading] = useState(false);
   let [previewModal, setPreviewModal] = useState(false);
+  let [formLoaded, setFormLoaded] = useState(false);
   const { setToast } = useContext(ContextAPI);
 
   // Spinner Element
@@ -255,6 +256,10 @@ const CreateForm = (props) => {
   };
 
   const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
+    if(typeof e.data === 'string' && e.data.includes('formLoad')) {
+      setFormLoaded(true);
+      return;
+    }
     if (typeof e.data === "string" && e.data.includes("webpackHot")) {
       return;
     }
@@ -290,6 +295,7 @@ const CreateForm = (props) => {
   };
 
   const handleEventTrigger = async (e) => {
+    console.log("Instance Load event =>", e);
     handleFormEvents(startingForm, afterFormSubmit, e);
   };
 
@@ -337,6 +343,11 @@ const CreateForm = (props) => {
         if (!section) return;
         for (var i = 0; i < section?.length; i++) {
           var inputElements = section[i].querySelectorAll("input");
+          var buttonElements = section[i].querySelectorAll("button");
+          // disable buttons
+          buttonElements.forEach((button) => {
+            button.disabled = true;
+          });
           inputElements.forEach((input) => {
             input.disabled = true;
           });
@@ -367,6 +378,12 @@ const CreateForm = (props) => {
       window.removeEventListener("message", handleEventTrigger);
     };
   }, []);
+
+  useEffect(() => {
+    if(formLoaded === true) {
+    checkIframeLoaded();
+    }
+  }, [formLoaded]);
 
   return (
     <div>

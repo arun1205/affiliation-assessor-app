@@ -31,5 +31,9 @@ events.FormUpdated = function() {
 events.FormReset = function() {
     return new CustomEvent( 'formreset', { bubbles: true } );
 };
+ 
+events.InstanceFirstLoad = function() {
+    return new CustomEvent('formInstanceLoaded', {bubbles: true});
+}
 
 export default events;
