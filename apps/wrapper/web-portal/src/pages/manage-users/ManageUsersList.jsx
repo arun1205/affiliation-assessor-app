@@ -359,12 +359,21 @@ export default function ManageUsersList({
     // let mailBody = require('./json-files/mail-body.json');
     if (userDetails.email) {
       const emailBody = status === 'active' ? data.ACTIVATION_MAIL : data.INACTIVATION_MAIL;
-      const emailData = {
-        recipientEmail: [`${userDetails.email}`],
-        emailSubject: `${emailBody.SUBJECT}`,
-        emailBody:  `${emailBody.BODY}`
-      };
-      sendEmailNotification(emailData)
+      if (state.menu_selected === 'Assessor') {
+        const emailData = {
+          recipientEmail: [`${userDetails.email}`],
+          emailSubject: `${emailBody.SUBJECT}`,
+          emailBody:  `${emailBody.BODY.part1}${userDetails.name}${emailBody.BODY.part2}`
+        };
+        sendEmailNotification(emailData)
+      } else {
+        const emailData = {
+          recipientEmail: [`${userDetails.email}`],
+          emailSubject: `${emailBody.SUBJECT}`,
+          emailBody:  `${emailBody.BODY.part1}${userDetails.full_name}${emailBody.BODY.part2}`
+        };
+        sendEmailNotification(emailData)
+      }
     }
   }
 

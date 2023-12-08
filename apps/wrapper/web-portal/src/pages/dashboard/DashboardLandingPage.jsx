@@ -5,12 +5,14 @@ import Nav from "../../components/Nav";
 import FilteringTable from "../../components/table/FilteringTable";
 import { ContextAPI } from "../../utils/ContextAPI";
 import { Option, Select } from "@material-tailwind/react";
+import { Button } from "../../components";
 import {
   filterDashBoardData,
   searchDashBoard,
   getInProgressCount,
   getApprovedCount,
-  getRejectedCount
+  getRejectedCount,
+  exportToExcel
 } from "../../api";
 
 const DashboardLandingPage = (props) => {
@@ -229,6 +231,55 @@ const DashboardLandingPage = (props) => {
     }
   };
 
+  const downloadReport = async () => {
+    if (paginationInfo.totalCount > 0) {
+      const postData = {
+        offsetNo: 0,
+        limit: paginationInfo.totalCount,
+        param: {
+          "round": {
+            "_eq": round
+          }
+        },
+      };
+      try {
+        setSpinner(true);
+        const res = await filterDashBoardData(postData);
+        // setFormsList(res?.data?.form_submissions);
+        console.log('form details: ', res?.data?.form_submissions);
+        const dashBoardReports = {
+          sheetName: 'report',
+          downloadObject: [],
+          headers: ['Application ID', 'Date', 'Institute Name', 'Application Type', 'Course Type', 'Form Title', 'City', 'Status']
+        }
+        res?.data?.form_submissions.forEach((element) => {
+          const report = {
+            application_id: element.form_id,
+            date: element?.submitted_on || "-",
+            institute_name: element?.institute.name || "-",
+            application_type: element?.course_type || "-",
+            course_type: element?.course_level || "-",
+            form_name: element?.form_name,
+            city: element?.institute.district || "-",
+            status: element?.form_status || "-",
+          }
+          dashBoardReports.downloadObject.push(report)
+        })
+        const roundName = round === 1 ? 'Round One' : 'Round Two'
+        const downloadObjects = {
+          fileName: `${roundName} dashboard_reports.xlsx`,
+          objectsList: [dashBoardReports]
+        }
+        exportToExcel(downloadObjects);
+        
+      } catch (error) {
+        console.log("error - ", error);
+      } finally {
+        setSpinner(false);
+      }
+    }
+  }
+
   formsList?.forEach((e) => {
     const formsData = {
       application_id: e.form_id,
@@ -267,7 +318,7 @@ const DashboardLandingPage = (props) => {
           <div className="flex flex-col gap-4">
 
             <div className="flex justify-end">
-              <div className="  mr-12 ">
+              <div>
                 <span>
                 <span className="   mr-5">
                 <label>
@@ -284,7 +335,7 @@ const DashboardLandingPage = (props) => {
                     Approved Applications:<span className="w-72   mr-5" > <b>{approvedCount}</b> </span>  
                   </label>
                   </span>
-                  <span className="mr-5" style={{ backgroundColor: "red" }}>
+                  <span style={{ backgroundColor: "red" }}>
                   <label>
                     Rejected Applications:<span className="w-72   mr-5"> <b>{rejectedCount}</b>  </span>
                   </label>
@@ -318,6 +369,15 @@ const DashboardLandingPage = (props) => {
                  
                 </div>
                
+              </div>
+              <div className="sm:col-span-3 flex justify-end">
+              <Button
+                onClick={() => {
+                  downloadReport();
+                }}
+                moreClass="border boevent_namerder-blue-500 bg-white text-blue-500 w-[160px]"
+                text="Download Report"
+              ></Button>
               </div>
             </div>
           </div>

@@ -11,6 +11,7 @@ import { userService, applicantService } from "../services";
 import { forkJoin, lastValueFrom } from "rxjs";
 import { UP_DISTRICTS } from "../utils/constants";
 import { ContextAPI } from "../utils/contextAPI";
+import messages from "../assets/json_files/messages.json";
 
 export default function SelfRegistration() {
   const navigate = useNavigate();
@@ -99,10 +100,11 @@ export default function SelfRegistration() {
       });
 
       //email notify
+      const emailBody = messages.ACCOUNT_CREATED_OTP_BASED_LOGIN_MAIL;
       const emailData = {
         recipientEmail: [`${userDetails.request.email}`],
-        emailSubject: `${applicantName} Applicant Registration`,
-        emailBody: `<!DOCTYPE html><html><head><meta charset='utf-8'><title>Your Email Title</title><link href='https://fonts.googleapis.com/css2?family=Mulish:wght@400;600&display=swap' rel='stylesheet'></head><body style='font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;'><table width='100%' bgcolor='#ffffff' cellpadding='0' cellspacing='0' border='0'><tr><td style='padding: 20px; text-align: center; background-color: #F5F5F5;'><img src='https://regulator.upsmfac.org/images/upsmf.png' alt='Logo' style='max-width: 360px;'></td></tr></table><table width='100%' bgcolor='#ffffff' cellpadding='0' cellspacing='0' border='0'><tr><td style='padding: 36px;'><p style='color: #555555; font-size: 18px; font-family: 'Mulish', Arial, sans-serif;'>Dear ${applicantName},</p><p style='color: #555555; font-size: 18px; line-height: 1.6; font-family: 'Mulish', Arial, sans-serif;'>You are successfully registered as an Applicant.</p></td></tr></table></body></html>`,
+        emailSubject: `${emailBody.SUBJECT}`,
+        emailBody:  `${emailBody.BODY.part1}${userDetails.request.firstName} ${userDetails.request.lastName}${emailBody.BODY.part2}${userDetails.request.email}${emailBody.BODY.part3}${userDetails.request.credentials[0].value}${emailBody.BODY.part4}`
       };
 
       applicantService.sendEmailNotification(emailData);
