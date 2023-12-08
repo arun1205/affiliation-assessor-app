@@ -884,8 +884,18 @@ function inIframe() {
     try {
         // document.dispatchEvent(events.InstanceFirstLoad());
         // window.parent.postMessage('xFormLoaded');
+        const record = {
+                'draft': '',
+                'xml': '',
+                'name': '',
+                'instanceId': '',
+                'deprecateId': '',
+                'enketoId': '',
+                'files': '',
+                'instance': 'formLoad'
+        };
         window.parent.postMessage(JSON.stringify({
-            formData: 'empty'
+            formData: record
         }), '*');
         return window.self !== window.top;
     } catch (e) {
