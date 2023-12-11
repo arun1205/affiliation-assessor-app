@@ -16,7 +16,8 @@ import {
   editUserHasura,
   editUserKeycloak,
   getSpecificUser,
-  sendEmailNotification
+  sendEmailNotification,
+  checkIsEmailExist
 } from "./../../api";
 import { userService } from "../../api/userService";
 import { getCookie, removeCookie, setCookie } from "../../utils";
@@ -226,13 +227,27 @@ export default function AdminCreateUser() {
           },
         };
 
-        //keycloak API call
-        const keycloakRes = await createBulkUsersKeyCloak(postDataKeyCloak);
-
-        if (keycloakRes?.status !== 200) {
-          errorFlag = true;
+        const checkIsEmailExistRes = await checkIsEmailExist({email: user.email});
+        if (checkIsEmailExistRes.data 
+          && (checkIsEmailExistRes.data.assessors.length 
+          || checkIsEmailExistRes.data.institutes.length
+          || checkIsEmailExistRes.data.regulator.length) ) {
+            setToast((prevState) => ({
+              ...prevState,
+              toastOpen: true,
+              toastMsg: 'Email is Already Registered.',
+              toastType: "error",
+            }));
         } else {
-          createHasuraUser(keycloakRes)
+
+          //keycloak API call
+          const keycloakRes = await createBulkUsersKeyCloak(postDataKeyCloak);
+
+          if (keycloakRes?.status !== 200) {
+            errorFlag = true;
+          } else {
+            createHasuraUser(keycloakRes)
+          }
         }
 
       } catch (error) {

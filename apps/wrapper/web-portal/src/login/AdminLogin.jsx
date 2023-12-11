@@ -56,6 +56,12 @@ const AdminLogin = () => {
         // setPhoneNumber(data.phone);
         setEmailId(data.email);
       } else {
+        setToast((prevState) => ({
+          ...prevState,
+          toastOpen: true,
+          toastMsg: otpRes?.data?.error ? otpRes?.data?.error : "Something went wrong",
+          toastType: "error",
+        }));
         console.log("Something went wrong", otpRes);
       }
       // } else {

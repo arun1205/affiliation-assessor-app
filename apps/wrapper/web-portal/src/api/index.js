@@ -395,6 +395,14 @@ export const createBulkUsersKeyCloak = async (postData) => {
   return res;
 };
 
+export const checkIsEmailExist = async (postData) => {
+  const res = await adminCustomPost.post(
+    API_URL.SIGNUP.CHECK_IS_EMAIL_EXIST,
+    postData
+  );
+  return res;
+};
+
 // Edit user keycloak
 export const editUserKeycloak = async (postData) => {
   const res = await axios.put(

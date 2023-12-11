@@ -9,6 +9,15 @@ const addInstitute = (instituteDetails) => {
   return axiosService.post(APIS.APPLICANT.ADD_INSTITUTE, instituteDetails);
 };
 
+
+const checkIsEmailExist = async (postData) => {
+  const res = await axiosService.post(
+    APIS.SIGNUP.CHECK_IS_EMAIL_EXIST,
+    postData
+  );
+  return res;
+};
+
 const updateParentCode = (instituteDetails) => {
   return axiosService.post(APIS.APPLICANT.UPDATE_PARENT_CODE,instituteDetails)
 }
@@ -103,5 +112,6 @@ export const applicantService = {
   updatePaymentStatus,
   getAllNotifications,
   sendEmailNotification,
-  readNotification
+  readNotification,
+  checkIsEmailExist
 };
