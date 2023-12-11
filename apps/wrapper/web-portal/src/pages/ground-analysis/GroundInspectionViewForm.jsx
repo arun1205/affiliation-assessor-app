@@ -53,6 +53,7 @@ export default function ApplicationPage({
   let [formSelected, setFormSelected] = useState();
   const { setSpinner, setToast } = useContext(ContextAPI);
   const userDetails = getCookie("userData");
+  const [formLoaded, setFormLoaded] = useState(false);
 
   const user_details = userDetails?.userRepresentation;
 
@@ -231,6 +232,21 @@ export default function ApplicationPage({
     }
   };
 
+  const handleFormEvents = async (e) => {
+    if(typeof e.data === 'string' && e.data.includes('formLoad')) {
+      setFormLoaded(true);
+      return;
+    }
+  }
+
+  const handleEventTrigger = async (e) => {
+    handleFormEvents(e);
+  };
+
+  const bindEventListener = () => {
+    window.addEventListener("message", handleEventTrigger);
+  };
+
   const checkIframeLoaded = () => {
     if (!window.location.host.includes("localhost")) {
       const iframeElem = document.getElementById("enketo_OGA_preview");
@@ -242,6 +258,10 @@ export default function ApplicationPage({
       if (!section) return;
       for (var i = 0; i < section?.length; i++) {
         var inputElements = section[i].querySelectorAll("input");
+        var buttonElements = section[i].querySelectorAll("button");
+        buttonElements.forEach((button) => {
+          button.disabled = true;
+        })
         inputElements.forEach((input) => {
           input.disabled = true;
         });
@@ -271,10 +291,12 @@ export default function ApplicationPage({
   useEffect(() => {
     getOGAFormsList();
     setSpinner(true);
-    // fetchFormData();
-    setTimeout(() => {
-      checkIframeLoaded();
-    }, 2000);
+    bindEventListener();
+
+    // To clean all variables
+    return () => {
+      window.removeEventListener("message", handleEventTrigger);
+    };
   }, []);
 
   useEffect(() => {
@@ -283,11 +305,13 @@ export default function ApplicationPage({
     } else {
       fetchFormData();
     }
-
-    setTimeout(() => {
-      checkIframeLoaded();
-    }, 2000);
   }, [formSelected]);
+
+  useEffect(() => {
+    if(formLoaded === true) {
+      checkIframeLoaded();
+    }
+  }, [formLoaded]);
 
   return (
     <>
@@ -394,6 +418,7 @@ export default function ApplicationPage({
                 <iframe
                   id="enketo_OGA_preview"
                   title="form"
+                  onLoad={checkIframeLoaded}
                   src={`${ENKETO_URL}/preview?formSpec=${encodeURI(
                     JSON.stringify(formSpec)
                   )}&xform=${encodedFormURI}&userId=${userId}`}
