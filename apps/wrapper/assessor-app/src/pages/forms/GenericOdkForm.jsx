@@ -375,6 +375,10 @@ const GenericOdkForm = (props) => {
       if (!section) return;
       for (var i = 0; i < section?.length; i++) {
         var inputElements = section[i].querySelectorAll("input");
+        var buttonElements = section[i].querySelectorAll("button");
+        buttonElements.forEach((button) => {
+          button.disabled = true;
+        })
         inputElements.forEach((input) => {
           input.disabled = true;
         });
