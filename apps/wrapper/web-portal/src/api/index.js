@@ -673,6 +673,13 @@ export const exportToExcel = async (downloadObjects) => {
     writeFile(workbook, downloadObjects.fileName ? downloadObjects.fileName : 'data.xlsx');
   }
 }
+
+export const base64ToPdf = async (postData) => {
+  const res = await axios.post(`${process.env.REACT_APP_PDF_DOWNLOAD_URL}/convert-via-puppeteer/pdfpuppeteer`, {
+    url: postData,
+  });
+  return res;
+};
 //#endregion
 
 //#endregion
