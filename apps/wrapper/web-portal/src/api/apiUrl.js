@@ -95,6 +95,7 @@ const API_URL = {
   SIGNUP: {
     CREATE_USER: "create",
     EDIT_USER: "update",
+    CHECK_IS_EMAIL_EXIST: `${rest}findUserByEmail`,
   },
   LOGIN: {
     GENERATE_OTP: "keycloak/otp",

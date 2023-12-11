@@ -12,6 +12,7 @@ export const APIS = {
   },
   SIGNUP: {
     CREATE_USER: "create",
+    CHECK_IS_EMAIL_EXIST: `/rest/findUserByEmail`
   },
   EDITUSERS:{
     EDIT_USER: "update",
