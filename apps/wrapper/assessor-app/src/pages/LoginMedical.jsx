@@ -51,6 +51,14 @@ const LoginMedical = ({ handleStepChangeForLogin }) => {
       return;
     }
 
+    if(loginRes?.error) {
+      setError("Invalid Username/ Password");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+      return
+    }
+
     // if (role == "Assessor") {
     //   setCookie("userData", loginRes?.userRepresentation);
     //   navigate(ROUTE_MAP.root);
