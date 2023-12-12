@@ -13,6 +13,12 @@ const FormCard = (props) => {
         title={props?.form?.course_desc}
       >
         {props?.form?.course_desc}
+
+      </div>
+      <div className="flex" >
+        <span className={"text-teal-400 text-sm"}>
+          Round : {props?.form?.round}
+        </span>
       </div>
       <div className="flex">
         <Button

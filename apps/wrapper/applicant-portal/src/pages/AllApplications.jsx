@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate,useParams } from "react-router-dom";
 
 import { FormCard } from "../components";
 import { useForm } from "react-hook-form";
@@ -8,22 +8,36 @@ import { setToLocalForage } from "../forms";
 import { Select, Option } from "@material-tailwind/react";
 
 import { FaAngleRight } from "react-icons/fa";
-import { MdFilterList } from "react-icons/md";
+import { Switch } from "@material-tailwind/react";
 
 import { formService } from "../services";
 import { getCookie } from "../utils";
 import APPLICANT_ROUTE_MAP from "../routes/ApplicantRoute";
 
 const AllApplications = () => {
+
+  let { round } = useParams();
   const [loadingForms, setLoadingForms] = useState(false);
+  
+  const [switchDisabled, setSwitchDisabled] = useState(true);
+  const [defaultChecked, setDefaultChecked] = useState(false);
+  const [selectedRound, setSelectedRound] = useState(round);
+  
   const [value, setValue] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState("false");
+
   const [formData, setFormData] = useState({
     condition: {
       _and: { form: {} },
       assignee: { _eq: "applicant" },
-    },
+      round: {
+        _eq: selectedRound
+      }
+    }
   });
+ 
+
+
   const [availableForms, setAvailableForms] = useState([]);
   const instituteDetails = getCookie("institutes");
   const navigate = useNavigate();
@@ -33,12 +47,15 @@ const AllApplications = () => {
       condition: {
         ...formData.condition,
         [name]: {
-          _eq: value,
+          _eq: value
         },
         assignee: {
-          _eq: "applicant",
+          _eq: "applicant"
         },
-      },
+        round: {
+          _eq: selectedRound
+        }
+      }
     });
   };
 
@@ -82,15 +99,92 @@ const AllApplications = () => {
     setFormData({
       condition: {
         assignee: {
-          _eq: "applicant",
+          _eq: "applicant"
         },
-      },
+        round: {
+          _eq: selectedRound
+        }
+      }
     });
   };
 
   useEffect(() => {
+    console.log("selectedRoundselectedRound from url",round)
+    if(round === "1"){
+      console.log("selectedRoundselectedRound ",selectedRound);
+      setSwitchDisabled(true);
+      setDefaultChecked(false);
+      //setDefaultChecked=false
+      setSelectedRound("1");
+  
+    } else {
+      console.log("selectedRoundselectedRound ",selectedRound);
+      setSelectedRound("2");
+      setDefaultChecked(true);
+      //setDefaultChecked = true;
+     // setSwitchDisabled(false);
+  
+   
+    }
+  }, []);
+
+  useEffect(() => {
+    
     getAvailableForms();
-  }, [formData]);
+  }, [selectedRound,formData,]);
+
+/*   useEffect(() => {
+    checkAvailableFormsToShow();
+  }, [applications]);
+
+  const checkAvailableFormsToShow = async () => {
+
+    if (!instituteDetails || !instituteDetails?.length) {
+      return;
+    }
+
+    setLoadingApplications(true);
+    let round=1 ;
+    applications.forEach((item, index) => {
+      console.log(item)
+      if (item.noc_Path !== null && item.round === 1) {
+        round=2
+      } 
+    });
+    setSelectedRound(round)
+    setLoadingApplications(false);
+  } */
+
+  const handleToggleChange = (e) => {
+    console.log("e.target.checkede.target.checked",e.target.checked)
+    if(e.target.checked){
+     // getAvailableForms();
+     setFormData({
+      condition: {
+        assignee: {
+          _eq: "applicant"
+        },
+        round: {
+          _eq: 2
+        }
+      }
+    });
+      setSelectedRound("2")
+    } else {
+     // getAvailableForms();
+     setFormData({
+      condition: {
+        assignee: {
+          _eq: "applicant"
+        },
+        round: {
+          _eq: 1
+        }
+      }
+    });
+     setSelectedRound("1");
+    }
+  }
 
   return (
     <>
@@ -170,6 +264,16 @@ const AllApplications = () => {
 
           <div className="flex flex-col gap-3">
             <div className="text-xl font-semibold">Application forms</div>
+            <div>
+            <Switch
+                    id="show-with-errors"
+                    label={<span className="text-sm">Show Round 2 forms</span>}
+                    onChange={handleToggleChange}
+                    disabled={switchDisabled}
+                    defaultChecked={defaultChecked}
+                  />
+            </div>
+          
             {!loadingForms && availableForms.length === 0 && (
               <div className="text-sm">There is no form available</div>
             )}
@@ -204,7 +308,7 @@ const AllApplications = () => {
               {availableForms.map((form, index) => (
                 <FormCard form={form} key={index} onApply={applyFormHandler} />
               ))}
-              {console.log("available forms-", availableForms)}
+             {/*  {console.log("available forms-", availableForms)} */}
             </div>
           )}
         </div>
