@@ -625,7 +625,14 @@ export const getRejectedCount = async (postData) => {
   return res;
 };
 
+//download pdf
 
+export const base64ToPdf = async (postData) => {
+  const res = await axios.post(`${process.env.REACT_APP_PDF_DOWNLOAD_URL}/convert-via-puppeteer/pdfpuppeteer`, {
+    url: postData,
+  });
+  return res;
+};
 
 //other common APIs
 export const updateFormStatus = async (postData) => {
