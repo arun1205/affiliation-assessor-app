@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { AiOutlineClose, AiOutlineCheck } from "react-icons/ai";
-import { FaAngleRight } from "react-icons/fa";
+import { FaAngleRight,FaFileDownload  } from "react-icons/fa";
 
 import { Card, Button } from "./../../components";
 
@@ -20,6 +20,7 @@ import {
   getAcceptApplicantCertificate,
   registerEvent,
   updateFormStatus,
+  base64ToPdf
 } from "../../api";
 import { getPrefillXML } from "./../../api/formApi";
 import { ContextAPI } from "../../utils/ContextAPI";
@@ -28,6 +29,7 @@ import { Fragment } from "react";
 
 const ENKETO_URL = process.env.REACT_APP_ENKETO_URL;
 const GCP_URL = process.env.REACT_APP_GCP_AFFILIATION_LINK;
+
 
 export default function ApplicationPage({
   closeModal,
@@ -54,6 +56,7 @@ export default function ApplicationPage({
   const { setSpinner, setToast } = useContext(ContextAPI);
   const userDetails = getCookie("userData");
   const [formLoaded, setFormLoaded] = useState(false);
+  let [isDownloading, setIsDownloading] = useState(false);
 
   const user_details = userDetails?.userRepresentation;
 
@@ -313,6 +316,27 @@ export default function ApplicationPage({
     }
   }, [formLoaded]);
 
+  const handleFormDownload = async () => {
+    try {
+      setIsDownloading(true);
+      const formUrl = `${ENKETO_URL}/preview?formSpec=${encodeURI(
+        JSON.stringify(formSpec)
+      )}&xform=${encodedFormURI}&userId=${userId}`;
+      const res = await base64ToPdf(formUrl);
+
+      const linkSource = `data:application/pdf;base64,${res.data}`;
+      const downloadLink = document.createElement("a");
+      const fileName = "enketo_form.pdf";
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.target = window.safari ? "" : "_blank";
+      downloadLink.click();
+      setIsDownloading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       {/* Breadcrum */}
@@ -415,6 +439,19 @@ export default function ApplicationPage({
                     </button>
                   </div>
                 )}
+                {/* add download logic here */}
+                <div className="flex flex-grow gap-3 justify-end">
+              <button
+                className={`bg-primary-900 py-3 font-medium rounded-[4px] px-6 text-white flex flex-row items-center gap-3 ${
+                  isDownloading ? "cursor-not-allowed" : ""
+                }  `}
+                onClick={handleFormDownload}
+                disabled={isDownloading}
+              >
+                <FaFileDownload />
+                <span>{isDownloading ? "Downloading..." : "Download"}</span>
+              </button>
+            </div>
                 <iframe
                   id="enketo_OGA_preview"
                   title="form"
