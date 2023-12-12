@@ -510,7 +510,7 @@ export default function DesktopAnalysisView() {
         <div className="flex flex-col gap-12">
           <div className="flex flex-row">
             <div className="flex grow gap-4 justify-end items-center">
-              {paymentStatus?.toLowerCase() !== "paid" &&
+              {/* {paymentStatus?.toLowerCase() !== "paid" &&
                 formDataFromApi?.form_status !== "Rejected" && (
                   <button
                     onClick={() => setReturnToInstituteModal(true)}
@@ -534,7 +534,7 @@ export default function DesktopAnalysisView() {
                     </span>
                     Reject Application
                   </button>
-                )}
+                )} */}
               {paymentStatus?.toLowerCase() === "paid" &&
                 formDataFromApi?.form_status?.toLowerCase() ===
                   "da completed" && loggedInUserRole !== "Desktop-Assessor" && (
