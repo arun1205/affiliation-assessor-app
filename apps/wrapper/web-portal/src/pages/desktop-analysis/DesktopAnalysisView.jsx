@@ -23,6 +23,7 @@ import {
   getAllRegulatorDeviceId,
   getApplicantDeviceId,
   sendEmailNotification,
+  base64ToPdf
 } from "../../api";
 import ADMIN_ROUTE_MAP from "../../routes/adminRouteMap";
 import {
@@ -40,6 +41,10 @@ import {
 import { ContextAPI } from "../../utils/ContextAPI";
 import { StrictMode } from "react";
 import ReturnToInstituteModal from "./ReturnToInstituteModal";
+
+import {
+  FaFileDownload,
+} from "react-icons/fa";
 
 const ENKETO_URL = process.env.REACT_APP_ENKETO_URL;
 let isFormSubmittedForConfiirmation = false;
@@ -62,6 +67,7 @@ export default function DesktopAnalysisView() {
   const [onSubmit, setOnSubmit] = useState(false);
   const [rejectStatus, setRejectStatus] = useState(false);
   const [formLoaded, setFormLoaded] = useState(false);
+  let [isDownloading, setIsDownloading] = useState(false);
 
   const loggedInUserRole = getCookie("userData").userRepresentation.attributes.Role[0];
 
@@ -444,6 +450,27 @@ export default function DesktopAnalysisView() {
     setSpinner(false);
   };
 
+  const handleFormDownload = async () => {
+    try {
+      setIsDownloading(true);
+      const formUrl = `${ENKETO_URL}/preview?formSpec=${encodeURI(
+        JSON.stringify(formSpec)
+      )}&xform=${encodedFormURI}&userId=${userId}`;
+      const res = await base64ToPdf(formUrl);
+
+      const linkSource = `data:application/pdf;base64,${res.data}`;
+      const downloadLink = document.createElement("a");
+      const fileName = "enketo_form.pdf";
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.target = window.safari ? "" : "_blank";
+      downloadLink.click();
+      setIsDownloading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     setSpinner(true);
     fetchFormData();
@@ -600,6 +627,18 @@ export default function DesktopAnalysisView() {
                 </div>
               </Card>
               <Card moreClass="shadow-md">
+              <div className="flex flex-grow gap-5 my-6 justify-end">
+              <button
+                className={`bg-primary-900 py-3 font-medium rounded-[4px] px-6 text-white flex flex-row items-center gap-3 ${
+                  isDownloading ? "cursor-not-allowed" : ""
+                }  `}
+                onClick={handleFormDownload}
+                disabled={isDownloading}
+              >
+                <FaFileDownload />
+                <span>{isDownloading ? "Downloading..." : "Download"}</span>
+              </button>
+            </div>
                 <iframe
                   id="enketo_DA_preview"
                   title="form"

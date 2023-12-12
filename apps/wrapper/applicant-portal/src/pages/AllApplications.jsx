@@ -8,7 +8,7 @@ import { setToLocalForage } from "../forms";
 import { Select, Option } from "@material-tailwind/react";
 
 import { FaAngleRight } from "react-icons/fa";
-import { Switch } from "@material-tailwind/react";
+import { Switch, Tooltip } from "@material-tailwind/react";
 
 import { formService } from "../services";
 import { getCookie } from "../utils";
@@ -110,27 +110,19 @@ const AllApplications = () => {
 
   useEffect(() => {
     console.log("selectedRoundselectedRound from url",round)
-    if(round === "1"){
-      console.log("selectedRoundselectedRound ",selectedRound);
-      setSwitchDisabled(true);
-      setDefaultChecked(false);
-      //setDefaultChecked=false
-      setSelectedRound("1");
-  
-    } else {
-      console.log("selectedRoundselectedRound ",selectedRound);
-      setSelectedRound("2");
-      setDefaultChecked(true);
-      //setDefaultChecked = true;
-     // setSwitchDisabled(false);
-  
-   
-    }
+    round === "1" ?   setSelectedRound("1") :  setSelectedRound("2");
   }, []);
 
   useEffect(() => {
     
     getAvailableForms();
+    if(round === "1"){
+      setSwitchDisabled(true);
+      setDefaultChecked(false);
+    } else {
+      setSwitchDisabled(false);
+      setDefaultChecked(true);
+    }
   }, [selectedRound,formData,]);
 
 /*   useEffect(() => {
@@ -265,6 +257,7 @@ const AllApplications = () => {
           <div className="flex flex-col gap-3">
             <div className="text-xl font-semibold">Application forms</div>
             <div>
+            <Tooltip content="Round 2 forms would be visible only if NOC is obtained for Round 1">
             <Switch
                     id="show-with-errors"
                     label={<span className="text-sm">Show Round 2 forms</span>}
@@ -272,6 +265,8 @@ const AllApplications = () => {
                     disabled={switchDisabled}
                     defaultChecked={defaultChecked}
                   />
+            </Tooltip>
+            
             </div>
           
             {!loadingForms && availableForms.length === 0 && (
