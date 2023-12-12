@@ -94,7 +94,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (toast) {
+    if (toast?.toastOpen) {
       setTimeout(() => {
         setToast({
           toastOpen: false,
