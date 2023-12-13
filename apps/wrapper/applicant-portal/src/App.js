@@ -101,7 +101,7 @@ function App() {
               }
             ></Route>
             <Route
-              path={`${APPLICANT_ROUTE_MAP.dashboardModule.all_applications}/:round?`}
+              path={`${APPLICANT_ROUTE_MAP.dashboardModule.all_applications}/:round?/:courseType?`}
              
               element={
                 <PrivateRoute>

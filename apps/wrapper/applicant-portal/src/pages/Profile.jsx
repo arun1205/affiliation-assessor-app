@@ -54,7 +54,7 @@ export default function Profile() {
   }, []);
 
   const handleEditProfile = async () => {
-    console.log("data", formData);
+    //console.log("data", formData);
     let errorFlag = false;
 
     const instituteEditDetails = {
@@ -108,7 +108,7 @@ export default function Profile() {
         setToast((prevState) => ({
           ...prevState,
           toastOpen: true,
-          toastMsg: "User successfully edited",
+          toastMsg: "Updated user profile successfully.",
           toastType: "success",
         }));
         navigate(APPLICANT_ROUTE_MAP.dashboardModule.my_applications);
@@ -117,7 +117,7 @@ export default function Profile() {
       setToast((prevState) => ({
         ...prevState,
         toastOpen: true,
-        toastMsg: "Error while editing user detail.",
+        toastMsg: "Failed to edit user profile details.",
         toastType: "error",
       }));
       console.error("Registration failed due to some error:", error);
@@ -156,7 +156,7 @@ export default function Profile() {
       setToast((prevState) => ({
         ...prevState,
         toastOpen: true,
-        toastMsg: "User already registered.",
+        toastMsg: "Failed to load user profile.",
         toastType: "error",
       }));
       console.error("Can not see profile due to some error:", error);
