@@ -84,44 +84,61 @@ export default function SelfRegistration() {
           toastType: "error",
         }));
       } else {
-        const keyCloakSignupRes = await userService.signup(userDetails);
-        console.log(keyCloakSignupRes);
-
-        const addInstituteRes = await applicantService.addInstitute(
-          instituteDetails
-        );
-        console.log(addInstituteRes);
-
-        institutePocDetils.user_id = keyCloakSignupRes.data;
-        institutePocDetils["institute_id"] =
-          addInstituteRes.data.insert_institutes_one.id;
-        const addInstitutePocRes = await applicantService.addInstitutePoc(
-          institutePocDetils
-        );
-        console.log(addInstitutePocRes);
-
-        //institute update API to add Parent center code
-        const res = await applicantService.updateParentCode({ "institute_id": addInstituteRes.data.insert_institutes_one.id, "parent_code": `P${addInstituteRes.data.insert_institutes_one.id}` })
-
-        //applicant notification
-        applicantService.sendPushNotification({
-          title: "Applicant Registration",
-          body: `You are successfully registered as an Applicant`,
-          deviceToken: [`${getCookie("firebase_client_token")}`],
-          userId: keyCloakSignupRes.data,
-        });
-
-        //email notify
-        const emailBody = messages.ACCOUNT_CREATED_OTP_BASED_LOGIN_MAIL;
-        const emailData = {
-          recipientEmail: [`${userDetails.request.email}`],
-          emailSubject: `${emailBody.SUBJECT}`,
-          emailBody: `${emailBody.BODY.part1}${userDetails.request.firstName} ${userDetails.request.lastName}${emailBody.BODY.part2}${userDetails.request.email}${emailBody.BODY.part3}${userDetails.request.credentials[0].value}${emailBody.BODY.part4}`
-        };
-
-        applicantService.sendEmailNotification(emailData);
-
-        navigate(APPLICANT_ROUTE_MAP.dashboardModule.congratulations);
+        try {
+          const keyCloakSignupRes = await userService.signup(userDetails);
+          console.log(keyCloakSignupRes);
+  
+          const addInstituteRes = await applicantService.addInstitute(
+            instituteDetails
+          )
+         // console.log(addInstituteRes);
+  
+          institutePocDetils.user_id = keyCloakSignupRes.data;
+          institutePocDetils["institute_id"] =
+            addInstituteRes.data.insert_institutes_one.id;
+          const addInstitutePocRes = await applicantService.addInstitutePoc(
+            institutePocDetils
+          ).then(
+            setToast((prevState) => ({
+              ...prevState,
+              toastOpen: true,
+              toastMsg: "You are successfully registered as an Applicant",
+              toastType: "success",
+            }))
+          );
+          //console.log(addInstitutePocRes);
+  
+          //institute update API to add Parent center code
+          const res = await applicantService.updateParentCode({ "institute_id": addInstituteRes.data.insert_institutes_one.id, "parent_code": `P${addInstituteRes.data.insert_institutes_one.id}` })
+  
+          //applicant notification
+          applicantService.sendPushNotification({
+            title: "Applicant Registration",
+            body: `You are successfully registered as an Applicant`,
+            deviceToken: [`${getCookie("firebase_client_token")}`],
+            userId: keyCloakSignupRes.data,
+          });
+  
+          //email notify
+          const emailBody = messages.ACCOUNT_CREATED_OTP_BASED_LOGIN_MAIL;
+          const emailData = {
+            recipientEmail: [`${userDetails.request.email}`],
+            emailSubject: `${emailBody.SUBJECT}`,
+            emailBody: `${emailBody.BODY.part1}${userDetails.request.firstName} ${userDetails.request.lastName}${emailBody.BODY.part2}${userDetails.request.email}${emailBody.BODY.part3}${userDetails.request.credentials[0].value}${emailBody.BODY.part4}`
+          };
+  
+          applicantService.sendEmailNotification(emailData);
+  
+          navigate(APPLICANT_ROUTE_MAP.dashboardModule.congratulations);
+        } catch (error) {
+          setToast((prevState) => ({
+            ...prevState,
+            toastOpen: true,
+            toastMsg: "Error occured during applicant registration",
+            toastType: "error",
+          }));
+        }
+       
       }
     } catch (error) {
       setToast((prevState) => ({

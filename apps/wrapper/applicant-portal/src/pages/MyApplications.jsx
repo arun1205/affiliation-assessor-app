@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Button, ApplicationCard, FormCard } from "../components";
@@ -6,29 +6,33 @@ import APPLICANT_ROUTE_MAP from "../routes/ApplicantRoute";
 import { applicationService, formService } from "../services";
 import { getCookie } from "../utils";
 import { setToLocalForage } from "../forms";
-import { Switch } from "@material-tailwind/react";
+import { Switch, Tooltip } from "@material-tailwind/react";
+import { profileService } from "../services";
+import { ContextAPI } from "../utils/contextAPI";
+
 
 const MyApplications = () => {
   const [loadingApplications, setLoadingApplications] = useState(false);
   const [loadingForms, setLoadingForms] = useState(false);
-  const [switchDisabled, setSwitchDisabled] = useState(false);
+  const [switchDisabled, setSwitchDisabled] = useState(true);
   
   const [applications, setApplications] = useState([]);
   const [availableForms, setAvailableForms] = useState([]);
   const [selectedRound, setSelectedRound] = useState(1);
-
+  const [courseType, setCourseType] = useState("");
+  const { setToast } = useContext(ContextAPI);
   
   const instituteDetails = getCookie("institutes");
   const navigate = useNavigate();
 
   useEffect(() => {
-    setSelectedRound(1)
+    getProfileDetails();
+    setSelectedRound(1);
     getApplications();
     getAllAvailableForms(1);
   }, []);
 
   useEffect(() => {
-    console.log("hereree")
     getAllAvailableForms(selectedRound);
   }, [selectedRound]);
 
@@ -38,8 +42,36 @@ const MyApplications = () => {
     checkAvailableFormsToShow(selectedRound);
   }, [applications]);
 
+
+  const getProfileDetails = async () => {
+    if (!instituteDetails || !instituteDetails?.length) {
+      return;
+    }
+    console.log(instituteDetails[0].course_applied)
+    setCourseType(instituteDetails[0].course_applied)
+   /*  const instituteViewDetails = {
+      institute_id: instituteData[0]?.id,
+    };
+
+    try {
+      const response = await profileService.getProfileView(
+        instituteViewDetails
+      );
+
+      const instituteDetails = response.data.institutes[0];
+      console.log(instituteDetails)
+    } catch (error) {
+      setToast((prevState) => ({
+        ...prevState,
+        toastOpen: true,
+        toastMsg: "Something went wrong.",
+        toastType: "error",
+      }));
+      console.error("Can not see profile due to some error:", error);
+    } */
+  }
+
   const checkAvailableFormsToShow = async (roundSelected) => {
-console.log("line 45 ",roundSelected)
     if (!instituteDetails || !instituteDetails?.length) {
       return;
     }
@@ -78,7 +110,7 @@ console.log("line 45 ",roundSelected)
      // setAvailableForms(rrr?.slice(0,4))
     }
     applications.forEach((item, index) => {
-      console.log(item)
+     // console.log(item)
       if (item.noc_Path !== null && item.round === 1) {
         setSwitchDisabled(false)
       } 
@@ -100,13 +132,13 @@ console.log("line 45 ",roundSelected)
       requestPayload
     );
 
-  /*   applicationsResponse?.data?.form_submissions.forEach((item, index) => {
-      console.log(item)
+    applicationsResponse?.data?.form_submissions.forEach((item, index) => {
+      //console.log(item)
       if (item.form_id === 706) {
         item.noc_Path = "noc-path-isthere";
         item.noc_fileName = "noc-filename";
       }
-    }); */
+    });
 
     if (applicationsResponse?.data?.form_submissions) {
       setApplications(applicationsResponse?.data?.form_submissions);
@@ -125,6 +157,11 @@ console.log("line 45 ",roundSelected)
         _and: { form: {
           "form_status": {
             "_eq": "Published"
+          }
+        },
+        "_and": {
+          "course_type": {
+            "_eq": courseType
           }
         } },
         assignee: { _eq: "applicant" },
@@ -178,7 +215,7 @@ console.log("line 45 ",roundSelected)
   };
 
   const navigateToAllApplications= () => {
-    navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.all_applications}/${selectedRound}`);
+    navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.all_applications}/${selectedRound}/${courseType}`);
     
   };
 
@@ -220,12 +257,15 @@ console.log("line 45 ",roundSelected)
               <div className="flex grow">
                 <div className="flex flex-col gap-3">
                   <div className="text-xl font-semibold">Application forms</div>
+              {    <Tooltip arrow content="Round 2 forms are applicable for applicants who have got NOC issued for Round 1 forms">
                   <Switch
                     id="show-with-errors"
                     label={<span className="text-sm">Show Round 2 forms</span>}
                     onChange={handleToggleChange}
                     disabled={switchDisabled}
                   />
+                  </Tooltip>}
+                  
                   {!loadingForms && availableForms?.length === 0 && (
                     <div className="text-sm">There is no form available
                       <br />

@@ -16,7 +16,7 @@ import APPLICANT_ROUTE_MAP from "../routes/ApplicantRoute";
 
 const AllApplications = () => {
 
-  let { round } = useParams();
+  const { round, courseType } = useParams();
   const [loadingForms, setLoadingForms] = useState(false);
   
   const [switchDisabled, setSwitchDisabled] = useState(true);
@@ -25,6 +25,8 @@ const AllApplications = () => {
   
   const [value, setValue] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState("false");
+  const [courseTypeOptions, setCourseTypeOptions] = useState([]);
+
 
 
   const [formData, setFormData] = useState({
@@ -32,6 +34,11 @@ const AllApplications = () => {
       _and: { form: {
         "form_status": {
           "_eq": "Published"
+        },
+        "_and": {
+          "course_type": {
+            "_eq": courseType
+          }
         }
       } },
       assignee: { _eq: "applicant" },
@@ -119,7 +126,9 @@ const AllApplications = () => {
   };
 
   useEffect(() => {
-    console.log("selectedRoundselectedRound from url",round)
+   // console.log("courseTypecourseType from url",courseType)
+    //courseTypeOptions.push(courseType)
+    setCourseTypeOptions([courseType])
     round === "1" ?   setSelectedRound("1") :  setSelectedRound("2");
   }, []);
 
@@ -246,8 +255,11 @@ const AllApplications = () => {
                 size="lg"
                 label="Course Type"
               >
-                <Option value="Nursing">Nursing</Option>
-                <Option value="Paramedical">Paramedical</Option>
+                {/*    <Option value="Nursing">Nursing</Option>
+                <Option value="Paramedical">Paramedical</Option> */}
+                {courseTypeOptions.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
               </Select>
             </div>
             <div className="sm:col-span-3 ">
