@@ -289,7 +289,7 @@ const AllApplications = () => {
           <div className="flex flex-col gap-3">
             <div className="text-xl font-semibold">Application forms</div>
             <div>
-            <Tooltip content="Round 2 forms would be visible only if NOC is obtained for Round 1">
+            <Tooltip content="Round 2 forms are only applicable for applicants who have received NOC for Round 1 forms">
             <Switch
                     id="show-with-errors"
                     label={<span className="text-sm">Show Round 2 forms</span>}
