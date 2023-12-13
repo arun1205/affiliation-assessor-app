@@ -132,13 +132,13 @@ const MyApplications = () => {
       requestPayload
     );
 
-    applicationsResponse?.data?.form_submissions.forEach((item, index) => {
+   /*  applicationsResponse?.data?.form_submissions.forEach((item, index) => {
       //console.log(item)
       if (item.form_id === 706) {
         item.noc_Path = "noc-path-isthere";
         item.noc_fileName = "noc-filename";
       }
-    });
+    }); */
 
     if (applicationsResponse?.data?.form_submissions) {
       setApplications(applicationsResponse?.data?.form_submissions);
@@ -257,7 +257,7 @@ const MyApplications = () => {
               <div className="flex grow">
                 <div className="flex flex-col gap-3">
                   <div className="text-xl font-semibold">Application forms</div>
-              {    <Tooltip arrow content="Round 2 forms are applicable for applicants who have got NOC issued for Round 1 forms">
+              {    <Tooltip arrow content="Round 2 forms are only applicable for applicants who have received NOC for Round 1 forms">
                   <Switch
                     id="show-with-errors"
                     label={<span className="text-sm">Show Round 2 forms</span>}
