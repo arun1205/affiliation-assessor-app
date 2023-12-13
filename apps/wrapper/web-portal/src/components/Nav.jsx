@@ -25,6 +25,13 @@ export default function Nav() {
                         <AiFillHome className="text-white text-xl" />
                       </NavLink>
                     </li>
+                    {<li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
+                      <NavLink
+                        to={ADMIN_ROUTE_MAP.adminModule.dashboard.home}
+                      >
+                        Dashboard
+                      </NavLink>
+                    </li>}
                     <li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
                       <NavLink to={ADMIN_ROUTE_MAP.adminModule.manageUsers.home}>
                         User Management
@@ -42,6 +49,13 @@ export default function Nav() {
                     </li>
                     <li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
                       <NavLink
+                        to={ADMIN_ROUTE_MAP.adminModule.scheduleManagement.home}
+                      >
+                        Schedule Management
+                      </NavLink>
+                    </li>
+                    <li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
+                      <NavLink
                         to={ADMIN_ROUTE_MAP.adminModule.onGroundInspection.home}
                       >
                         On-Ground Inspection Analysis
@@ -54,26 +68,27 @@ export default function Nav() {
                         Certificate Management
                       </NavLink>
                     </li>
-                    <li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
-                      <NavLink
-                        to={ADMIN_ROUTE_MAP.adminModule.scheduleManagement.home}
-                      >
-                        Schedule Management
-                      </NavLink>
-                    </li>
-                    {<li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
+                   
+                    {/* {<li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
                       <NavLink
                         to={ADMIN_ROUTE_MAP.adminModule.dashboard.home}
                       >
                         Dashboard
                       </NavLink>
-                    </li>}
+                    </li>} */}
                   </ul>
                 case 'Desktop-Admin':
                   return <ul className="flex md nav-items text-gray-500 text-[14px] font-bold uppercase gap-4 justify-center align-center menus">
                     <li className="flex bg-primary-800 rounded-md items-center justify-center h-8 w-8 hover:cursor-pointer">
                       <NavLink to={ADMIN_ROUTE_MAP.adminModule.manageUsers.home}>
                         <AiFillHome className="text-white text-xl" />
+                      </NavLink>
+                    </li>
+                    <li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
+                      <NavLink
+                        to={ADMIN_ROUTE_MAP.adminModule.dashboard.home}
+                      >
+                        Dashboard
                       </NavLink>
                     </li>
                     <li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
@@ -88,6 +103,13 @@ export default function Nav() {
                     </li>
                     <li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
                       <NavLink
+                        to={ADMIN_ROUTE_MAP.adminModule.scheduleManagement.home}
+                      >
+                        Schedule Management
+                      </NavLink>
+                    </li>
+                    <li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
+                      <NavLink
                         to={ADMIN_ROUTE_MAP.adminModule.onGroundInspection.home}
                       >
                         On-Ground Inspection Analysis
@@ -98,20 +120,6 @@ export default function Nav() {
                         to={ADMIN_ROUTE_MAP.adminModule.certificateManagement.home}
                       >
                         Certificate Management
-                      </NavLink>
-                    </li>
-                    <li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
-                      <NavLink
-                        to={ADMIN_ROUTE_MAP.adminModule.scheduleManagement.home}
-                      >
-                        Schedule Management
-                      </NavLink>
-                    </li>
-                    <li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
-                      <NavLink
-                        to={ADMIN_ROUTE_MAP.adminModule.dashboard.home}
-                      >
-                        Dashboard
                       </NavLink>
                     </li>
                   </ul>
