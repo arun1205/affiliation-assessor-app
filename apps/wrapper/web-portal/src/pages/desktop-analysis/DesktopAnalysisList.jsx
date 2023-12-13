@@ -324,7 +324,7 @@ const DesktopAnalysisList = () => {
   };
 
   formsList?.forEach((e) => {
-    console.log("e =>", e);
+    //console.log("e =>", e);
     let applicationType = e?.course?.application_type?.replace("_", " ");
     var formsData = {
       form_title: (

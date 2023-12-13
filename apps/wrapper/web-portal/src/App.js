@@ -55,17 +55,7 @@ import Toast from "./components/Toast";
 
 function App() {
   const loggedInUser = getCookie("regulator")?.[0];
-  /* const loggedInUser = 
-  {
-    "full_name":"Dharani Vamanamurthy Super Admin",
-    "user_id":"add1215f-c4c5-428d-9d4f-55b8192f5743",
-    "email":"dharani.vamanamurthy+superadmin@tarento.com",
-    "phonenumber":"9952149539",
-    "role":"Desktop-Assessor",
-    "device_id":"[]"
- } */
  
-  console.log(JSON.stringify(loggedInUser)) //Desktop-Assessor
   const [spinner, setSpinner] = useState(false);
   const [toast, setToast] = useState({
     toastOpen: false,

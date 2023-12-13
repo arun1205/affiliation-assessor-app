@@ -122,7 +122,11 @@ console.log("line 45 ",roundSelected)
     setLoadingForms(true);
     const requestPayload = {
       condition: {
-        _and: { form: {} },
+        _and: { form: {
+          "form_status": {
+            "_eq": "Published"
+          }
+        } },
         assignee: { _eq: "applicant" },
       round: {
         _eq: round
