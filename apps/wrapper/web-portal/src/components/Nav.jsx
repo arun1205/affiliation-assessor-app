@@ -10,7 +10,6 @@ import { useState } from "react";
 export default function Nav() {
   //const userRole = 'Desktop-Assessor';
   const [userRole] = useState(getCookie("regulator")[0]["role"])
-  console.log(userRole)
   return (
     <>
       <div className="h-[48px] bg-white drop-shadow-sm">

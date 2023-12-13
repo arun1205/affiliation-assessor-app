@@ -26,9 +26,14 @@ const AllApplications = () => {
   const [value, setValue] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState("false");
 
+
   const [formData, setFormData] = useState({
     condition: {
-      _and: { form: {} },
+      _and: { form: {
+        "form_status": {
+          "_eq": "Published"
+        }
+      } },
       assignee: { _eq: "applicant" },
       round: {
         _eq: selectedRound
@@ -98,6 +103,11 @@ const AllApplications = () => {
   const handleClearFilter = () => {
     setFormData({
       condition: {
+        _and: { form: {
+          "form_status": {
+            "_eq": "Published"
+          }
+        } },
         assignee: {
           _eq: "applicant"
         },
@@ -153,6 +163,11 @@ const AllApplications = () => {
      // getAvailableForms();
      setFormData({
       condition: {
+        _and: { form: {
+          "form_status": {
+            "_eq": "Published"
+          }
+        } },
         assignee: {
           _eq: "applicant"
         },
@@ -166,6 +181,11 @@ const AllApplications = () => {
      // getAvailableForms();
      setFormData({
       condition: {
+        _and: { form: {
+          "form_status": {
+            "_eq": "Published"
+          }
+        } },
         assignee: {
           _eq: "applicant"
         },
