@@ -102,19 +102,10 @@ const AdminLogin = () => {
       };
 
       const loginRes = await userService.login(loginDetails);
-      console.log(loginRes);
-      // const verifyOtpReq = userService.verifyOtp(data.email, data.otp);
-      // const fusionAuthLoginReq = from(verifyOtpReq).pipe(
-      //   mergeMap((verifyOtpRes) => {
-      //     if (verifyOtpRes.data.data.Status === "Error") {
-      //       setVerifyEnteredOtp(false);
-      //     } else {
-      //       setVerifyEnteredOtp(true);
-      //       return userService.login(loginDetails);
-      //     }
-      //   })
-      // );
-      let user_details = loginRes?.data?.userRepresentation;
+      //console.log(loginRes);
+
+
+      const user_details = loginRes?.data?.userRepresentation;
       const adminDetailsRes = await getRegulator({
         user_id: user_details?.id,
       });
@@ -144,16 +135,26 @@ const AdminLogin = () => {
         });
       }
     } catch (error) {
-      setToast((prevState) => ({
-        ...prevState,
-        toastOpen: true,
-        toastMsg: "Enter the correct OTP.",
-        toastType: "error",
-      }));
-      console.log(
-        "Otp veriification and login failed due to some error",
-        error
-      );
+      if(error.response.data.code){
+        setToast((prevState) => ({
+          ...prevState,
+          toastOpen: true,
+          toastMsg: "User not found. Please contact system admin.",
+          toastType: "error",
+        }));
+      } else {
+        setToast((prevState) => ({
+          ...prevState,
+          toastOpen: true,
+          toastMsg: "Enter the correct OTP.",
+          toastType: "error",
+        }));
+        console.log(
+          "Otp veriification and login failed due to some error",
+          error
+        );
+      }
+      
       removeCookie("regulator");
       removeCookie("userData");
     } finally {
@@ -286,11 +287,11 @@ const AdminLogin = () => {
                         Please enter the correct OTP
                       </div>
                     )}
-                    {toast.toastOpen && (
+                   {/*  {toast.toastOpen && (
                       <div className="text-red-500 mt-2 text-sm">
                         You are not a registered admin.
                       </div>
-                    )}
+                    )} */}
                   </div>
                   <Button
                     moreClass="uppercase text-white w-full mt-7"

@@ -173,76 +173,94 @@ export default function ManageUsersList({
     let e = user;
     try {
       setSpinner(true);
-      const response = state.menu_selected === 'Assessor' ? await handleInctiveUser(formData) : await handleInctiveRegulatorUser(formData);
-      e["workingstatus"] = "Invalid";
-      resUserData.forEach((item) => {
-        if (item.id === userId) {
-          item.status = "Inactive";
-          item.more_actions = (
-            <div className="flex flex-row text-2xl font-semibold">
-              <Menu placement="bottom-end">
-                <MenuHandler>
-                  <button className="leading-3 relative top-[-8px]">...</button>
-                </MenuHandler>
-                <MenuList className="p-2">
-                  <MenuItem
-                    onClick={() =>
-                      navigation(
-                        `${ADMIN_ROUTE_MAP.adminModule.manageUsers.createUser}/${e.user_id}`
-                      )
-                    }
-                  >
-                    <div className="flex flex-row gap-4 mt-4">
-                      <div>
-                        <MdEdit />
-                      </div>
-                      <div className="text-semibold m-">
-                        <span>Edit</span>
-                      </div>
-                    </div>{" "}
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() =>
-                      e?.workingstatus === "Invalid"
-                        ? handleUserSetValid(e)
-                        : handleUsersetInvalid(e)
-                    }
-                  >
-                    <div className="flex flex-row gap-4">
-                      <div>
-                        <MdSwapHoriz />
-                      </div>
-                      <div className="text-semibold m-">
-                        <span>
-                          {e?.workingstatus === "Invalid"
-                            ? "Activate"
-                            : "Deactivate"}
-                        </span>
-                      </div>
-                    </div>
-                  </MenuItem>
-                  <MenuItem onClick={() => handleUserDelete(e)}>
-                    <div className="flex flex-row gap-4">
-                      <div>
-                        <MdDelete />
-                      </div>
-                      <div className="text-semibold m-">
-                        <span>Delete</span>
-                      </div>
-                    </div>{" "}
-                  </MenuItem>
-                </MenuList>
-              </Menu>
-            </div>
-          );
+
+      const reqBody = {
+        "request": {
+          "userName": userId
         }
-      });
-      console.log("data", resUserData);
-      setUserTableList(resUserData);
-      const userDetails = response?.data?.update_assessors?.returning[0] ? response?.data?.update_assessors?.returning[0] : response?.data?.update_regulator?.returning[0]
-      if (userDetails) {
-        sendActivationStatusNotification(userDetails, 'inactive');
       }
+
+      const res = await userService.deActivateUserKeycloak(reqBody)
+      if(res){
+        const response = state.menu_selected === 'Assessor' ? await handleInctiveUser(formData) : await handleInctiveRegulatorUser(formData);
+        e["workingstatus"] = "Invalid";
+        resUserData.forEach((item) => {
+          if (item.id === userId) {
+            item.status = "Inactive";
+            item.more_actions = (
+              <div className="flex flex-row text-2xl font-semibold">
+                <Menu placement="bottom-end">
+                  <MenuHandler>
+                    <button className="leading-3 relative top-[-8px]">...</button>
+                  </MenuHandler>
+                  <MenuList className="p-2">
+                    <MenuItem
+                      onClick={() =>
+                        navigation(
+                          `${ADMIN_ROUTE_MAP.adminModule.manageUsers.createUser}/${e.user_id}`
+                        )
+                      }
+                    >
+                      <div className="flex flex-row gap-4 mt-4">
+                        <div>
+                          <MdEdit />
+                        </div>
+                        <div className="text-semibold m-">
+                          <span>Edit</span>
+                        </div>
+                      </div>{" "}
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() =>
+                        e?.workingstatus === "Invalid"
+                          ? handleUserSetValid(e)
+                          : handleUsersetInvalid(e)
+                      }
+                    >
+                      <div className="flex flex-row gap-4">
+                        <div>
+                          <MdSwapHoriz />
+                        </div>
+                        <div className="text-semibold m-">
+                          <span>
+                            {e?.workingstatus === "Invalid"
+                              ? "Activate"
+                              : "Deactivate"}
+                          </span>
+                        </div>
+                      </div>
+                    </MenuItem>
+                    <MenuItem onClick={() => handleUserDelete(e)}>
+                      <div className="flex flex-row gap-4">
+                        <div>
+                          <MdDelete />
+                        </div>
+                        <div className="text-semibold m-">
+                          <span>Delete</span>
+                        </div>
+                      </div>{" "}
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              </div>
+            );
+          }
+        });
+       // console.log("data", resUserData);
+        setUserTableList(resUserData);
+        const userDetails = response?.data?.update_assessors?.returning[0] ? response?.data?.update_assessors?.returning[0] : response?.data?.update_regulator?.returning[0]
+        if (userDetails) {
+          sendActivationStatusNotification(userDetails, 'inactive');
+          setToast((prevState) => ({
+            ...prevState,
+            toastOpen: true,
+            toastMsg: "User deactivated successfully",
+            toastType: "success",
+          }));
+        }
+      }
+
+     
     } catch (error) {
       const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage;
       setToast((prevState) => ({
@@ -272,75 +290,94 @@ export default function ManageUsersList({
     let e = user;
     try {
       setSpinner(true);
-      const validResponse = state.menu_selected === 'Assessor' ? await handleActiveUser(formData) : await handleActiveRegulatorUser(formData);
-      e["workingstatus"] = "Valid";
-      resUserData.forEach((item) => {
-        if (item.id === userId) {
-          item.status = "Active";
-          item.more_actions = (
-            <div className="flex flex-row text-2xl font-semibold">
-              <Menu placement="bottom-end">
-                <MenuHandler>
-                  <button className="leading-3 relative top-[-8px]">...</button>
-                </MenuHandler>
-                <MenuList className="p-2">
-                  <MenuItem
-                    onClick={() =>
-                      navigation(
-                        `${ADMIN_ROUTE_MAP.adminModule.manageUsers.createUser}/${e.user_id}`
-                      )
-                    }
-                  >
-                    <div className="flex flex-row gap-4">
-                      <div>
-                        <MdEdit />
-                      </div>
-                      <div className="text-semibold m-">
-                        <span>Edit</span>
-                      </div>
-                    </div>{" "}
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() =>
-                      e?.workingstatus === "Invalid"
-                        ? handleUserSetValid(e)
-                        : handleUsersetInvalid(e)
-                    }
-                  >
-                    <div className="flex flex-row gap-4">
-                      <div>
-                        <MdSwapHoriz />
-                      </div>
-                      <div className="text-semibold m-">
-                        <span>
-                          {e?.workingstatus === "Invalid"
-                            ? "Activate"
-                            : "Deactivate"}
-                        </span>
-                      </div>
-                    </div>{" "}
-                  </MenuItem>
-                  <MenuItem onClick={() => handleUserDelete(e)}>
-                    <div className="flex flex-row gap-4">
-                      <div>
-                        <MdDelete />
-                      </div>
-                      <div className="text-semibold m-">
-                        <span>Delete</span>
-                      </div>
-                    </div>{" "}
-                  </MenuItem>
-                </MenuList>
-              </Menu>
-            </div>
-          );
+
+      const reqBody = {
+        "request": {
+          "userName": userId
         }
-      });
-      setUserTableList(resUserData);
-      const userDetails = validResponse?.data?.update_assessors?.returning[0] ? validResponse?.data?.update_assessors?.returning[0] : validResponse?.data?.update_regulator?.returning[0]
-      if (userDetails) {
-        sendActivationStatusNotification(userDetails, 'active');
       }
+
+      const res = await userService.activateUserKeycloak(reqBody)
+
+      if (res.status === 200) {
+        const validResponse = state.menu_selected === 'Assessor' ? await handleActiveUser(formData) : await handleActiveRegulatorUser(formData);
+        e["workingstatus"] = "Valid";
+        resUserData.forEach((item) => {
+          if (item.id === userId) {
+            item.status = "Active";
+            item.more_actions = (
+              <div className="flex flex-row text-2xl font-semibold">
+                <Menu placement="bottom-end">
+                  <MenuHandler>
+                    <button className="leading-3 relative top-[-8px]">...</button>
+                  </MenuHandler>
+                  <MenuList className="p-2">
+                    <MenuItem
+                      onClick={() =>
+                        navigation(
+                          `${ADMIN_ROUTE_MAP.adminModule.manageUsers.createUser}/${e.user_id}`
+                        )
+                      }
+                    >
+                      <div className="flex flex-row gap-4">
+                        <div>
+                          <MdEdit />
+                        </div>
+                        <div className="text-semibold m-">
+                          <span>Edit</span>
+                        </div>
+                      </div>{" "}
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() =>
+                        e?.workingstatus === "Invalid"
+                          ? handleUserSetValid(e)
+                          : handleUsersetInvalid(e)
+                      }
+                    >
+                      <div className="flex flex-row gap-4">
+                        <div>
+                          <MdSwapHoriz />
+                        </div>
+                        <div className="text-semibold m-">
+                          <span>
+                            {e?.workingstatus === "Invalid"
+                              ? "Activate"
+                              : "Deactivate"}
+                          </span>
+                        </div>
+                      </div>{" "}
+                    </MenuItem>
+                    <MenuItem onClick={() => handleUserDelete(e)}>
+                      <div className="flex flex-row gap-4">
+                        <div>
+                          <MdDelete />
+                        </div>
+                        <div className="text-semibold m-">
+                          <span>Delete</span>
+                        </div>
+                      </div>{" "}
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              </div>
+            );
+          }
+        });
+        setUserTableList(resUserData);
+        const userDetails = validResponse?.data?.update_assessors?.returning[0] ? validResponse?.data?.update_assessors?.returning[0] : validResponse?.data?.update_regulator?.returning[0]
+        if (userDetails) {
+
+          sendActivationStatusNotification(userDetails, 'active');
+          setToast((prevState) => ({
+            ...prevState,
+            toastOpen: true,
+            toastMsg: "User activated successfully",
+            toastType: "success",
+          }));
+        }
+      }
+     
     } catch (error) {
       console.log("error - ", error);
       const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage

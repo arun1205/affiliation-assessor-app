@@ -97,6 +97,10 @@ const API_URL = {
     EDIT_USER: "update",
     CHECK_IS_EMAIL_EXIST: `${rest}findUserByEmail`,
   },
+  USER: {
+    ACTIVATE: "activate",
+    DEACTIVATE: "deactivate"
+  },
   LOGIN: {
     GENERATE_OTP: "keycloak/otp",
     USERLOGIN: "keycloak/login",
