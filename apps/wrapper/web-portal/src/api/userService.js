@@ -82,6 +82,29 @@ const generateOtp = (postData) => {
   });
 };
 
+//Deactivate user keycloak
+export const deActivateUserKeycloak = async (postData) => {
+  
+  return axios.post(`${BASE_URL}${API_URL.USER.DEACTIVATE}`, postData, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: process.env.REACT_APP_AUTH_TOKEN,
+    },
+  });
+};
+
+//Activate user keycloak
+export const activateUserKeycloak = async (postData) => {
+
+    return axios.post(`${BASE_URL}${API_URL.USER.ACTIVATE}`, postData, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: process.env.REACT_APP_AUTH_TOKEN,
+      },
+    });
+
+};
+
 const signup = (userDetails) => {
   return axios.post(`${BASE_URL}${API_URL.SIGNUP.CREATE_USER}`, userDetails, {
     headers: {
@@ -131,4 +154,6 @@ export const userService = {
   deleteUsers,
   signup,
   getAccessToken,
+  deActivateUserKeycloak,
+  activateUserKeycloak
 };
