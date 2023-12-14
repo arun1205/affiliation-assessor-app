@@ -8,6 +8,7 @@ let DESKTOP_ANALYSIS = "desktop-analysis";
 let SCHEDULE_MANAGEMENT = "schedule-management";
 let NOTIFICATIONS = "notifications"
 let DASHBOARD = "dashboard"
+const ROLE_MANAGEMENT = "role-management";
 
 ADMIN_ROUTE_MAP.auth = "/auth";
 ADMIN_ROUTE_MAP.loginModule = {
@@ -56,6 +57,11 @@ ADMIN_ROUTE_MAP.adminModule = {
   },
   dashboard: {
     home: `/${DASHBOARD}`,
+  },
+  roleManagement: {
+    home: `/${ROLE_MANAGEMENT}`,
+    list: `/${ROLE_MANAGEMENT}/list`,
+    updateRole: `/${ROLE_MANAGEMENT}/create-update-role`,
   }
   
 };

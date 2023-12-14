@@ -36,6 +36,10 @@ import FormsOverview from "./pages/manage-forms/FormsOverview";
 import CreateForm from "./pages/manage-forms/CreateForm";
 import UploadForm from "./pages/manage-forms/UploadForm";
 
+import ManageRolesList from "./pages/role-management/ManageRolesList";
+import ManageRole from "./pages/role-management/ManageRole";
+import CreateUpdateRole from "./pages/role-management/CreateUpdateRole";
+
 import DesktopAnalysisList from "./pages/desktop-analysis/DesktopAnalysisList";
 import DesktopAnalysisView from "./pages/desktop-analysis/DesktopAnalysisView";
 import CertificateManagement from "./pages/certificate-management/CertificateManagement";
@@ -53,7 +57,9 @@ import { ContextAPI } from "./utils/ContextAPI";
 import { getCookie, getLocalTimeInISOFormat } from "./utils";
 import Toast from "./components/Toast";
 
+
 function App() {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const loggedInUser = getCookie("regulator")?.[0];
  
   const [spinner, setSpinner] = useState(false);
@@ -81,6 +87,19 @@ function App() {
 
   useEffect(() => {
     getPermissionForToken();
+
+setTimeout(() => {
+  console.log("checking conn")
+  if(!isOnline){
+    setToast((prevState) => ({
+      ...prevState,
+      toastOpen: true,
+      toastMsg: "You seem to be offline. Please check your internet connection.",
+      toastType: "error",
+    }));
+  }
+}, 3000);
+
   }, []);
 
   useEffect(() => {
@@ -239,6 +258,26 @@ function App() {
               element={
                 <PrivateRoute>
                   <DashboardLandingPage />
+                </PrivateRoute>
+              }
+              ></Route>
+
+              <Route
+                path={ADMIN_ROUTE_MAP.adminModule.roleManagement.home}
+                element={<ManageRole />}
+              >
+                <Route index element={<ManageRolesList />}></Route>
+                <Route
+                  path={`${ADMIN_ROUTE_MAP.adminModule.roleManagement.updateRole}/:userId?`}
+                  element={<CreateUpdateRole />}
+                ></Route>
+              </Route>
+
+
+             <Route path={ADMIN_ROUTE_MAP.adminModule.roleManagement.home}
+              element={
+                <PrivateRoute>
+                  <ManageRolesList />
                 </PrivateRoute>
               }
             ></Route>

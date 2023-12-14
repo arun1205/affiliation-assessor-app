@@ -135,7 +135,7 @@ const AdminLogin = () => {
         });
       }
     } catch (error) {
-      if(error.response.data.code){
+      if(error?.response?.data?.code){
         setToast((prevState) => ({
           ...prevState,
           toastOpen: true,
