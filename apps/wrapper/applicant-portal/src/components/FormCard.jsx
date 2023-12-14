@@ -16,7 +16,16 @@ const FormCard = (props) => {
 
       </div>
       <div className="flex" >
-        <span className={"text-teal-400 text-sm"}>
+      <span className={"text-purple-400 text-sm  rounded-md p-1" } style={{ backgroundColor: "#eee" }}>
+          Course type: {props?.form?.course_type}   -  ({props?.form?.course_level})
+        </span>
+        
+     {/*    <span className={"text-indigo-700 text-sm rounded-md m-2"} style={{ backgroundColor: "#eee" }}>
+          Course level: ({props?.form?.course_level})
+        </span> */}
+        </div>
+        <div className="flex" >
+        <span className={"text-teal-400 text-sm rounded-md p-1"} style={{ backgroundColor: "#eee" }}>
           Round : {props?.form?.round}
         </span>
       </div>

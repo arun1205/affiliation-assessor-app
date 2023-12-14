@@ -45,7 +45,7 @@ export default function ManageUsersList({
   setDeleteFlags,
 }) {
   const navigation = useNavigate();
-  var resUserData = [];
+  let resUserData = [];
   const [deleteUsersModel, setDeleteUsersModel] = useState(false);
   const [deleteBulkUsersModel, setDeleteBulkUsersModel] = useState(false);
 
@@ -469,7 +469,7 @@ export default function ManageUsersList({
       full_name: e.fname || e.lname ? e.fname + " " + e.lname : e.name,
       email: e.email?.toLowerCase(),
       mobile_number: e.phonenumber,
-      role: e.role === "Desktop-Admin" ? "Admin" : "Admin",
+      role: e.role === "Desktop-Admin" ? "Admin" : "Desktop-Assessor",
       status:
         e.workingstatus === "Valid"
           ? "Active"
@@ -558,7 +558,7 @@ export default function ManageUsersList({
         ...prevState,
         totalCount: res.data.assessors_aggregate.aggregate.totalCount,
       }));
-      setUsersList(res?.data?.assessors);
+     // setUsersList(res?.data?.assessors);
       const data = res?.data?.assessors;
       data.forEach(setTableData);
       setUserTableList(resUserData);
@@ -581,7 +581,7 @@ export default function ManageUsersList({
         ...prevState,
         totalCount: res.data.regulator_aggregate.aggregate.totalCount,
       }));
-      setUsersList(res?.data?.regulator);
+      //setUsersList(res?.data?.regulator);
       const data = res?.data?.regulator;
       data.forEach(setAdminTableData);
       const newData = resUserData.filter(user => user.role === "Admin");
@@ -607,7 +607,7 @@ export default function ManageUsersList({
         totalCount: res.data.regulator_aggregate.aggregate.totalCount,
       }));
       console.log(res?.data?.regulator)
-      setUsersList(res?.data?.regulator);
+     // setUsersList(res?.data?.regulator);
       const data = res?.data?.regulator;
       data.forEach(setTableData);
       console.log(resUserData);
@@ -633,27 +633,38 @@ export default function ManageUsersList({
           ...prevState,
           totalCount: res.data.assessors_aggregate.aggregate.totalCount,
         }));
-        setUsersList(res?.data?.assessors);
-        const data = res?.data?.assessors;
-        data.forEach(setTableData);
+       // setUsersList(res?.data?.assessors);
+        res?.data?.assessors.forEach(setTableData);
       }
       if (state.menu_selected === "Desktop-Admin") {
+       
+        const newData = res?.data?.regulator.filter(obj => {
+          return obj.role === "Desktop-Admin";
+        });
+      
+       // setUsersList(newData);
+        
+        newData.forEach(setAdminTableData);
+       
         setPaginationInfo((prevState) => ({
           ...prevState,
-          totalCount: res.data.regulator_aggregate.aggregate.totalCount,
+          totalCount: resUserData.length,
         }));
-        setUsersList(res?.data?.regulator);
-        const data = res?.data?.regulator;
-        data.forEach(setAdminTableData);
+        
       }
       if (state.menu_selected === "Desktop-Assessor") {
+        
+      //  setUsersList(res?.data?.regulator);
+        
+        const newData =  res?.data?.regulator.filter(obj => {
+          return obj.role === "Desktop-Assessor";
+        });
+        
+        newData.forEach(setAdminTableData);
         setPaginationInfo((prevState) => ({
           ...prevState,
-          totalCount: res.data.regulator_aggregate.aggregate.totalCount,
+          totalCount: resUserData.length,
         }));
-        setUsersList(res?.data?.regulator);
-        const data = res?.data?.regulator;
-        data.forEach(setAdminTableData);
       }
       setUserTableList(resUserData);
     } catch (error) {
@@ -676,7 +687,7 @@ export default function ManageUsersList({
         ...prevState,
         totalCount: res?.data?.assessors_aggregate?.aggregate?.totalCount,
       }));
-      setUsersList(res?.data?.assessors);
+     // setUsersList(res?.data?.assessors);
       const data = res?.data?.assessors;
       data.forEach(setTableData);
       setUserTableList(resUserData);
@@ -840,23 +851,15 @@ export default function ManageUsersList({
         const postData = { assessorId: selectedRows[x].user_id };
         const validResponse = await handleInctiveUser(postData);
 
-        // resUserData.forEach((item) => {
-        //   if (item.id === selectedRows[x].user_id) {
-        //     item.status = "Inactive";
-        //   }
-        // });
+        
       } else if (selectedRows[x].status.toLowerCase() === "inactive") {
         const postData = { assessorId: selectedRows[x].user_id };
         const validResponse = await handleActiveUser(postData);
-        // resUserData.forEach((item) => {
-        //   if (item.id === selectedRows[x].user_id) {
-        //     item.status = "Active";
-        //   }
-        // });
+        
       }
     }
     await fetchAllAssessors();
-    // setUserTableList(resUserData);
+   
   };
 
   useEffect(() => {
