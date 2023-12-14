@@ -67,6 +67,14 @@ export default function Nav() {
                         Certificate Management
                       </NavLink>
                     </li>
+
+                    {/* <li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
+                      <NavLink
+                        to={ADMIN_ROUTE_MAP.adminModule.roleManagement.home}
+                      >
+                        Role Management
+                      </NavLink>
+                    </li> */}
                    
                     {/* {<li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
                       <NavLink
