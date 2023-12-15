@@ -453,6 +453,30 @@ export const getFormSubmissions = () => {
   return makeHasuraCalls(query);
 };
 
+export const isUserActive = async (email) => {
+  try {
+    const res = await keyCloakAxiosService.post(
+      KEYCLOAK_BASE_URL + "emaildetails",
+      {
+        request:{
+          fieldName: "email",
+          fieldValue: email
+        }
+    },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: process.env.REACT_APP_AUTH_TOKEN,
+        },
+      }
+    );
+    return res.data[0].enabled;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
 export const generateOTP = async (email) => {
   try {
     const res = await keyCloakAxiosService.post(

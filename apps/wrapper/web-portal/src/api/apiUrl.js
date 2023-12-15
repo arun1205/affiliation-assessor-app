@@ -99,7 +99,8 @@ const API_URL = {
   },
   USER: {
     ACTIVATE: "activate",
-    DEACTIVATE: "deactivate"
+    DEACTIVATE: "deactivate",
+    CHECKVALID: "emaildetails"
   },
   LOGIN: {
     GENERATE_OTP: "keycloak/otp",

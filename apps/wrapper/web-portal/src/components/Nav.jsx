@@ -68,13 +68,13 @@ export default function Nav() {
                       </NavLink>
                     </li>
 
-                    {/* <li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
+                    <li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
                       <NavLink
                         to={ADMIN_ROUTE_MAP.adminModule.roleManagement.home}
                       >
                         Role Management
                       </NavLink>
-                    </li> */}
+                    </li>
                    
                     {/* {<li className="flex fontsize hover:text-primary-600 hover:cursor-pointer">
                       <NavLink

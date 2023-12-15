@@ -8,7 +8,7 @@ import OtpInput from "react-otp-input";
 
 import { sendOtpToMobile, verifyOtpSavePassword } from "../api";
 import { logout } from "./../utils/index";
-import { generateOTP, getLoginDetails, editUserKeycloak } from "../api";
+import { generateOTP, getLoginDetails, editUserKeycloak, isUserActive } from "../api";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -92,8 +92,15 @@ const ForgotPassword = () => {
       return;
     } else {
       setEmail(mobile);
-      let res = await generateOTP(mobile);
-      if (res === "Sending OTP to user mail") setOtpPage(true);
+
+      if(await isUserActive(mobile)){
+        let res = await generateOTP(mobile);
+        if (res === "Sending OTP to user mail") setOtpPage(true);
+      } else {
+        setError("User Not Found. Please contact system admin.");
+        setTimeout(() => setError(false), 3000);
+      }
+    
     }
   };
 
@@ -223,6 +230,27 @@ const ForgotPassword = () => {
               errorStyle={"animate__animated animate__headShake error-otp"}
               shouldAutoFocus={true}
             />
+            {/*  <OtpInput
+      value={otp}
+      onChange={setOtp}
+      numInputs={6}
+      renderSeparator={<span>-</span>}
+      renderInput={(props) => <input {...props} />}
+      shouldAutoFocus={true}
+      containerStyle={"w-full py-6"}
+      inputStyle={{
+        border: "1px solid #9b9b9b",
+        borderRadius: "0.25rem",
+        marginRight: "8px",
+        height: "3rem",
+        width: "3rem",
+        fontSize: "1.5rem",
+        color: "rgba(0,0,0,0.5)",
+      }}
+      isInputNum
+      hasErrored={error}
+      errorStyle={"animate__animated animate__headShake error-otp"}
+    /> */}
             {error && (
               <p className="text-red-500 text-sm font-bold py-1">{error} </p>
             )}
