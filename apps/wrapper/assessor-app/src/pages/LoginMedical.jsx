@@ -32,9 +32,9 @@ const LoginMedical = ({ handleStepChangeForLogin }) => {
     }
 
     const loginRes = await login(username, password);
-    console.log("login-", loginRes.accessToken);
+   // console.log("login-", loginRes.accessToken);
     const role = loginRes?.userRepresentation?.attributes?.Role?.[0];
-    console.log(role);
+    //console.log(role);
     if (loginRes?.accessToken) {
       setCookie("userData", loginRes);
       navigate(ROUTE_MAP.root_star);
@@ -52,6 +52,8 @@ const LoginMedical = ({ handleStepChangeForLogin }) => {
     }
 
     if(loginRes?.error) {
+     // console.log(loginRes?.error)
+      loginRes?.error === "Unable to get user details" ?   setError("User not found. Please contact administrator") :
       setError("Invalid Username/ Password");
       setTimeout(() => {
         setError("");
