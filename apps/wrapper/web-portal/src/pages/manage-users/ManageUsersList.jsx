@@ -230,7 +230,7 @@ export default function ManageUsersList({
                         </div>
                       </div>
                     </MenuItem>
-                    <MenuItem onClick={() => handleUserDelete(e)}>
+                 {/*    <MenuItem onClick={() => handleUserDelete(e)}>
                       <div className="flex flex-row gap-4">
                         <div>
                           <MdDelete />
@@ -239,7 +239,7 @@ export default function ManageUsersList({
                           <span>Delete</span>
                         </div>
                       </div>{" "}
-                    </MenuItem>
+                    </MenuItem> */}
                   </MenuList>
                 </Menu>
               </div>
@@ -348,7 +348,7 @@ export default function ManageUsersList({
                         </div>
                       </div>{" "}
                     </MenuItem>
-                    <MenuItem onClick={() => handleUserDelete(e)}>
+                  {/*   <MenuItem onClick={() => handleUserDelete(e)}>
                       <div className="flex flex-row gap-4">
                         <div>
                           <MdDelete />
@@ -357,7 +357,7 @@ export default function ManageUsersList({
                           <span>Delete</span>
                         </div>
                       </div>{" "}
-                    </MenuItem>
+                    </MenuItem> */}
                   </MenuList>
                 </Menu>
               </div>
@@ -484,7 +484,7 @@ export default function ManageUsersList({
                   </div>
                 </div>{" "}
               </MenuItem>
-              <MenuItem onClick={() => handleUserDelete(e)}>
+             {/*  <MenuItem onClick={() => handleUserDelete(e)}>
                 <div className="flex flex-row gap-4 p-1">
                   <div>
                     <MdDelete />
@@ -493,7 +493,7 @@ export default function ManageUsersList({
                     <span>Delete</span>
                   </div>
                 </div>{" "}
-              </MenuItem>
+              </MenuItem> */}
             </MenuList>
           </Menu>
         </div>
@@ -565,7 +565,7 @@ export default function ManageUsersList({
                   </div>
                 </div>{" "}
               </MenuItem>
-              <MenuItem onClick={() => handleUserDelete(e)}>
+             {/*  <MenuItem onClick={() => handleUserDelete(e)}>
                 <div className="flex flex-row gap-4 p-1">
                   <div>
                     <MdDelete />
@@ -574,7 +574,7 @@ export default function ManageUsersList({
                     <span>Delete</span>
                   </div>
                 </div>{" "}
-              </MenuItem>
+              </MenuItem> */}
             </MenuList>
           </Menu>
         </div>

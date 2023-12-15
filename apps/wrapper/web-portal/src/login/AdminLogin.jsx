@@ -42,11 +42,7 @@ const AdminLogin = () => {
 
   const login = async (data) => {
     try {
-      // const loginDetails = { username: data.email };
-      // const checkUser = await userService.login(loginDetails);
-      // console.log("user check", checkUser.data.user.email);
-      // if (checkUser.data.user.email) {
-      // console.log(checkUser.data.user.email);
+
       const otpRes = await userService.generateOtp({
         username: data.email,
       });
@@ -64,24 +60,7 @@ const AdminLogin = () => {
         }));
         console.log("Something went wrong", otpRes);
       }
-      // } else {
-      //   setToast((prevState) => ({
-      //     ...prevState,
-      //     toastOpen: true,
-      //     toastMsg: "User not registered.",
-      //     toastType: "error",
-      //   }));
-      //   setTimeout(
-      //     () =>
-      //       setToast((prevState) => ({
-      //         ...prevState,
-      //         toastOpen: false,
-      //         toastMsg: "",
-      //         toastType: "",
-      //       })),
-      //     3000
-      //   );
-      // }
+    
     } catch (error) {
       setToast((prevState) => ({
         ...prevState,
@@ -102,7 +81,37 @@ const AdminLogin = () => {
       };
 
       const loginRes = await userService.login(loginDetails);
-      //console.log(loginRes);
+      console.log(loginRes);
+
+      if(loginRes?.data?.error){
+
+        switch (loginRes?.data?.error) {
+         // case "unable_to_get_user": msg should be changed but since all modules handling this text.. not changing
+        case "Unable to get user detils - Update user":
+          setToast((prevState) => ({
+            ...prevState,
+            toastOpen: true,
+            toastMsg: "User not found. Please contact system admin.",
+            toastType: "error",
+          }));
+          
+            break;
+  
+          case "OTP mismatch":
+            setToast((prevState) => ({
+              ...prevState,
+              toastOpen: true,
+              toastMsg: "Enter the correct OTP.",
+              toastType: "error",
+            }));
+
+            break;
+  
+          default:
+            break;
+        }
+          return
+      }
 
 
       const user_details = loginRes?.data?.userRepresentation;
@@ -135,25 +144,14 @@ const AdminLogin = () => {
         });
       }
     } catch (error) {
-      if(error?.response?.data?.code){
+      console.log(
+        "some error @ login", error);
         setToast((prevState) => ({
           ...prevState,
           toastOpen: true,
-          toastMsg: "User not found. Please contact system admin.",
+          toastMsg: "Something went wrong. Please try again later.",
           toastType: "error",
         }));
-      } else {
-        setToast((prevState) => ({
-          ...prevState,
-          toastOpen: true,
-          toastMsg: "Enter the correct OTP.",
-          toastType: "error",
-        }));
-        console.log(
-          "Otp veriification and login failed due to some error",
-          error
-        );
-      }
       
       removeCookie("regulator");
       removeCookie("userData");
