@@ -60,7 +60,7 @@ const AdminLogin = () => {
         }));
         console.log("Something went wrong", otpRes);
       }
-    
+
     } catch (error) {
       setToast((prevState) => ({
         ...prevState,
@@ -72,6 +72,20 @@ const AdminLogin = () => {
     }
   };
 
+  const isUserActive = async (data) => {
+    const res = await userService.isUserActive(data);
+    if (res.data[0].enabled) {
+      login(data);
+    } else {
+      setToast((prevState) => ({
+        ...prevState,
+        toastOpen: true,
+        toastMsg: "User not found. Please contact system admin.",
+        toastType: "error",
+      }));
+    }
+  }
+
   const verifyOtp = async (data) => {
     try {
       setSpinner(true);
@@ -81,37 +95,18 @@ const AdminLogin = () => {
       };
 
       const loginRes = await userService.login(loginDetails);
-      console.log(loginRes);
+     // console.log(loginRes);
 
-      if(loginRes?.data?.error){
-
-        switch (loginRes?.data?.error) {
-         // case "unable_to_get_user": msg should be changed but since all modules handling this text.. not changing
-        case "Unable to get user detils - Update user":
-          setToast((prevState) => ({
-            ...prevState,
-            toastOpen: true,
-            toastMsg: "User not found. Please contact system admin.",
-            toastType: "error",
-          }));
-          
-            break;
-  
-          case "OTP mismatch":
-            setToast((prevState) => ({
-              ...prevState,
-              toastOpen: true,
-              toastMsg: "Enter the correct OTP.",
-              toastType: "error",
-            }));
-
-            break;
-  
-          default:
-            break;
-        }
-          return
+      if (loginRes?.data?.error) {
+        setToast((prevState) => ({
+          ...prevState,
+          toastOpen: true,
+          toastMsg: "Enter the correct OTP.",
+          toastType: "error",
+        }));
+        return;
       }
+
 
 
       const user_details = loginRes?.data?.userRepresentation;
@@ -123,8 +118,8 @@ const AdminLogin = () => {
       setCookie("regulator", adminDetailsRes.data.regulator);
       if (role === "Super-Admin" || role === "Desktop-Admin") {
         navigate(ADMIN_ROUTE_MAP.adminModule.manageUsers.home);
-      } 
-      else if(role === "Desktop-Assessor"){
+      }
+      else if (role === "Desktop-Assessor") {
         navigate(ADMIN_ROUTE_MAP.adminModule.desktopAnalysis.home);
       }
       else {
@@ -146,13 +141,13 @@ const AdminLogin = () => {
     } catch (error) {
       console.log(
         "some error @ login", error);
-        setToast((prevState) => ({
-          ...prevState,
-          toastOpen: true,
-          toastMsg: "Something went wrong. Please try again later.",
-          toastType: "error",
-        }));
-      
+      setToast((prevState) => ({
+        ...prevState,
+        toastOpen: true,
+        toastMsg: "Something went wrong. Please try again later.",
+        toastType: "error",
+      }));
+
       removeCookie("regulator");
       removeCookie("userData");
     } finally {
@@ -171,7 +166,8 @@ const AdminLogin = () => {
               <>
                 <form
                   onSubmit={handleSubmit((data) => {
-                    login(data);
+                   // login(data);
+                   isUserActive(data)
                   })}
                   noValidate
                 >
@@ -285,7 +281,7 @@ const AdminLogin = () => {
                         Please enter the correct OTP
                       </div>
                     )}
-                   {/*  {toast.toastOpen && (
+                    {/*  {toast.toastOpen && (
                       <div className="text-red-500 mt-2 text-sm">
                         You are not a registered admin.
                       </div>

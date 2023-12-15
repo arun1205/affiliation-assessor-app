@@ -148,6 +148,24 @@ const deleteUsers = (postData) => {
     },
   });
 };
+
+const isUserActive = (postData) => {
+  return keyCloakAxiosService.post(API_URL.USER.CHECKVALID,
+     {
+      request:{
+        fieldName: "email",
+        fieldValue: postData.email
+      }
+  },
+     {
+    headers: {
+      "Content-Type": "application/json",
+      // "Authorization": getCookie("access_token")
+      Authorization: process.env.REACT_APP_AUTH_TOKEN,
+    },
+  });
+
+};
 export const userService = {
   generateOtp,
   login,
@@ -155,5 +173,6 @@ export const userService = {
   signup,
   getAccessToken,
   deActivateUserKeycloak,
-  activateUserKeycloak
+  activateUserKeycloak,
+  isUserActive
 };
