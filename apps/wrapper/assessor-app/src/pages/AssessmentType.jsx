@@ -242,8 +242,8 @@ const AssessmentType = () => {
       pageDesc="Select the appropriate application type that you'd want to proceed inspection with."
       logoutDisabled
     >
-      <div className="w-full flex flex-col px-6">
-        <div className="flex flex-col gap-4">
+        <div className="w-full flex flex-col px-6">
+         {/* <div className="flex flex-col gap-4">
           <div className="font-medium">
             Begin by filling the basic information first:
           </div>
@@ -252,14 +252,14 @@ const AssessmentType = () => {
             onClick={handleNavigateToBasicFrom}
           >
             <div className="text-white grow">Basic information</div>
-            <div className="grow-0 flex justify-center items-center">
+           <div className="grow-0 flex justify-center items-center">
               <FontAwesomeIcon
                 icon={faChevronRight}
                 className="text-1xl text-white"
               />
-            </div>
+            </div> 
           </div>
-        </div>
+        </div>*/}
 
         <div className="my-6">
           <hr className="border-slate-300" />
