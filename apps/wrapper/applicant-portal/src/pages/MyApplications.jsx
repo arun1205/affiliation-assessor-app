@@ -27,10 +27,14 @@ const MyApplications = () => {
 
   useEffect(() => {
     getProfileDetails();
+  }, []);
+
+
+  useEffect(() => {
     setSelectedRound(1);
     getApplications();
     getAllAvailableForms(1);
-  }, []);
+  }, [courseType]);
 
   useEffect(() => {
     getAllAvailableForms(selectedRound);
@@ -43,7 +47,7 @@ const MyApplications = () => {
   }, [applications]);
 
 
-  const getProfileDetails = async () => {
+  const getProfileDetails = () => {
     if (!instituteDetails || !instituteDetails?.length) {
       return;
     }
