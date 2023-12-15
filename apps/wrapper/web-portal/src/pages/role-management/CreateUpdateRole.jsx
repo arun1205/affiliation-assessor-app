@@ -35,17 +35,16 @@ export default function CreateUpdateRole() {
 
   const [availableTabsList, setAvailableTabsList] = useState([
 
-    { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberry' },
-    { value: 'vanilla', label: 'Vanilla' },
+    { value: 'Desktop Analysis screen', label: 'Desktop Analysis' },
+    { value: 'Form Management Screen', label: 'Form Management' },
+    { value: 'User Management Screen', label: 'User Management' },
+    { value: 'Schedule Management Screen', label: 'Schedule Management' },
   ]);
 
   const [selectedTabsList, setSelectedTabsList] = useState([
-    { value: 'Sugar', label: 'Sugar' },
-    { value: 'Salt', label: 'Salt' },
-    { value: 'Moshala', label: 'Moshala' },
-    { value: 'Dahi', label: 'Dahi' },
-    { value: 'Haldi', label: 'Haldi' },
+    { value: 'On-Ground Management Screen', label: 'On-Ground Management' },
+    { value: 'Certificate Management Screen', label: 'Certificate Management' },
+    { value: 'Dashboard Management Screen', label: 'Dashboard Management' },
   ]);
 
   const [selectedAvailableOptions, setSelectedAvailableOptions] = useState([]);
@@ -419,7 +418,7 @@ export default function CreateUpdateRole() {
                   <div className="sm:col-span-3">
                     <Label
                       htmlFor="firstname"
-                      text="First name"
+                      text="Role name"
                       required
                     ></Label>
                     <div className="mt-2">
@@ -437,7 +436,7 @@ export default function CreateUpdateRole() {
                       />
                     </div>
                   </div>
-                  <div className="sm:col-span-3">
+                {/*   <div className="sm:col-span-3">
                     <Label htmlFor="lastname" text="Last name" required></Label>
                     <div className="mt-2">
                       <input
@@ -453,55 +452,16 @@ export default function CreateUpdateRole() {
                       // disabled={userId?true:false}
                       />
                     </div>
-                  </div>
+                  </div> */}
                 </div>
 
-                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div className="sm:col-span-3">
-                    <Label htmlFor="email" text="Email Id" required></Label>
-                    <div className="mt-2">
-                      <input
-                        type="email"
-                        placeholder="Type here"
-                        id="email"
-                        name="email"
-                        defaultValue={user.email}
-                        onChange={(e) => handleChange("email", e.target.value)}
-                        disabled={userId ? true : false}
-                        className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-3">
-                    <Label
-                      htmlFor="phonenumber"
-                      text="Phone number"
+                <div className="mt-9 grid grid-cols-1  sm:grid-cols-3">
+               {/*  <Label
                       required
-                    ></Label>
-                    <div className="mt-2">
-                      <input
-                        type="tel"
-                        placeholder="Type here"
-                        name="phonenumber"
-                        id="phonenumber"
-                        maxLength={10}
-                        value={user.phonenumber}
-                        onChange={(e) =>
-                          handleNumbersOnly(e.target.value, "phonenumber")
-                        }
-                        className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div className="sm:col-span-3 ">
-                    <Label
-                      required
-                      text="Role"
+                      text="Module"
                       htmlFor="role"
-                      moreClass="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
-                    />
+                      moreClass=" text-sm font-medium text-gray-900 dark:text-gray-400"
+                    /> */}
 
                     <select
                       required
@@ -512,11 +472,15 @@ export default function CreateUpdateRole() {
                       onChange={(e) => handleChange("role", e.target.value)}
                       className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     >
-                      <option value="">Select Module</option>
+                      <option value="">Select Module*</option>
                       <option value="Assessor">OGA Assessor App</option>
                       <option value="Desktop-Admin">Regulator Portal</option>
                       <option value="Desktop-Assessor">Applicant Portal</option>
                     </select>
+                </div>
+                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                  <div className="sm:col-span-3 ">
+                   
                     <div class="flex-parent-element">
                       <div class="flex-child-element border border-gray-200">
                         <p className="m-2"> Available Screens</p>
