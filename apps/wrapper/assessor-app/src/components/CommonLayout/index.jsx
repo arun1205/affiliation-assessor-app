@@ -12,7 +12,6 @@ import CommonModal from "../Modal";
 // import isOnline from "is-online";
 import { logout } from "../../utils/index.js";
 import { useEffect } from "react";
-import { base64ToPdf } from "../../api";
 import { Tooltip } from "@material-tailwind/react";
 import ButtonLoader from "../ButtonLoader";
 
@@ -79,7 +78,7 @@ const CommonLayout = (props) => {
             alt="illustration"
           />
         </div>
-        <div className="bg-white min-h-[calc(100vh-120px)] w-full rounded-t-[60px] overflow-none">
+        <div className="bg-white min-h-[calc(100vh-80px)] w-full rounded-t-[60px] overflow-none">
           <div className="flex flex-col px-8 py-7 gap-1">
             <div className="flex flex-row w-full items-center cursor-pointer gap-4">
               <div className="flex grow-0">
