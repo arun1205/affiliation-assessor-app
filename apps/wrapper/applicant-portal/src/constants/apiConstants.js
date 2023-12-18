@@ -1,7 +1,8 @@
 export const APIS = {
   APPLICATIONS: {
     STATUS_LIST: "/rest/getApplicationStatus",
-    OTHER_VALID_FORMS:"/rest/applicantApplicationStatus"
+    OTHER_VALID_FORMS:"/rest/applicantApplicationStatus",
+    DRAFTED_APPLICATIONS: "/rest/getAllInstituteDrafts"
   },
   COMMON: {
     REGISTER_EVENT: `/rest/addEvents`,
@@ -10,6 +11,7 @@ export const APIS = {
   FORMS: {
     LIST: "/rest/getAllCourses",
     VIEW_FORM: `/rest/getFormData`,
+    SAVE_DRAFT: "/rest/instituteFormsDrafts"
   },
   SIGNUP: {
     CREATE_USER: "create",

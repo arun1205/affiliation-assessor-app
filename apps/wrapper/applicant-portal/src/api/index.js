@@ -63,6 +63,15 @@ export const exportToExcel = async (downloadObjects) => {
     writeFile(workbook, downloadObjects.fileName ? downloadObjects.fileName : 'data.xlsx');
   }
 }
+
+/** API to save drafted application on click of save as draft */
+export const saveApplicationDraft = async (postData) => {
+  const res = await customPost.post(
+    APIS.FORMS.SAVE_DRAFT,
+    postData
+  );
+  return res.data;
+}
 //#endregion
 
 //#endregion
