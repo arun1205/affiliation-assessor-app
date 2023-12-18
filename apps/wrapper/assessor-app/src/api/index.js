@@ -473,7 +473,7 @@ export const isUserActive = async (email) => {
     if(res.data[0]){
       return res.data[0].enabled;
     } else {
-      return [];
+      return false;
     }
    
   } catch (err) {
