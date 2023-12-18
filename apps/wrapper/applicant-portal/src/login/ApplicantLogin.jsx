@@ -214,11 +214,11 @@ const ApplicantLogin = () => {
                         Please enter the correct OTP
                       </p>
                     )}
-                    {toast.toastOpen && (
+                  {/*   {toast.toastOpen && (
                       <p className="text-red-500 mt-2 text-sm">
                         You are not a registered institute.
                       </p>
-                    )}
+                    )} */}
                   </div>
                   <Button
                     moreClass="uppercase text-white w-full mt-7"
