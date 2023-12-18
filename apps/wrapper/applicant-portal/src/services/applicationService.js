@@ -9,7 +9,12 @@ const formsToOmit = (requestPayload) => {
   return axiosService.post(APIS.APPLICATIONS.OTHER_VALID_FORMS, requestPayload);
 };
 
+const getDraftForms = (requestPayload) => {
+  return axiosService.post(APIS.APPLICATIONS.DRAFTED_APPLICATIONS, requestPayload);
+}
+
 export const applicationService = {
   getData,
-  formsToOmit
+  formsToOmit,
+  getDraftForms
 };

@@ -20,7 +20,8 @@ const MyApplications = () => {
   const [availableForms, setAvailableForms] = useState([]);
   const [selectedRound, setSelectedRound] = useState(1);
   const [courseType, setCourseType] = useState("");
-  const { setToast } = useContext(ContextAPI);
+  const { setToast } = useContext(ContextAPI);  const [draftApplications, setDraftApplications] = useState([]);
+
   
   const instituteDetails = getCookie("institutes");
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ const MyApplications = () => {
     getProfileDetails();
     setSelectedRound(1);
     getApplications();
+    getDraftApplications();
     getAllAvailableForms(1);
   }, []);
 
@@ -119,6 +121,40 @@ const MyApplications = () => {
   }
 
 
+  const getDraftApplications = async () => {
+    if (!instituteDetails || !instituteDetails?.length) {
+      return;
+    }
+
+    setLoadingApplications(true);
+    const requestPayload = {
+      "searchString": {
+        "applicant_id": {
+          _eq: instituteDetails?.[0].id || 11 
+        }
+      },
+      offsetNo: 1,
+      limit: 100
+    }
+    const draftApplicationResponse = await applicationService.getDraftForms(
+      requestPayload
+    );
+
+  /*   applicationsResponse?.data?.form_submissions.forEach((item, index) => {
+      console.log(item)
+      if (item.form_id === 706) {
+        item.noc_Path = "noc-path-isthere";
+        item.noc_fileName = "noc-filename";
+      }
+    }); */
+
+    if (draftApplicationResponse?.data?.institute_form_drafts) {
+      setDraftApplications(draftApplicationResponse?.data?.institute_form_drafts);
+    }
+    console.log("draft Applications =>", draftApplicationResponse?.data?.institute_form_drafts);
+    setLoadingApplications(false);
+  };
+  
   const getApplications = async () => {
     if (!instituteDetails || !instituteDetails?.length) {
       return;
@@ -186,7 +222,7 @@ const MyApplications = () => {
 
   const handleViewApplicationHandler = (formObj) => {
     navigate(
-      `${APPLICANT_ROUTE_MAP.dashboardModule.createForm}/${formObj?.form_name
+      `${APPLICANT_ROUTE_MAP.dashboardModule.viewForm}/${formObj?.form_name
       }/${formObj?.form_id}/${formObj.form_status?.toLowerCase()}`
     );
   };
@@ -199,7 +235,7 @@ const MyApplications = () => {
     }
     let file_name = form_obj[0].name;
     file_name = file_name.substr(0, file_name.lastIndexOf("."));
-    navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.createForm}/${file_name}`);
+    navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.viewForm}/${file_name}`);
   };
 
   
@@ -236,6 +272,18 @@ const MyApplications = () => {
               apply.
             </div>
           )}
+          {/** DRAFT APPLICATIONS */}
+          {/* {!loadingApplications && draftApplications?.length > 0 && (
+            <div className="flex flex-wrap">
+              {draftApplications.map((application) => (
+                <ApplicationCard
+                  application={application}
+                  key={application.form_id}
+                  onView={handleViewApplicationHandler}
+                />
+              ))}
+            </div>
+          )} */}
           {!loadingApplications && applications?.length > 0 && (
             <div className="flex flex-wrap">
               {applications.map((application) => (

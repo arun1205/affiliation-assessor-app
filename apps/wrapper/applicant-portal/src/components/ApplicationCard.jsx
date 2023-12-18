@@ -111,29 +111,31 @@ const ApplicationCard = (props) => {
               ? props?.application?.payment_status
               : "NA"}
           </span>
-          <span
-            className={`text-xs p-1 rounded-md ${
-              props.application.round === 1
-                ? "text-yellow-800"
-                : "text-indigo-700"
-            }`}
-            style={{ backgroundColor: "#eee" }}
-          >
-            
-            Round: {props.application.round}
-          </span> 
+          <div>
+            <span
+              className={`text-xs py-1 px-2  rounded-md ${
+                props.application.round === 1
+                  ? "text-yellow-800"
+                  : "text-indigo-700"
+              }`}
+              style={{ backgroundColor: "#eee" }}
+            >
+              Round: {props.application.round}
+            </span> 
+          </div>
         </div>
-        <span
-            className={`text-xs p-1  ${
-              props.application.round === 1
-                ? "text-yellow-800"
-                : "text-indigo-700"
-            }`}
-            style={{ backgroundColor: "#eee" }}
-          >
-            
+        <div>
+          <span
+              className={`text-xs py-1 px-2 rounded-md  ${
+                props.application.round === 1
+                  ? "text-yellow-800"
+                  : "text-indigo-700"
+              }`}
+              style={{ backgroundColor: "#eee" }}
+            >
             Course Applied: {props.application.institute.course_applied}
           </span>
+        </div>
       </div>
 
       <div className="flex flex-row gap-2">

@@ -26,7 +26,7 @@ import CommonModal from "../Modal";
 import Toast from "../components/Toast";
 import "./loading.css";
 
-import { getFormData, base64ToPdf, getLocalTimeInISOFormat } from "../api";
+import { getFormData, base64ToPdf, getLocalTimeInISOFormat, saveApplicationDraft } from "../api";
 import {
   getPrefillXML,
   saveFormSubmission,
@@ -44,7 +44,6 @@ let isFormInPreview = false;
 
 const CreateForm = (props) => {
   const navigate = useNavigate();
-
   let { formName, formId, applicantStatus } = useParams();
   let [encodedFormURI, setEncodedFormURI] = useState("");
   let [paymentDetails, setPaymentDetails] = useState("");
@@ -111,6 +110,7 @@ const CreateForm = (props) => {
     let data = await getFromLocalForage(
       `${userId}_${formName}_${new Date().toISOString().split("T")[0]}`
     );
+    console.log("Dataaaaa ====>", data);
 
     if (data) {
       formData = data;
@@ -260,6 +260,41 @@ const CreateForm = (props) => {
   };
 
   const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
+    const eventFormData = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+    console.log("eventFormData", eventFormData.formData);
+    if(eventFormData?.formData?.draft !== '' && eventFormData?.formData?.draft === true) {
+      const course_details = await getSpecificDataFromForage("course_details");
+      console.log("courseDetails ===>", course_details);
+      const requestBody = {
+        "object": {
+          applicant_id: instituteDetails?.[0]?.id,
+          form_status: "Draft",
+          assessment_type: course_details?.form?.assignee,
+          round: course_details?.form?.round,
+          course_type: course_details?.course_type,
+          course_level: course_details?.course_level,
+          course_name: course_details?.form?.course_mapping,
+          course_id: course_details?.course_id,
+          active: true,
+          updated_by: userId,
+          created_by: userId,
+          form_data: eventFormData?.formData?.xml,
+          form_id: course_details?.form?.form_id,
+          created_on: Date.now(),        
+        }
+      }
+      console.log(requestBody);
+      const res = await saveApplicationDraft(requestBody);
+      if(res) {
+        console.log("record saved as draft");
+        setTimeout(
+          () => navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.my_applications}`),
+          1500
+        );
+      }
+      
+      return;
+    }
     if(typeof e.data === 'string' && e.data.includes('formLoad')) {
       setFormLoaded(true);
       return;
@@ -361,7 +396,7 @@ const CreateForm = (props) => {
       }
 
       // Need to work on Save draft...
-      iframeContent.getElementById("save-draft").style.display = "none";
+      // iframeContent.getElementById("save-draft").style.display = "none";
       // var draftButton = iframeContent.getElementById("save-draft");
     }
   };
