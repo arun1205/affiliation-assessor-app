@@ -23,9 +23,13 @@ export default function PaymentResult() {
 
   const applicantTransaction = async () => {
     if (params.get("transaction_id")) {
+      const paymentRefNo = await applicantService.getPaymentRefNumber();
       const formData = {
         transaction_details: [
-          { id: params.get("transaction_id"), form_id: formId },
+          { id: params.get("transaction_id"),
+           form_id: formId,
+           payment_ref_no: paymentRefNo
+           }
         ],
       };
       const formsResponse = await applicantService.transactionStatus(formData);
