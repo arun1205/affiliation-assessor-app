@@ -76,7 +76,7 @@ const AdminLogin = () => {
     setSpinner(true);
     try {
       const res = await userService.isUserActive(data);
-      if (res.data[0].enabled) {
+      if (res?.data[0]?.enabled) {
         login(data);
         setSpinner(false);
       } else {

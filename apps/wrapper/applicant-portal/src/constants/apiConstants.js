@@ -19,6 +19,10 @@ export const APIS = {
     EDIT_USER: "update",
   },
 
+  USER:{
+    CHECKVALID: "emaildetails"
+  },
+  
   LOGIN: {
     GENERATE_OTP: "keycloak/otp",
     USERLOGIN: "keycloak/login",
