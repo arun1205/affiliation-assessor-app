@@ -205,11 +205,12 @@ const ForgotPassword = () => {
         <div className="flex flex-col px-3 py-8 h-5/6 justify-between h-[90%]">
           <div className="w-full">
             <p className="text-secondary text-xl lg:text-2xl font-bold">
-              Enter OTP sent on
+              Enter OTP sent on  :
+              <span className="text-primary text-xl lg:text-3xl  py-4">
+              &nbsp;{mobile}
+            </span>
             </p>
-            <p className="text-primary text-2xl lg:text-3xl font-bold py-4">
-              {email}
-            </p>
+            
             <style>
               {`
                 .error-otp {
