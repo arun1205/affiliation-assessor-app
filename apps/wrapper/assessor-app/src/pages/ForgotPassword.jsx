@@ -119,6 +119,11 @@ const ForgotPassword = () => {
     setDetails(loginRes.data);
     // const res = await verifyOtpSavePassword(mobile, newPass, otp);
     if (loginRes.status === 200) {
+      if(loginRes.data.error === "OTP mismatch"){
+        setError("Wrong OTP entered");
+        setTimeout(() => setError(false), 3000);
+        return;
+      }
       setChangePasswordPage(true);
       setOtpPage(false);
     } else if (loginRes?.params?.err == "INVALID_OTP_USERNAME_PAIR") {
