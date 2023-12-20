@@ -45,6 +45,11 @@ const initiatePayment = async (postData) => {
   return res;
 };
 
+const initiatePaymentForNewForm = async (postData) => {
+  const res = await paymentService.post(APIS.PAYMENT.GENERATE_LINK_V2, postData);
+  return res;
+};
+
 const updateApplicantDeviceId = async (postData) => {
   const res = await axiosService.put(
     APIS.COMMON.UPDATE_APPLICANT_DEVICE_ID,
@@ -121,6 +126,7 @@ export const applicantService = {
   addInstitutePoc,
   getApplicantDetails,
   initiatePayment,
+  initiatePaymentForNewForm,
   updateApplicantDeviceId,
   sendPushNotification,
   getAllRegulatorDeviceId,
