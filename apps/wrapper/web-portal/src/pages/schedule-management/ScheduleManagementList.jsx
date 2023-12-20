@@ -349,7 +349,7 @@ const ScheduleManagementList = () => {
       <Nav />
       
       <div className={`container m-auto min-h-[calc(100vh-148px)] px-3 py-12`}>
-      <div className="sm:col-span-3 flex justify-end">
+    {/*   <div className="sm:col-span-3 flex justify-end">
               <Button
                 onClick={() => {
                   downloadTemplate();
@@ -357,7 +357,7 @@ const ScheduleManagementList = () => {
                 moreClass="border boevent_namerder-blue-500 bg-white text-blue-500 w-[160px]"
                 text="Download Template"
               ></Button>
-              </div>
+              </div> */}
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-4">
             <div className="flex flex-row">
