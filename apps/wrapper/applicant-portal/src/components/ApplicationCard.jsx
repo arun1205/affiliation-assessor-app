@@ -3,6 +3,10 @@ import { Card, Button } from "./index";
 import { generate_uuidv4, getCookie, readableDate, removeCookie, setCookie } from "../utils";
 import { applicantService } from "../services";
 import paymentConfigPostData from '../payment-config/config.json';
+
+import {
+  setToLocalForage,
+} from "./../forms";
 const ApplicationCard = (props) => {
   let formName = props?.application?.course?.course_name?.trim() || "NA";
 
