@@ -338,30 +338,36 @@ const DesktopAnalysisList = () => {
         setSpinner(true);
         const res = await getDesktopAnalysisForms(postData);
         // setFormsList(res?.data?.form_submissions);
-        console.log('DesktopAnalysisForms: ', res?.data?.form_submissions);
-        const dashBoardReports = {
+        //console.log('DesktopAnalysisForms: ', res?.data?.form_submissions);
+        const daCompletedFormsReport = {
           sheetName: 'report',
           downloadObject: [],
           headers: ['FORM ID','FORM TITLE',	'APPLICATION TYPE',	'COURSE TYPE','DATE',	'FORM STATUS'	,'PAYMENT STATUS','ASSESSOR ID']
           
         }
+       
         res?.data?.form_submissions.forEach((element) => {
-          const report = {
-            form_id: element.form_id,
-            form_title: element.course.course_name,
-            application_type:  element.course.application_type || "-",
-            course_type: element?.course_type || "-",
-            date: element?.submitted_on || "-",
-           // course_level: element?.course_level || "-",
-            form_status: element?.form_status,
-            payment_status: element?.payment_status || "-",
+         
+          if(element?.payment_status === "Paid"){
+            const report = {
+              form_id: element.form_id,
+              form_title: element.course.course_name,
+              application_type:  element.course.application_type || "-",
+              course_type: element?.course_type || "-",
+              date: element?.submitted_on || "-",
+             // course_level: element?.course_level || "-",
+              form_status: element?.form_status,
+              payment_status: element?.payment_status || "-",
+            }
+            daCompletedFormsReport.downloadObject.push(report)
           }
-          dashBoardReports.downloadObject.push(report)
         })
+        const arr = daCompletedFormsReport.downloadObject
+        daCompletedFormsReport.downloadObject = arr.sort((p1, p2) => (p1.date < p2.date) ? 1 : (p1.date > p2.date) ? -1 : 0);
        // const roundName = selectedRound === 1 ? 'Round One' : 'Round Two'
         const downloadObjects = {
           fileName: `${formatDate(new Date())}_DA_COMPLETED.xlsx`,
-          objectsList: [dashBoardReports]
+          objectsList: [daCompletedFormsReport]
         }
         exportToExcel(downloadObjects);
         setSpinner(false);
