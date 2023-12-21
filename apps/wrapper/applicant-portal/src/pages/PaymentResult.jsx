@@ -27,12 +27,14 @@ export default function PaymentResult() {
 
   const applicantTransaction = async () => {
     if (params.get("transaction_id")) {
-      const paymentRefNo = await applicantService.getPaymentRefNumber();
+      const tempStore = await getFromLocalForage(
+        `refNo`
+      );
       const formData = {
         transaction_details: [
           { id: params.get("transaction_id"),
            form_id: formId,
-           payment_ref_no: paymentRefNo
+           payment_ref_no: tempStore.refNo
            }
         ],
       };
@@ -77,11 +79,28 @@ export default function PaymentResult() {
     const formDATA = await getFromLocalForage(
       `common_payload`
     );
+   
     if (params.get("resp") && formDATA.paymentStage === "firstStage") {
+
+      try {
+        const tempStore = await getFromLocalForage(
+          `refNo`
+        );
+       // console.log(tempStore.refNo)
+      const reqBody = {
+        refNo: tempStore.refNo,
+        status: "Paid"
+    }
+
+      await applicantService.updateTransactionStatusByRefNo(reqBody);
       navigate(
         `${APPLICANT_ROUTE_MAP.dashboardModule.createForm}/${formDATA?.common_payload.form_name
         }/${undefined}/${undefined}/${formDATA?.paymentStage}`
       );
+      } catch (error) {
+        console.log(error)
+      }
+      
      
     } else if (params.get("resp"))  {
       applicantTransaction();
