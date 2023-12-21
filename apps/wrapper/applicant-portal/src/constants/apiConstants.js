@@ -11,7 +11,9 @@ export const APIS = {
   FORMS: {
     LIST: "/rest/getAllCourses",
     VIEW_FORM: `/rest/getFormData`,
-    SAVE_DRAFT: "/rest/instituteFormsDrafts"
+    SAVE_DRAFT: "/rest/instituteFormsDrafts",
+    UPDATE_DRAFT: "/rest/updateInstituteFormDrafts",
+    DELETE_DRAFT: "/rest/deleteInstituteFormDraftsById"
   },
   SIGNUP: {
     CREATE_USER: "create",

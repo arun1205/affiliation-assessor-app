@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import XMLParser from "react-xml-parser";
+import { applicationService } from "../services";
 
 import {
   FaAngleRight,
@@ -17,6 +18,7 @@ import {
   updateFormData,
   getSpecificDataFromForage,
   removeAllFromLocalForage,
+  removeItemFromLocalForage,
 } from "./../forms";
 
 import APPLICANT_ROUTE_MAP from "../routes/ApplicantRoute";
@@ -26,7 +28,7 @@ import CommonModal from "../Modal";
 import Toast from "../components/Toast";
 import "./loading.css";
 
-import { getFormData, base64ToPdf, getLocalTimeInISOFormat, saveApplicationDraft } from "../api";
+import { getFormData, base64ToPdf, getLocalTimeInISOFormat, saveApplicationDraft, updateApplicationDraft, deleteApplicationDraft } from "../api";
 import {
   getPrefillXML,
   saveFormSubmission,
@@ -136,6 +138,51 @@ const CreateForm = (props) => {
     setEncodedFormURI(formURI);
   };
 
+  const getDraftApplicationDetail = async (id) => {
+      let formData = {};
+      let data = await getFromLocalForage(
+        `${userId}_${formName}_${new Date().toISOString().split("T")[0]}`
+      );
+      console.log("Dataaaaa ====>", data);
+  
+      if (data) {
+        formData = data;
+      } else {
+        const requestPayload = {
+          "searchString": {
+            "applicant_id": {
+              _eq: instituteDetails?.[0].id || 11
+            },
+              "id": {
+                "_eq": id
+              }
+            },
+          offsetNo: 0,
+          limit: 100
+        }
+        const draftApplicationResponse = await applicationService.getDraftForms(
+          requestPayload
+        );
+        console.log("response =>", draftApplicationResponse);
+          formData = draftApplicationResponse?.data?.institute_form_drafts[0];
+          // setPaymentDetails(formData?.payment_status);
+
+          console.log("formData ==>", formData);
+          setFormDataNoc(formData);
+      }
+  
+      let fileGCPPath =
+        process.env.REACT_APP_GCP_AFFILIATION_LINK + formName + ".xml";
+  
+      let formURI = await getPrefillXML(
+        `${fileGCPPath}`,
+        formSpec.onSuccess,
+        formData?.formData || formData?.form_data,
+        formData?.imageUrls
+      );
+      setEncodedFormURI(formURI);
+    };
+
   const afterFormSubmit = async (e) => {
     const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
 
@@ -145,7 +192,12 @@ const CreateForm = (props) => {
       if (data?.state === "ON_FORM_SUCCESS_COMPLETED") {
         isFormInPreview = true;
         if (!previewFlag) {
+          if(applicantStatus !== 'draft' || applicantStatus === undefined) {
           await fetchFormData();
+          }
+          else {
+            getDraftApplicationDetail();
+          }
           handleRenderPreview();
         } else {
           handleSubmit();
@@ -214,8 +266,9 @@ const CreateForm = (props) => {
     };
 
     console.log("common_payload - ", common_payload);
-    if (!applicantStatus) {
-      await saveFormSubmission({
+    console.log("applicantStatus =>", applicantStatus)
+    if (applicantStatus === 'draft' || applicantStatus === undefined) {
+      const res = await saveFormSubmission({
         schedule_id: null,
         assessor_id: null,
         applicant_id: instituteDetails?.[0]?.id,
@@ -223,6 +276,14 @@ const CreateForm = (props) => {
         form_status: "Application Submitted",
         ...common_payload,
       });
+      // if the application is drafted, remove it's entry post form submission
+      if(res && applicantStatus === 'draft') {
+        const request = {
+          id: formId
+        }
+       await deleteApplicationDraft(request);
+       removeAllFromLocalForage();
+      }
     } else {
       await updateFormSubmission({
         form_id: formId,
@@ -231,10 +292,10 @@ const CreateForm = (props) => {
         form_status: "Resubmitted",
         ...common_payload,
       });
+      removeAllFromLocalForage();
     }
 
     // Delete the form and course details data from the Local Forage
-    removeAllFromLocalForage();
     isFormInPreview = false;
 
     setOnSubmit(false);
@@ -266,24 +327,40 @@ const CreateForm = (props) => {
       const course_details = await getSpecificDataFromForage("course_details");
       console.log("courseDetails ===>", course_details);
       const requestBody = {
-        "object": {
+        "object": { 
           applicant_id: instituteDetails?.[0]?.id,
           form_status: "Draft",
+          form_name: formName,
           assessment_type: course_details?.form?.assignee,
           round: course_details?.form?.round,
           course_type: course_details?.course_type,
           course_level: course_details?.course_level,
           course_name: course_details?.form?.course_mapping,
           course_id: course_details?.course_id,
-          active: true,
-          updated_by: userId,
+          // updated_by: userId,
           created_by: userId,
           form_data: eventFormData?.formData?.xml,
-          form_id: course_details?.form?.form_id,
-          created_on: Date.now(),        
+          // form_id: course_details?.form?.form_id,
+          created_at: new Date().toJSON().slice(0, 10),        
         }
       }
-      console.log(requestBody);
+      if(formId !== undefined) {
+        const requestBody = {
+          id: formId,
+          formData: eventFormData?.formData?.xml
+        }
+        const res = await updateApplicationDraft(requestBody);
+        if(res) {
+          console.log("record saved as draft");
+        setTimeout(
+          () => navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.my_applications}`),
+          1500
+        );
+        // to remove all data from local forage
+        removeAllFromLocalForage();
+      }
+      }
+      else {
       const res = await saveApplicationDraft(requestBody);
       if(res) {
         console.log("record saved as draft");
@@ -291,7 +368,10 @@ const CreateForm = (props) => {
           () => navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.my_applications}`),
           1500
         );
+        // to remove all data from local forage
+        removeAllFromLocalForage();
       }
+    }
       
       return;
     }
@@ -402,7 +482,13 @@ const CreateForm = (props) => {
   };
 
   useEffect(() => {
-    fetchFormData();
+   if(applicantStatus === 'draft') {
+    const draftApplicationId = formId;
+     getDraftApplicationDetail(draftApplicationId);
+    }
+    else {
+      fetchFormData();
+    }
     bindEventListener();
 
     if (spinner) {
@@ -413,7 +499,7 @@ const CreateForm = (props) => {
     // To clean all variables
     return () => {
       previewFlag = false;
-      removeAllFromLocalForage();
+      // removeAllFromLocalForage();
       window.removeEventListener("message", handleEventTrigger);
     };
   }, []);
@@ -453,7 +539,7 @@ const CreateForm = (props) => {
               Back to my application done
             </button>
 
-            <button
+            {/* <button
                 onClick={() => setOpenStatusModel(true)}
                 className="bg-gray-100 py-2 mb-8 font-medium rounded-[4px] px-2 text-blue-900 border border-gray-500 flex flex-row items-center gap-3"
               >
@@ -470,7 +556,7 @@ const CreateForm = (props) => {
               }`}
             >
               Download NOC/Certificate
-            </button>
+            </button> */}
           </div>
         </div>
         {openStatusModel && (

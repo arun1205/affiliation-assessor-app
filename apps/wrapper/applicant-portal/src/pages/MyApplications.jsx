@@ -135,6 +135,11 @@ const MyApplications = () => {
       "searchString": {
         "applicant_id": {
           _eq: instituteDetails?.[0].id || 11 
+        },
+        "_and": {
+          "id": {
+            "_gte": 0
+          }
         }
       },
       offsetNo: 1,
@@ -224,11 +229,21 @@ const MyApplications = () => {
     setLoadingForms(false);
   };
 
-  const handleViewApplicationHandler = (formObj) => {
-    navigate(
-      `${APPLICANT_ROUTE_MAP.dashboardModule.viewForm}/${formObj?.form_name
-      }/${formObj?.form_id}/${formObj.form_status?.toLowerCase()}`
-    );
+  const handleViewApplicationHandler = async (formObj) => {
+    await setToLocalForage("course_details", formObj.course);
+    if(formObj?.form_id) {
+      navigate(
+        `${APPLICANT_ROUTE_MAP.dashboardModule.createForm}/${formObj?.form_name
+        }/${formObj?.form_id}/${formObj.form_status?.toLowerCase()}`
+      );
+    }
+    else {
+      navigate(
+        `${APPLICANT_ROUTE_MAP.dashboardModule.createForm}/${formObj?.form_name
+        }/${formObj.id}/${formObj.form_status?.toLowerCase()}`
+      );
+    }
+   
   };
 
   const handleApplyFormHandler = async (obj) => {
@@ -239,7 +254,7 @@ const MyApplications = () => {
     }
     let file_name = form_obj[0].name;
     file_name = file_name.substr(0, file_name.lastIndexOf("."));
-    navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.viewForm}/${file_name}`);
+    navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.createForm}/${file_name}`);
   };
 
   
@@ -277,7 +292,7 @@ const MyApplications = () => {
             </div>
           )}
           {/** DRAFT APPLICATIONS */}
-          {/* {!loadingApplications && draftApplications?.length > 0 && (
+          {!loadingApplications && draftApplications?.length > 0 && (
             <div className="flex flex-wrap">
               {draftApplications.map((application) => (
                 <ApplicationCard
@@ -287,7 +302,7 @@ const MyApplications = () => {
                 />
               ))}
             </div>
-          )} */}
+          )}
           {!loadingApplications && applications?.length > 0 && (
             <div className="flex flex-wrap">
               {applications.map((application) => (

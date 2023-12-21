@@ -66,8 +66,24 @@ export const exportToExcel = async (downloadObjects) => {
 
 /** API to save drafted application on click of save as draft */
 export const saveApplicationDraft = async (postData) => {
-  const res = await customPost.post(
+  const res = await customPost.put(
     APIS.FORMS.SAVE_DRAFT,
+    postData
+  );
+  return res.data;
+}
+
+export const updateApplicationDraft = async (postData) => {
+  const res = await customPost.post(
+    APIS.FORMS.UPDATE_DRAFT,
+    postData
+  );
+  return res.data;
+}
+
+export const deleteApplicationDraft = async (postData) => {
+  const res = await customPost.post(
+    APIS.FORMS.DELETE_DRAFT,
     postData
   );
   return res.data;
