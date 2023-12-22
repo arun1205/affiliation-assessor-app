@@ -549,7 +549,7 @@ const CreateForm = (props) => {
       if(applicantStatus && applicantStatus?.toLowerCase() !== 'draft') {
         iframeContent.getElementById("save-draft").style.display = "none";
       }
-      if (applicantStatus !== 'undefined' && (applicantStatus?.toLowerCase() !== "returned" || applicantStatus?.toLowerCase() !== 'draft')) {
+      if (applicantStatus?.toLowerCase() !== "returned" || applicantStatus !== 'draft') {
         var section = iframeContent?.getElementsByClassName("or-group");
         if (!section) return;
         for (var i = 0; i < section?.length; i++) {
@@ -684,7 +684,7 @@ const CreateForm = (props) => {
               </button>
             </div>
             <div className="flex">
-              <iframe
+             <iframe
                 id="enketo-applicant-form"
                 title="form"
                 ref={iframeRef}
