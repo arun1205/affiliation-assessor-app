@@ -290,7 +290,7 @@ const CreateForm = (props) => {
     const commonPayload = formDATA?.common_payload
     if (applicantStatus === "undefined") { //new form
       console.log("Saving new form..")
-      await saveFormSubmission({
+     const response = await saveFormSubmission({
         schedule_id: null,
         assessor_id: null,
         applicant_id: instituteDetails?.[0]?.id,
@@ -298,6 +298,18 @@ const CreateForm = (props) => {
         form_status: "Application Submitted",
         ...commonPayload,
       });
+     // console.log(response?.data?.insert_form_submissions?.returning[0]?.form_id)
+      const tempStore = await getFromLocalForage(
+        `refNo`
+      );
+    //  console.log(tempStore.refNo)
+    const reqBody = {
+      refNo: tempStore.refNo,
+      status: "Paid",
+      formId: response?.data?.insert_form_submissions?.returning[0]?.form_id
+  }
+
+    await applicantService.updateTransactionStatusByRefNo(reqBody);
     } else {
       console.log("Updating existing form..",formId)
       await updateFormSubmission({
