@@ -83,16 +83,7 @@ export default function PaymentResult() {
     if (params.get("resp") && formDATA.paymentStage === "firstStage") {
 
       try {
-        const tempStore = await getFromLocalForage(
-          `refNo`
-        );
-       // console.log(tempStore.refNo)
-      const reqBody = {
-        refNo: tempStore.refNo,
-        status: "Paid"
-    }
-
-      await applicantService.updateTransactionStatusByRefNo(reqBody);
+        
       navigate(
         `${APPLICANT_ROUTE_MAP.dashboardModule.createForm}/${formDATA?.common_payload.form_name
         }/${undefined}/${undefined}/${formDATA?.paymentStage}`
