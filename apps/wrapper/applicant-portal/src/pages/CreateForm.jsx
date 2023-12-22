@@ -339,7 +339,7 @@ const CreateForm = (props) => {
       `common_payload`
     );
     const commonPayload = formDATA?.common_payload
-    if (applicantStatus === 'draft' || applicantStatus === undefined) { //new form
+    if (applicantStatus === 'draft' || applicantStatus === "undefined") { //new form
       console.log("Saving new form..")
      const response = await saveFormSubmission({
         schedule_id: null,
@@ -549,7 +549,7 @@ const CreateForm = (props) => {
       if(applicantStatus && applicantStatus?.toLowerCase() !== 'draft') {
         iframeContent.getElementById("save-draft").style.display = "none";
       }
-      if (applicantStatus && (applicantStatus?.toLowerCase() !== "returned" || applicantStatus?.toLowerCase() !== 'draft')) {
+      if (applicantStatus !== 'undefined' && (applicantStatus?.toLowerCase() !== "returned" || applicantStatus?.toLowerCase() !== 'draft')) {
         var section = iframeContent?.getElementsByClassName("or-group");
         if (!section) return;
         for (var i = 0; i < section?.length; i++) {
@@ -602,10 +602,9 @@ const CreateForm = (props) => {
   }, [formLoaded]);
 
   useEffect(() => {
-  console.log(paymentStage)
+  console.log(paymentStage);
   if(paymentStage === "firstStage") {
-    console.log("hhhhhhhhhhhhh")
-    triggerFormSubmission()
+    triggerFormSubmission();
     }
   }, [paymentStage]);
 
