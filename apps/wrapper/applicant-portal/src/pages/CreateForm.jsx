@@ -549,7 +549,10 @@ const CreateForm = (props) => {
       if(applicantStatus && applicantStatus?.toLowerCase() !== 'draft') {
         iframeContent.getElementById("save-draft").style.display = "none";
       }
-      if (applicantStatus !== 'undefined' && (applicantStatus?.toLowerCase() !== "returned" && applicantStatus !== 'draft')) {
+      if(applicantStatus && (applicantStatus?.toLowerCase() !== 'draft' && applicantStatus?.toLowerCase() !== "returned")) {
+        iframeContent.getElementById("submit-form").style.display = "none";
+      }
+      if (applicantStatus && applicantStatus?.toLowerCase() !== "returned" && applicantStatus.toLowerCase() !== "draft") {
         var section = iframeContent?.getElementsByClassName("or-group");
         if (!section) return;
         for (var i = 0; i < section?.length; i++) {
@@ -563,7 +566,6 @@ const CreateForm = (props) => {
             input.disabled = true;
           });
         }
-        iframeContent.getElementById("submit-form").style.display = "none";
       }
 
       // Need to work on Save draft...
