@@ -11,6 +11,8 @@ import {
   FaRegTimesCircle,
 } from "react-icons/fa";
 
+import paymentConfigPostData from '../payment-config/config.json';
+
 import {
   getCookie,
   getFromLocalForage,
@@ -46,7 +48,7 @@ let isFormInPreview = false;
 
 const CreateForm = (props) => {
   const navigate = useNavigate();
-  let { formName, formId, applicantStatus } = useParams();
+  let { formName, formId, applicantStatus, paymentStage } = useParams();
   let [encodedFormURI, setEncodedFormURI] = useState("");
   let [paymentDetails, setPaymentDetails] = useState("");
   let [onFormSuccessData, setOnFormSuccessData] = useState(undefined);
@@ -76,7 +78,6 @@ const CreateForm = (props) => {
   const instituteDetails = getCookie("institutes");
   const [openStatusModel, setOpenStatusModel] = useState(false);
 
-  let formData = {};
 
   const formSpec = {
     skipOnSuccessMessage: true,
@@ -182,6 +183,54 @@ const CreateForm = (props) => {
       );
       setEncodedFormURI(formURI);
     };
+  
+  const initiatePaymentForNewForm = async() => {
+
+    try {
+      const payloadFromForage =  await getFromLocalForage(
+        `common_payload`
+      );
+     // console.log(payloadFromForage)
+
+      let reqBody ={
+        "object": {
+            "form_data":payloadFromForage.common_payload.form_data,
+             "form_name": payloadFromForage.common_payload.form_name,
+            "assessment_type":payloadFromForage.common_payload.form_name,
+            "submission_status": true,
+            "applicant_id":  instituteDetails?.[0]?.id,
+            "form_status": "Initial Draft",
+            "round": payloadFromForage.common_payload.round,
+            "course_type": payloadFromForage.common_payload.course_type,
+            "course_level": payloadFromForage.common_payload.course_level,
+            "course_id": payloadFromForage.common_payload.course_id,
+            "payment_status": "Pending"
+        }
+    }
+       await applicantService.saveInitialFormSubmission(reqBody);
+     
+      paymentConfigPostData.created_by = userId;
+    
+      const paymentRes = await applicantService.initiatePaymentForNewForm(paymentConfigPostData);
+      await setToLocalForage(
+        `refNo`,
+        {
+          refNo: paymentRes?.data?.referenceNo
+        }
+      );
+    //  await applicantService.savePaymentRefNumber(paymentRes?.data?.referenceNo);
+      window.open(paymentRes?.data?.redirectUrl)
+    //  window.location.replace(paymentRes?.data?.redirectUrl)
+    } catch (error) {
+      console.log(error)
+      setToast((prevState) => ({
+        ...prevState,
+        toastOpen: true,
+        toastMsg: "Payment gateway seems to be not responding. Please try again later.",
+        toastType: "error",
+      }))
+    }
+  }
 
   const afterFormSubmit = async (e) => {
     const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
@@ -200,7 +249,9 @@ const CreateForm = (props) => {
           }
           handleRenderPreview();
         } else {
+          console.log("aaaaaa")
           handleSubmit();
+      
         }
       }
 
@@ -251,9 +302,11 @@ const CreateForm = (props) => {
   };
 
   const handleSubmit = async () => {
+
+   
     const updatedFormData = await updateFormData(formSpec.start, userId);
     const course_details = await getSpecificDataFromForage("course_details");
-
+    
     const common_payload = {
       form_data: updatedFormData,
       assessment_type: "applicant",
@@ -265,16 +318,36 @@ const CreateForm = (props) => {
       course_id: course_details?.course_id,
     };
 
-    console.log("common_payload - ", common_payload);
-    console.log("applicantStatus =>", applicantStatus)
-    if (applicantStatus === 'draft' || applicantStatus === undefined) {
+    await setToLocalForage(
+      `common_payload`,
+      {
+        "formSpecstart":formSpec.start, 
+        userId,
+        common_payload,
+        "paymentStage":"firstStage",
+        formId
+      }
+    );
+    
+   
+    initiatePaymentForNewForm();
+ 
+  };
+
+  const triggerFormSubmission = async () => {
+    const formDATA = await getFromLocalForage(
+      `common_payload`
+    );
+    const commonPayload = formDATA?.common_payload
+    if (applicantStatus === 'draft' || applicantStatus === undefined) { //new form
+      console.log("Saving new form..")
       const res = await saveFormSubmission({
         schedule_id: null,
         assessor_id: null,
         applicant_id: instituteDetails?.[0]?.id,
         submitted_on: new Date().toJSON().slice(0, 10),
         form_status: "Application Submitted",
-        ...common_payload,
+        ...commonPayload,
       });
       // if the application is drafted, remove it's entry post form submission
       if(res && applicantStatus === 'draft') {
@@ -285,15 +358,19 @@ const CreateForm = (props) => {
        removeAllFromLocalForage();
       }
     } else {
+      console.log("Updating existing form..",formId)
       await updateFormSubmission({
         form_id: formId,
         applicant_id: instituteDetails?.[0]?.id,
         updated_at: getLocalTimeInISOFormat(),
         form_status: "Resubmitted",
-        ...common_payload,
+        ...commonPayload,
       });
       removeAllFromLocalForage();
     }
+
+    // Delete the form and course details data from the Local Forage
+     
 
     // Delete the form and course details data from the Local Forage
     isFormInPreview = false;
@@ -304,13 +381,13 @@ const CreateForm = (props) => {
       toastOpen: true,
       toastMsg: "Form Submitted Successfully!.",
       toastType: "success",
-    }));
+    }))
 
     setTimeout(
       () => navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.my_applications}`),
       1500
-    );
-  };
+    ); 
+  }
 
   const handleDownloadNocOrCertificate = () => {
     if (formDataNoc.round == 1) {
@@ -414,7 +491,7 @@ const CreateForm = (props) => {
   };
 
   const handleEventTrigger = async (e) => {
-    console.log("Instance Load event =>", e);
+//console.log("Instance Load event =>", e);
     handleFormEvents(startingForm, afterFormSubmit, e);
   };
 
@@ -510,6 +587,14 @@ const CreateForm = (props) => {
     }
   }, [formLoaded]);
 
+  useEffect(() => {
+  console.log(paymentStage)
+  if(paymentStage === "firstStage") {
+    console.log("hhhhhhhhhhhhh")
+    triggerFormSubmission()
+    }
+  }, [paymentStage]);
+
   return (
     <div>
       <div className="h-[48px] bg-white drop-shadow-sm">
@@ -539,7 +624,9 @@ const CreateForm = (props) => {
               Back to my application done
             </button>
 
-            {/* <button
+            {applicantStatus !== 'draft' && (
+              <>
+            <button
                 onClick={() => setOpenStatusModel(true)}
                 className="bg-gray-100 py-2 mb-8 font-medium rounded-[4px] px-2 text-blue-900 border border-gray-500 flex flex-row items-center gap-3"
               >
@@ -556,8 +643,11 @@ const CreateForm = (props) => {
               }`}
             >
               Download NOC/Certificate
-            </button> */}
-          </div>
+            </button>
+          
+        </>
+        )}
+        </div>
         </div>
         {openStatusModel && (
             <StatusLogModal

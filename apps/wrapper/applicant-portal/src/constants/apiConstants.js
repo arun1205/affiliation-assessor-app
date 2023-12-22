@@ -23,6 +23,10 @@ export const APIS = {
     EDIT_USER: "update",
   },
 
+  USER:{
+    CHECKVALID: "emaildetails"
+  },
+  
   LOGIN: {
     GENERATE_OTP: "keycloak/otp",
     USERLOGIN: "keycloak/login",
@@ -44,7 +48,8 @@ export const APIS = {
   },
   FORM: {
     UPDATE_FORM: "/rest/updateFormSubmission",
-    UPDATE_CHILD_CODE: "/rest/updateChildCode"
+    UPDATE_CHILD_CODE: "/rest/updateChildCode",
+    SAVE_INITIAL_FORM_SUBMISSION: "/rest/saveInitialFormSubmissions"
   },
   SEARCH:{
     SEARCH_FORM: "/rest/searchCourses"
@@ -58,8 +63,10 @@ export const APIS = {
     readNotification: `notification/update`,
   },
   PAYMENT:{
+    GENERATE_LINK_V2: `payment/v2/generatelink`,
     GENERATE_LINK: `payment/generatelink`,
-    UPDATE_PAYMENT_STATUS: `rest/updatePaymentStatus`
+    UPDATE_PAYMENT_STATUS: `rest/updatePaymentStatus`,
+    UPDATE_INITIAL_PAYMENT_STATUS: `rest/updateTransactionStatusByRefNo`
   },
   viewStatus: {
     getViewStatus: `rest/getEvents`,
