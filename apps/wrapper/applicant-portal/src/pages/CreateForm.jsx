@@ -141,14 +141,48 @@ const CreateForm = (props) => {
   const initiatePaymentForNewForm = async() => {
 
     try {
-      paymentConfigPostData.refNo = generate_uuidv4();
-      paymentConfigPostData.payerId = instituteDetails?.[0]?.id;
+      const payloadFromForage =  await getFromLocalForage(
+        `common_payload`
+      );
+     // console.log(payloadFromForage)
+
+      let reqBody ={
+        "object": {
+            "form_data":payloadFromForage.common_payload.form_data,
+             "form_name": payloadFromForage.common_payload.form_name,
+            "assessment_type":payloadFromForage.common_payload.form_name,
+            "submission_status": true,
+            "applicant_id":  instituteDetails?.[0]?.id,
+            "form_status": "Initial Draft",
+            "round": payloadFromForage.common_payload.round,
+            "course_type": payloadFromForage.common_payload.course_type,
+            "course_level": payloadFromForage.common_payload.course_level,
+            "course_id": payloadFromForage.common_payload.course_id,
+            "payment_status": "Pending"
+        }
+    }
+       await applicantService.saveInitialFormSubmission(reqBody);
+     
+      paymentConfigPostData.created_by = userId;
+    
       const paymentRes = await applicantService.initiatePaymentForNewForm(paymentConfigPostData);
-      await applicantService.savePaymentRefNumber(paymentRes?.data?.referenceNo);
+      await setToLocalForage(
+        `refNo`,
+        {
+          refNo: paymentRes?.data?.referenceNo
+        }
+      );
+    //  await applicantService.savePaymentRefNumber(paymentRes?.data?.referenceNo);
       window.open(paymentRes?.data?.redirectUrl)
-     // window.location.replace(paymentRes?.data?.redirectUrl)
+    //  window.location.replace(paymentRes?.data?.redirectUrl)
     } catch (error) {
       console.log(error)
+      setToast((prevState) => ({
+        ...prevState,
+        toastOpen: true,
+        toastMsg: "Payment gateway seems to be not responding. Please try again later.",
+        toastType: "error",
+      }))
     }
   }
 
@@ -221,7 +255,7 @@ const CreateForm = (props) => {
    
     const updatedFormData = await updateFormData(formSpec.start, userId);
     const course_details = await getSpecificDataFromForage("course_details");
-
+    
     const common_payload = {
       form_data: updatedFormData,
       assessment_type: "applicant",
@@ -341,7 +375,7 @@ const CreateForm = (props) => {
   };
 
   const handleEventTrigger = async (e) => {
-    console.log("Instance Load event =>", e);
+//console.log("Instance Load event =>", e);
     handleFormEvents(startingForm, afterFormSubmit, e);
   };
 

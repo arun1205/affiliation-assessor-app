@@ -109,16 +109,20 @@ const updatePaymentStatus = async (postData) => {
   return res;
 };
 
-const savePaymentRefNumber = async (referenceNo) => {
-  paymentReferenceNo = referenceNo;
-  console.log(paymentReferenceNo)
-  return paymentReferenceNo;
-};
 
-const getPaymentRefNumber = async () => {
- // setPaymentReferenceNo(referenceNo)
-  return paymentReferenceNo;
-};
+const saveInitialFormSubmission = async (postData) => {
+  return await axiosService.put(
+    APIS.FORM.SAVE_INITIAL_FORM_SUBMISSION,
+    postData
+  );
+}
+
+const updateTransactionStatusByRefNo = async (postData) => {
+  return await axiosService.post(
+    APIS.PAYMENT.UPDATE_INITIAL_PAYMENT_STATUS,
+    postData
+  );
+}
 
 export const applicantService = {
   addInstitute,
@@ -136,6 +140,6 @@ export const applicantService = {
   sendEmailNotification,
   readNotification,
   checkIsEmailExist,
-  savePaymentRefNumber,
-  getPaymentRefNumber
+  saveInitialFormSubmission,
+  updateTransactionStatusByRefNo
 };

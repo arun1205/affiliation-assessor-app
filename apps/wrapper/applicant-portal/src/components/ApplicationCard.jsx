@@ -3,6 +3,10 @@ import { Card, Button } from "./index";
 import { generate_uuidv4, getCookie, readableDate, removeCookie, setCookie } from "../utils";
 import { applicantService } from "../services";
 import paymentConfigPostData from '../payment-config/config.json';
+
+import {
+  setToLocalForage,
+} from "./../forms";
 const ApplicationCard = (props) => {
   let formName = props?.application?.course?.course_name?.trim() || "NA";
 
@@ -41,8 +45,14 @@ const ApplicationCard = (props) => {
     }; */
     try {
       const paymentRes = await applicantService.initiatePayment(paymentConfigPostData);
-      await applicantService.savePaymentRefNumber(paymentRes?.data?.referenceNo);
-      await window.open(paymentRes?.data?.redirectUrl);
+      //await applicantService.savePaymentRefNumber(paymentRes?.data?.referenceNo);
+      await setToLocalForage(
+        `refNo`,
+        {
+          refNo: paymentRes?.data?.referenceNo
+        }
+      );
+       window.open(paymentRes?.data?.redirectUrl);
     } catch (error) {}
   };
 
