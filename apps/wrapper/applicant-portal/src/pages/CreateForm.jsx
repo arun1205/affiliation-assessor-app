@@ -534,6 +534,9 @@ const CreateForm = (props) => {
       var iframeContent =
         iframeElem?.contentDocument || iframeElem?.contentWindow.document;
       if (!iframeContent) return;
+      if(applicantStatus && applicantStatus?.toLowerCase() !== 'draft') {
+        iframeContent.getElementById("save-draft").style.display = "none";
+      }
       if (applicantStatus && applicantStatus?.toLowerCase() !== "returned") {
         var section = iframeContent?.getElementsByClassName("or-group");
         if (!section) return;
@@ -548,7 +551,6 @@ const CreateForm = (props) => {
             input.disabled = true;
           });
         }
-
         iframeContent.getElementById("submit-form").style.display = "none";
       }
 
