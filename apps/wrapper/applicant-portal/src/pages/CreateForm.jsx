@@ -338,6 +338,7 @@ const CreateForm = (props) => {
     const formDATA = await getFromLocalForage(
       `common_payload`
     );
+    try {
     const commonPayload = formDATA?.common_payload
     if (applicantStatus === 'draft' || applicantStatus === "undefined") { //new form
       console.log("Saving new form..")
@@ -349,13 +350,24 @@ const CreateForm = (props) => {
         form_status: "Application Submitted",
         ...commonPayload,
       });
+      console.log("applicantStatus =>", applicantStatus);
       // if the application is drafted, remove it's entry post form submission
-      if(response && applicantStatus === 'draft') {
+      if(response) {
+        const draft = await getFromLocalForage('draft');
+        console.log("draft ===>", draft);
+        if(draft !== undefined) {
         const request = {
-          id: formId
+          id: draft.draftId
         }
-       await deleteApplicationDraft(request);
-       removeAllFromLocalForage();
+        console.log("req", request);
+        try {
+          await deleteApplicationDraft(request);
+          removeItemFromLocalForage('draft');
+        } catch (error) {
+          console.log("error =>", error);
+        }
+      }
+      //  await removeAllFromLocalForage();
       }
      // console.log(response?.data?.insert_form_submissions?.returning[0]?.form_id)
       const tempStore = await getFromLocalForage(
@@ -399,6 +411,11 @@ const CreateForm = (props) => {
       () => navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.my_applications}`),
       1500
     ); 
+    }
+    catch(error) {
+      console.log('Something went wrong');
+      
+    }
   }
 
   const handleDownloadNocOrCertificate = () => {
@@ -576,6 +593,7 @@ const CreateForm = (props) => {
 
   useEffect(() => {
    if(applicantStatus === 'draft') {
+    setDraftIdToLocal();
     const draftApplicationId = formId;
      getDraftApplicationDetail(draftApplicationId);
     }
@@ -596,6 +614,15 @@ const CreateForm = (props) => {
       window.removeEventListener("message", handleEventTrigger);
     };
   }, []);
+
+  const setDraftIdToLocal = async () => {
+    await setToLocalForage(
+      `draft`,
+      {
+        "draftId": formId, 
+      }
+    );
+  }
 
   useEffect(() => {
     if(formLoaded === true) {
