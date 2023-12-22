@@ -60,9 +60,9 @@ const ApplicationCard = (props) => {
     <Card moreClass="flex flex-col border-gray-100 m-3 gap-5 w-[360px] border-[1px] drop-shadow justify-between">
       <div className="flex flex-col gap-2">
         <div className="text-xl font-medium">{formName}</div>
-        <div className="text-sm">
+        {props.application.submitted_on !== null && (<div className="text-sm">
           Submitted on: {readableDate(props.application.submitted_on)}
-        </div>
+        </div>)}
         <div className="flex flex-row gap-2 text-sm">
           <span
             className={`text-xs p-1 rounded-md ${
@@ -121,29 +121,31 @@ const ApplicationCard = (props) => {
               ? props?.application?.payment_status
               : "NA"}
           </span>
-          <span
-            className={`text-xs p-1 rounded-md ${
-              props.application.round === 1
-                ? "text-yellow-800"
-                : "text-indigo-700"
-            }`}
-            style={{ backgroundColor: "#eee" }}
-          >
-            
-            Round: {props.application.round}
-          </span> 
+          <div>
+            <span
+              className={`text-xs py-1 px-2  rounded-md ${
+                props.application.round === 1
+                  ? "text-yellow-800"
+                  : "text-indigo-700"
+              }`}
+              style={{ backgroundColor: "#eee" }}
+            >
+              Round: {props.application.round}
+            </span> 
+          </div>
         </div>
-        <span
-            className={`text-xs p-1  ${
-              props.application.round === 1
-                ? "text-yellow-800"
-                : "text-indigo-700"
-            }`}
-            style={{ backgroundColor: "#eee" }}
-          >
-            
-            Course Applied: {props.application.institute.course_applied}
+        <div>
+          <span
+              className={`text-xs py-1 px-2 rounded-md  ${
+                props.application.round === 1
+                  ? "text-yellow-800"
+                  : "text-indigo-700"
+              }`}
+              style={{ backgroundColor: "#eee" }}
+            >
+            Course Applied: {props?.application?.institute?.course_applied ? props?.application?.institute?.course_applied : props?.application?.institutes?.course_applied }
           </span>
+        </div>
       </div>
 
       <div className="flex flex-row gap-2">
