@@ -346,6 +346,7 @@ const CreateForm = (props) => {
         assessor_id: null,
         applicant_id: instituteDetails?.[0]?.id,
         submitted_on: new Date().toJSON().slice(0, 10),
+        reverted_count: 0,
         form_status: "Application Submitted",
         ...commonPayload,
       });

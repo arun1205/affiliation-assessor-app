@@ -188,6 +188,7 @@ export default function DesktopAnalysisView() {
       submission_status: true,
       applicant_id: formDataFromApi?.institute?.id,
       updated_at: getLocalTimeInISOFormat(),
+      reverted_count: formDataFromApi?.reverted_count + 1,
       form_status: formSubmissionStatus // "Returned",
     });
 
