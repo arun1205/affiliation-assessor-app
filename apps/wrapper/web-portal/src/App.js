@@ -268,7 +268,7 @@ setTimeout(() => {
               >
                 <Route index element={<ManageRolesList />}></Route>
                 <Route
-                  path={`${ADMIN_ROUTE_MAP.adminModule.roleManagement.updateRole}/:userId?`}
+                  path={`${ADMIN_ROUTE_MAP.adminModule.roleManagement.updateRole}/:roleId?/:roleName?`}
                   element={<CreateUpdateRole />}
                 ></Route>
               </Route>
