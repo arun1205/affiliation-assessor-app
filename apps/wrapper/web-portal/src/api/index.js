@@ -388,6 +388,14 @@ export const getScheduledList = async (postData) => {
   return res;
 };
 
+export const uploadAssessmentSchedule = async (postData) => {
+  const res = await fileConversionCustomPost.post(
+    API_URL.scheduleManagement.uploadAssessmentSchedule,
+    postData
+  );
+  return res;
+};
+
 // Bulk create users keycloak
 export const createBulkUsersKeyCloak = async (postData) => {
   const res = await axios.post(
