@@ -592,7 +592,7 @@ export default function DesktopAnalysisView() {
                     onClick={() => handleSubmit()}
                     className="text-red-500 flex flex-wrap items-center justify-center gap-2 border border-gray-500 bg-white text-gray-500 w-fit h-fit p-2 font-semibold rounded-[4px]"
                   >
-                  Reject 
+                  Reject Application
                   </button>
                   </Tooltip>
                 )}
