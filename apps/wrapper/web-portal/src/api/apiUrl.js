@@ -94,7 +94,8 @@ const API_URL = {
     filterAssessments: `${rest}filterAssessments`,
     addAssessmentSchedule: `${rest}addAssessmentSchedule`,
     deleteSchedule: `${rest}deleteSchedule`,
-    getAllSchedule: `${rest}getUpcomingSchedules`
+    getAllSchedule: `${rest}getUpcomingSchedules`,
+    uploadAssessmentSchedule: `${rest}upload`,
   },
   viewStatus: {
     getViewStatus: `${rest}getEvents`,
