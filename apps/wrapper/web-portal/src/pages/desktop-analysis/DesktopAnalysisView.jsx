@@ -11,8 +11,7 @@ import { getLocalTimeInISOFormat } from "../../utils";
 import { Card, Button } from "./../../components";
 import CommonModal from "./../../Modal";
 import ScheduleInspectionModal from "./ScheduleInspectionModal";
-import Sidebar from "../../components/Sidebar";
-
+import {  Tooltip } from "@material-tailwind/react";
 import {
   getFormData,
   registerEvent,
@@ -113,7 +112,8 @@ export default function DesktopAnalysisView() {
     try {
       const res = await getFormData(postData);
       formData = res.data.form_submissions[0];
-
+      //formData = formData.reverted_count = 2; //revertedCount
+      console.log(formData)
       setPaymentStatus(formData?.payment_status);
       const postDataEvents = { id: formId };
       const events = await getStatus(postDataEvents);
@@ -170,6 +170,14 @@ export default function DesktopAnalysisView() {
   };
 
   const handleSubmit = async () => {
+  try {
+     console.log(formDataFromApi)
+     let formSubmissionStatus = "Returned";
+     if( formDataFromApi?.reverted_count >= 2){
+       formSubmissionStatus = "Rejected";
+     }
+    console.log(formSubmissionStatus)
+    //return
     const updatedFormData = await updateFormData(formSpec.start, userId);
 
     const res = await updateFormSubmission({
@@ -180,7 +188,7 @@ export default function DesktopAnalysisView() {
       submission_status: true,
       applicant_id: formDataFromApi?.institute?.id,
       updated_at: getLocalTimeInISOFormat(),
-      form_status: "Returned",
+      form_status: formSubmissionStatus // "Returned",
     });
 
     if (res) {
@@ -189,8 +197,8 @@ export default function DesktopAnalysisView() {
         created_date: getLocalTimeInISOFormat(),
         entity_id: formId.toString(),
         entity_type: "form",
-        event_name: "Returned",
-        remarks: `${userDetails?.userRepresentation?.username} has returned application with remarks`,
+        event_name: formSubmissionStatus, // "Returned",
+        remarks: `${userDetails?.userRepresentation?.username} has ${formSubmissionStatus} application with remarks`,
       });
 
       //notifications
@@ -236,8 +244,8 @@ export default function DesktopAnalysisView() {
         if (regDeviceIds.length) {
           regDeviceIds.forEach((regulator) =>
             sendPushNotification({
-              title: "Application returned!",
-              body: `Application returned for ${applicantRes?.data?.institutes[0]?.name} with remarks.`,
+              title: `Application ${formSubmissionStatus}!`,
+              body: `Application ${formSubmissionStatus} for ${applicantRes?.data?.institutes[0]?.name} with remarks.`,
               deviceToken: [regulator.device_id],
               userId: regulator.user_id,
             })
@@ -250,11 +258,11 @@ export default function DesktopAnalysisView() {
       if (applicantRes?.data?.institutes[0]?.email) {
         const emailData = {
           recipientEmail: [`${applicantRes?.data?.institutes[0]?.email}`],
-          emailSubject: `Application returned!`,
+          emailSubject: `Application ${formSubmissionStatus}!`,
           emailBody: `<!DOCTYPE html><html><head><meta charset='utf-8'><title>Your Email Title</title><link href='https://fonts.googleapis.com/css2?family=Mulish:wght@400;600&display=swap' rel='stylesheet'></head><body style='font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;'><table width='100%' bgcolor='#ffffff' cellpadding='0' cellspacing='0' border='0'><tr><td style='padding: 20px; text-align: center; background-color: #F5F5F5;'><img src='https://regulator.upsmfac.org/images/upsmf.png' alt='Logo' style='max-width: 360px;'></td></tr></table><table width='100%' bgcolor='#ffffff' cellpadding='0' cellspacing='0' border='0'><tr><td style='padding: 36px;'><p style='color: #555555; font-size: 18px; font-family: 'Mulish', Arial, sans-serif;'>Dear ${applicantRes?.data?.institutes[0]?.name},</p><p style='color: #555555; font-size: 18px; line-height: 1.6; font-family: 'Mulish', Arial, sans-serif;'>We hope this email finds you well. We are writing to kindly request the resubmission of your application for the affiliation process. We apologize for any inconvenience caused, but it appears that there was an issue with the initial submission, and we did not receive the full information for proceeding to next steps.</p><p style='color: #555555; font-size: 18px; line-height: 1.6; font-family: 'Mulish', Arial, sans-serif;'>We kindly request that you resubmit your application using the following steps:
-            <p>1. Please find your returned application in the application inbox.</p>
-            <p>2. You can open the returned application to view the returning officer's comment. The comments will help you to understand the gaps and bridge them.</p>
-            <p>3. You can resubmit the returned application after you are done with making the required changes. Please ensure to keep saving the application as draft while you progress.</p></p><p style='color: #555555; font-size: 18px; line-height: 1.6; font-family: 'Mulish', Arial, sans-serif;'>We understand that this may require some additional effort on your part, and we sincerely appreciate your cooperation. Rest assured that we will treat your resubmitted application with the utmost attention and consideration during our evaluation process.</p><p style='color: #555555; font-size: 18px; line-height: 1.6; font-family: 'Mulish', Arial, sans-serif;'>If you have any questions or need further clarification regarding the resubmission process, please do not hesitate to reach out to our support executives at <Contact Details>. We are here to assist you and provide any necessary guidance.</p><p style='color: #555555; font-size: 18px; line-height: 1.6; font-family: 'Mulish', Arial, sans-serif;'></p>Please note that the deadline for resubmitting your application is <deadline date>. Applications received after this date may not be considered for the current affiliation process.<p style='color: #555555; font-size: 18px; line-height: 1.6; font-family: 'Mulish', Arial, sans-serif;'></p>We look forward to receiving your updated application.<p style='color: #555555; font-size: 18px; line-height: 1.6; font-family: 'Mulish', Arial, sans-serif;'>Thank you for your time and continued interest in getting affiliated from our organization.</p></td></tr></table></body></html>`,
+            <p>1. Please find your ${formSubmissionStatus} application in the application inbox.</p>
+            <p>2. You can open the ${formSubmissionStatus} application to view the returning officer's comment. The comments will help you to understand the gaps and bridge them.</p>
+            <p>3. You can resubmit the ${formSubmissionStatus} application after you are done with making the required changes. Please ensure to keep saving the application as draft while you progress.</p></p><p style='color: #555555; font-size: 18px; line-height: 1.6; font-family: 'Mulish', Arial, sans-serif;'>We understand that this may require some additional effort on your part, and we sincerely appreciate your cooperation. Rest assured that we will treat your resubmitted application with the utmost attention and consideration during our evaluation process.</p><p style='color: #555555; font-size: 18px; line-height: 1.6; font-family: 'Mulish', Arial, sans-serif;'>If you have any questions or need further clarification regarding the resubmission process, please do not hesitate to reach out to our support executives at <Contact Details>. We are here to assist you and provide any necessary guidance.</p><p style='color: #555555; font-size: 18px; line-height: 1.6; font-family: 'Mulish', Arial, sans-serif;'></p>Please note that the deadline for resubmitting your application is <deadline date>. Applications received after this date may not be considered for the current affiliation process.<p style='color: #555555; font-size: 18px; line-height: 1.6; font-family: 'Mulish', Arial, sans-serif;'></p>We look forward to receiving your updated application.<p style='color: #555555; font-size: 18px; line-height: 1.6; font-family: 'Mulish', Arial, sans-serif;'>Thank you for your time and continued interest in getting affiliated from our organization.</p></td></tr></table></body></html>`,
         };
 
         sendEmailNotification(emailData);
@@ -273,8 +281,8 @@ export default function DesktopAnalysisView() {
     setToast((prevState) => ({
       ...prevState,
       toastOpen: true,
-      toastMsg: "Remarks added successfully!",
-      toastType: "success",
+      toastMsg: `Form ${formSubmissionStatus} successfully!`,
+      toastType: `success`
     }));
 
     setSpinner(false);
@@ -282,7 +290,18 @@ export default function DesktopAnalysisView() {
       () => navigate(`${ADMIN_ROUTE_MAP.adminModule.desktopAnalysis.home}`),
       1500
     );
-  };
+  
+  } catch (error) {
+    setSpinner(false);
+    setToast((prevState) => ({
+      ...prevState,
+      toastOpen: true,
+      toastMsg: `Something went wrong. Please try again later`,
+      toastType: `error`
+    }));
+  }
+  }
+ 
 
   const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
     if(typeof e.data === 'string' && e.data.includes('formLoad')) {
@@ -462,9 +481,9 @@ export default function DesktopAnalysisView() {
         iframeContent.getElementById("submit-form").style.display = "none";
       }
       // manipulate span element text content
-      // const buttonElement = document.getElementById('submit-form');
-      // const spanElement = buttonElement.children[1];
-      // spanElement.textContent = 'Return to applicant';
+       const buttonElement = document.getElementById('submit-form');
+       const spanElement = buttonElement.children[1];
+       spanElement.textContent = 'Return to applicant';
 
       // Need to work on Save draft...
       iframeContent.getElementById("save-draft").style.display = "none";
@@ -561,6 +580,22 @@ export default function DesktopAnalysisView() {
                     Reject Application
                   </button>
                 )} */}
+                 
+                   {
+
+                formDataFromApi?.reverted_count >= 2 &&
+                formDataFromApi?.form_status?.toLowerCase() === "resubmitted" && 
+                 formDataFromApi?.form_status?.toLowerCase() !== "rejected" && 
+                (
+                  <Tooltip arrow content="This form has been resubmitted 3 times. No more reverts possible.">
+                  <button 
+                    onClick={() => handleSubmit()}
+                    className="text-red-500 flex flex-wrap items-center justify-center gap-2 border border-gray-500 bg-white text-gray-500 w-fit h-fit p-2 font-semibold rounded-[4px]"
+                  >
+                  Reject 
+                  </button>
+                  </Tooltip>
+                )}
               {paymentStatus?.toLowerCase() === "paid" &&
                 formDataFromApi?.form_status?.toLowerCase() ===
                   "da completed" && loggedInUserRole !== "Desktop-Assessor" && (
@@ -707,7 +742,7 @@ export default function DesktopAnalysisView() {
       {onSubmit && (
         <CommonModal>
           <p className="text-secondary text-2xl text-semibold font-medium text-center">
-            Are you sure, do you want to submit with remarks?
+            Are you sure, do you want to <span className="text-red-500">return</span>  this application with remarks to the applicant?
           </p>
 
           <div className="flex flex-row justify-center w-full py-4 gap-5">
@@ -724,7 +759,7 @@ export default function DesktopAnalysisView() {
               className="bg-primary-900 py-3 rounded-[4px] px-8 text-white items-center gap-3 border border-primary py-3 px-7 cursor-pointer"
               onClick={() => handleSubmit()}
             >
-              Yes! Submit
+              Yes! Return
             </div>
           </div>
         </CommonModal>

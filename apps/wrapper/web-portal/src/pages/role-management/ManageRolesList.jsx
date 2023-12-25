@@ -605,44 +605,12 @@ export default function ManageRolesList({
     try {
       setSpinner(true);
       const res = await searchUsers(pagination);
-      if (state.menu_selected === "Assessor") {
         setPaginationInfo((prevState) => ({
           ...prevState,
           totalCount: res.data.assessors_aggregate.aggregate.totalCount,
         }));
        // setUsersList(res?.data?.assessors);
         res?.data?.assessors.forEach(setTableData);
-      }
-      if (state.menu_selected === "Desktop-Admin") {
-       
-        const newData = res?.data?.regulator.filter(obj => {
-          return obj.role === "Desktop-Admin";
-        });
-      
-       // setUsersList(newData);
-        
-        newData.forEach(setAdminTableData);
-       
-        setPaginationInfo((prevState) => ({
-          ...prevState,
-          totalCount: resUserData.length,
-        }));
-        
-      }
-      if (state.menu_selected === "Desktop-Assessor") {
-        
-      //  setUsersList(res?.data?.regulator);
-        
-        const newData =  res?.data?.regulator.filter(obj => {
-          return obj.role === "Desktop-Assessor";
-        });
-        
-        newData.forEach(setAdminTableData);
-        setPaginationInfo((prevState) => ({
-          ...prevState,
-          totalCount: resUserData.length,
-        }));
-      }
       setUserTableList(resUserData);
     } catch (error) {
       console.log("error - ", error);
