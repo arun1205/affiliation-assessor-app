@@ -68,6 +68,12 @@ const API_URL = {
     editUser: `${rest}editUser`,
     viewSchedule: `${rest}viewSchedule`,
   },
+  manageRoles: {
+    getAll: `${rest}getAllRolesWithPermissions`,
+    editRole: `${rest}updateRoleById`,
+    addRole: `${rest}addNewRoleAndPermissions`,
+  
+  },
   desktopAnalysis: {
     getUsersForSchedulingAssessment: `${rest}getUsersForSchedulingAssessment`,
     scheduleAssessment: `${rest}addAssessmentSchedule`,

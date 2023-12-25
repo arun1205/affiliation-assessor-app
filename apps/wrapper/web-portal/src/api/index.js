@@ -675,6 +675,45 @@ export const getCoursesByTypeAndLevel = async (postData) => {
   return res;
 }
 
+
+//#region (roles apis)
+
+export const fetchAllUserRoles = async (postData) => {
+  return await adminCustomPost.post(
+    API_URL.manageRoles.getAll,
+    postData
+  )
+}
+
+export const getSpecificRoleByRoleId = async (postData) => {
+  return await adminCustomPost.post(
+    API_URL.manageRoles.getRoleById,
+    postData
+  )
+}
+
+export const editRole = async (postData) => {
+  return await adminCustomPost.post(
+    API_URL.manageRoles.editRole,
+    postData
+  )
+}
+
+export const createRole = async (postData) => {
+  return await adminCustomPost.post(
+    API_URL.manageRoles.addRole,
+    postData
+  )
+}
+
+
+
+
+
+//#region (roles apis)
+
+
+
 //#region (xlsx)
 
 //#region (json to xlsx)
