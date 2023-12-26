@@ -340,7 +340,7 @@ const CreateForm = (props) => {
     );
     try {
     const commonPayload = formDATA?.common_payload
-    if (applicantStatus === 'draft' || applicantStatus === "undefined") { //new form
+    if (applicantStatus === 'draft' || applicantStatus === undefined) { //new form
       console.log("Saving new form..")
      const response = await saveFormSubmission({
         schedule_id: null,
@@ -714,7 +714,7 @@ const CreateForm = (props) => {
               </button>
             </div>
             <div className="flex">
-            {paymentStage === undefined && (<iframe
+            {(paymentStage === undefined && encodedFormURI !== "") && (<iframe
                 id="enketo-applicant-form"
                 title="form"
                 ref={iframeRef}
