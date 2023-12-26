@@ -22,10 +22,9 @@ import messages from "../../assets/json-files/messages.json";
 export default function CreateUpdateRole() {
   const { roleId } = useParams();
   const { setSpinner, setToast } = useContext(ContextAPI);
-  const [user, setUser] = useState({
-    name: "",
-   
-  });
+  const [user, setUser] = useState({    name: ""  });
+  const [roleName, setRoleName] = useState("");
+  
   const navigation = useNavigate();
 
   const [availableTabsList, setAvailableTabsList] = useState([
@@ -66,10 +65,7 @@ export default function CreateUpdateRole() {
       const res = await fetchAllUserRoles(reqBody); 
       console.log(res.data.role[0].permissions)
       if (res.data.role_aggregate.aggregate.count === 1) {
-        setUser({
-          name:
-            res.data.role[0].name,
-        });
+        setRoleName(res.data.role[0].name)
       const currentModulesArr= [];
         res.data.role[0].permissions?.module?.forEach(element => {
         const currentModule = {
@@ -214,21 +210,20 @@ console.log(arr)
    
   }
 
-  
-
   const isFieldsValid = () => {
-    if (
-      user.firstname === "" 
+    console.log(selectedTabsList)
+    if (roleName === "" || selectedModuleName === "" || !selectedTabsList?.length 
     ) {
       //  setErrMsg("Please fill in valid information");
       return false;
     } else return true;
   };
 
-  const handleAlphaOnly = (value, nameFlag) => {
+  const handleAlphaOnly = (value) => {
     const re = /^[a-zA-Z ]*$/;
     if (re.test(value)) {
-      handleChange(nameFlag, value)
+     // handleChange(nameFlag, value)
+      setRoleName(value)
     }
   }
 
@@ -239,10 +234,9 @@ console.log(arr)
     }
   }
 
-  const submitUserData = async (e) => {
+  const submitRoleData = async (e) => {
     let errorFlag = false;
-console.log(selectedTabsList)
-console.log(selectedModuleName)
+    console.log(roleName)
     if (roleId) {
       //for edit user
       try {
@@ -312,11 +306,20 @@ console.log(selectedModuleName)
       // for create role
       try {
         setSpinner(true);
-        const checkIsEmailExistRes = await checkIsEmailExist({ email: user.email });
-        if (checkIsEmailExistRes.data
-          && (checkIsEmailExistRes.data.assessors.length
-            || checkIsEmailExistRes.data.institutes.length
-            || checkIsEmailExistRes.data.regulator.length)) {
+        let reqBody = {
+          "object": {
+              "name": {
+                  "_eq": roleName
+              }
+          },
+          "offsetNo": 0,
+          "limit": 100
+      }
+      
+        const checkIsRoleExistRes = await fetchAllUserRoles(reqBody);
+        console.log(checkIsRoleExistRes)
+        if (checkIsRoleExistRes.data
+          && (checkIsRoleExistRes.data.role.length)) {
           setToast((prevState) => ({
             ...prevState,
             toastOpen: true,
@@ -337,6 +340,7 @@ console.log(selectedModuleName)
                      {
                         "pages":[
                            "DASHBOARD",
+                           "FORM-MANAGEMENT"
                         ],
                         "module":"Regulator-portal",
                         "sub-pages":[ ]
@@ -366,7 +370,9 @@ console.log(selectedModuleName)
 
   };
 
-  const createHasuraRole = (async (reqBody) => {
+  const createHasuraRole = async (reqBody) => {
+
+    console.log(reqBody)
  
     try {
       //Hasura API call
@@ -395,7 +401,7 @@ console.log(selectedModuleName)
     }
 
   }
-  )
+  
 
   const sendAccountCreationNotification = async (userDetails) => {
     if (userDetails.email) {
@@ -423,6 +429,8 @@ console.log(selectedModuleName)
     console.log(roleId)
     if (roleId) {
       fetchRole();
+    } else {
+      fetchAllAvailablePages();
     }
   }, [roleId]);
 
@@ -469,13 +477,9 @@ console.log(selectedModuleName)
                       <input
                         type="text"
                         placeholder="Type here"
-                        id="firstname"
-                        name="firstname"
-                        value={user.name}
-                        onChange={(e) =>
-                          handleAlphaOnly(e.target.value, "firstname")
-                        }
-                        // disabled={userId?true:false}
+                        value={roleName} 
+                        onChange={(e) =>handleAlphaOnly(e.target.value) }
+                        disabled={roleId ? true : false}
                         className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
@@ -567,14 +571,14 @@ console.log(selectedModuleName)
                           moreClass="mt-3 border border-gray-200 bg-white text-blue-600 w-[120px]"
                           text="<"
                         ></Button> */}
-                        <NavLink
+                       {/*  <NavLink
                         moreClass="border border-gray-200">
                         <MdRefresh className="text-white text-xl ml-12 mt-2" 
                         
                          onClick={() => {refreshTabsList()
                          }}
                          />
-                      </NavLink>
+                      </NavLink> */}
 
                       </div>
 
@@ -611,7 +615,7 @@ console.log(selectedModuleName)
                     otherProps={{
                       disabled: !isFieldsValid(),
                     }}
-                    onClick={submitUserData}
+                    onClick={submitRoleData}
                   ></Button>
                 </div>
               </div>
