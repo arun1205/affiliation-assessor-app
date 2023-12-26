@@ -72,7 +72,7 @@ const API_URL = {
     getAll: `${rest}getAllRolesWithPermissions`,
     editRole: `${rest}updateRoleById`,
     addRole: `${rest}addNewRoleAndPermissions`,
-  
+    toggleRoleStatus: `${rest}updateRoleById`,
   },
   desktopAnalysis: {
     getUsersForSchedulingAssessment: `${rest}getUsersForSchedulingAssessment`,
