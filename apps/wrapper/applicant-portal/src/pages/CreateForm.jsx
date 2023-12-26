@@ -713,7 +713,7 @@ const CreateForm = (props) => {
               </button>
             </div>
             <div className="flex">
-             <iframe
+            {paymentStage === undefined && (<iframe
                 id="enketo-applicant-form"
                 title="form"
                 ref={iframeRef}
@@ -722,7 +722,7 @@ const CreateForm = (props) => {
                   JSON.stringify(formSpec)
                 )}&xform=${encodedFormURI}&userId=${userId}`}
                 style={{ minHeight: "100vh", width: "100%" }}
-              />
+              />)}
             </div>
           </div>
         </Card>
