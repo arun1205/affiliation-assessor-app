@@ -12,7 +12,8 @@ import { getCookie, removeCookie } from "../utils";
 import Header from "../components/Header";
 import { applicantService } from "../services";
 import {
-  getFromLocalForage
+  getFromLocalForage,
+  removeItemFromLocalForage,
 } from "./../forms";
 
 
