@@ -118,7 +118,7 @@ const CreateForm = (props) => {
     if (data) {
       formData = data;
     } else {
-      if (formId) {
+      if (formId !== undefined) {
         const postData = { form_id: formId };
         const res = await getFormData(postData);
         formData = res?.data?.form_submissions[0];
