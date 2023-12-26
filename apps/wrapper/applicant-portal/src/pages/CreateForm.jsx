@@ -356,7 +356,7 @@ const CreateForm = (props) => {
       if(response) {
         const draft = await getFromLocalForage('draft');
         console.log("draft ===>", draft);
-        if(draft !== undefined) {
+        if(draft && draft.draftId !== "") {
         const request = {
           id: draft.draftId
         }
