@@ -362,7 +362,7 @@ export default function DesktopAnalysisView() {
   const desktopVerification = async () => {
 
     try {
-      updatePaymentStatus({ form_id: formId, payment_status: "Pending" });
+     await updatePaymentStatus({ form_id: formId, payment_status: "Pending" });
       registerEvent({
         created_date: getLocalTimeInISOFormat(),
         entity_id: formId,
