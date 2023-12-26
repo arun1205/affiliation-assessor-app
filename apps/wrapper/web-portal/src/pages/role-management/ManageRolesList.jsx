@@ -16,7 +16,7 @@ import {
   handleDeleteUser,
   getAllRegulators,
   sendEmailNotification,
-  fetchAllDeskTopAssessors,
+  fetchAllUserRoles,
   handleActiveRegulatorUser,
   handleInctiveRegulatorUser
 } from "../../api";
@@ -81,32 +81,20 @@ export default function ManageRolesList({
 
   const COLUMNS = [
     {
-      Header: "Full name",
+      Header: "Role name",
       accessor: "full_name",
     },
     {
-      Header: "Code",
-      accessor: "code",
+      Header: "Module",
+      accessor: "module",
     },
     {
-      Header: "Email",
-      accessor: "email",
+      Header: "Pages",
+      accessor: "pages",
     },
     {
-      Header: "Mobile number",
-      accessor: "mobile_number",
-    },
-    {
-      Header: "Role",
-      accessor: "role",
-    },
-    {
-      Header: "Account Status",
+      Header: "Role Status",
       accessor: "status",
-    },
-    {
-      Header: "",
-      accessor: "schedule",
     },
     {
       Header: "",
@@ -121,39 +109,6 @@ export default function ManageRolesList({
     },
   ];
 
-  const ADMIN_COLUMN = [
-    {
-      Header: "Full name",
-      accessor: "full_name",
-    },
-    {
-      Header: "Email",
-      accessor: "email",
-    },
-    {
-      Header: "Mobile number",
-      accessor: "mobile_number",
-    },
-    {
-      Header: "Role",
-      accessor: "role",
-    },
-    {
-      Header: "Account Status",
-      accessor: "status",
-    },
-    {
-      Header: "",
-      accessor: "more_actions",
-    },
-    {
-      Header: "",
-      accessor: "isRowInvalid",
-      Cell: () => {
-        return invalidUserRowFlag;
-      },
-    },
-  ];
 
   const handleSelectMenu = (menuItem) => {
     setState((prevState) => ({ ...prevState, menu_selected: menuItem }));
@@ -230,7 +185,7 @@ export default function ManageRolesList({
                         </div>
                       </div>
                     </MenuItem>
-                    <MenuItem onClick={() => handleUserDelete(e)}>
+                   {/*  <MenuItem onClick={() => handleUserDelete(e)}>
                       <div className="flex flex-row gap-4">
                         <div>
                           <MdDelete />
@@ -239,7 +194,7 @@ export default function ManageRolesList({
                           <span>Delete</span>
                         </div>
                       </div>{" "}
-                    </MenuItem>
+                    </MenuItem> */}
                   </MenuList>
                 </Menu>
               </div>
@@ -348,16 +303,7 @@ export default function ManageRolesList({
                         </div>
                       </div>{" "}
                     </MenuItem>
-                    <MenuItem onClick={() => handleUserDelete(e)}>
-                      <div className="flex flex-row gap-4">
-                        <div>
-                          <MdDelete />
-                        </div>
-                        <div className="text-semibold m-">
-                          <span>Delete</span>
-                        </div>
-                      </div>{" "}
-                    </MenuItem>
+                   
                   </MenuList>
                 </Menu>
               </div>
@@ -420,27 +366,25 @@ export default function ManageRolesList({
   };
 
   const setTableData = (e) => {
+    console.log(e)
+    let pagesArr= []
+    e.permissions?.action[0].pages.forEach(element => {
+      console.log(element)
+      pagesArr.push(`<p>${element}</p>`)
+      
+    });
     var usersData = {
       full_name: e.fname || e.lname ? e.fname + " " + e.lname : e.name,
-      email: e.email?.toLowerCase(),
-      mobile_number: e.phonenumber,
-      role: e.role || "Assessor",
+     // pages: pagesArr.length ? `${pagesArr} , ` : "-",
+     pages: `${e.permissions?.action[0].pages} , `,
+      module: e.permissions?.module?.length ? `${e.permissions?.module}` : "-", 
       status:
-        e.workingstatus === "Valid"
+        e.active 
           ? "Active"
-          : e.workingstatus === "Invalid"
+          : !e.active
           ? "Inactive"
           : "-",
-      id: e.user_id,
-      code: e.code,
-    /*   schedule: (
-        <div
-          className={`px-6 text-primary-600 pl-0`}
-          onClick={() => handleViewSchedule(e)}
-        >
-          View Schedule
-        </div>
-      ), */
+      id: e.id,
       more_actions: (
         <div className="flex flex-row text-2xl font-semibold">
           <Menu placement="bottom-end">
@@ -451,7 +395,7 @@ export default function ManageRolesList({
               <MenuItem
                 onClick={() =>
                   navigation(
-                    `${ADMIN_ROUTE_MAP.adminModule.roleManagement.updateRole}/${e.user_id}`
+                    `${ADMIN_ROUTE_MAP.adminModule.roleManagement.updateRole}/${e.id}`
                   )
                 }
               >
@@ -466,9 +410,9 @@ export default function ManageRolesList({
               </MenuItem>
               <MenuItem
                 onClick={() =>
-                  e?.workingstatus === "Invalid"
-                    ? handleUserSetValid(e)
-                    : handleUsersetInvalid(e)
+                  e?.active
+                    ? handleUsersetInvalid(e.id)
+                    : handleUserSetValid(e.id)
                 }
               >
                 <div className="flex flex-row gap-4 p-1">
@@ -477,23 +421,14 @@ export default function ManageRolesList({
                   </div>
                   <div className="text-semibold">
                     <span>
-                      {e?.workingstatus === "Invalid"
-                        ? "Activate"
-                        : "Deactivate"}
+                      {e?.active
+                        ? "Deactivate"
+                        : "Activate"}
                     </span>
                   </div>
                 </div>{" "}
               </MenuItem>
-              <MenuItem onClick={() => handleUserDelete(e)}>
-                <div className="flex flex-row gap-4 p-1">
-                  <div>
-                    <MdDelete />
-                  </div>
-                  <div className="text-semibold">
-                    <span>Delete</span>
-                  </div>
-                </div>{" "}
-              </MenuItem>
+            
             </MenuList>
           </Menu>
         </div>
@@ -630,22 +565,27 @@ export default function ManageRolesList({
     }
   };
 
-  const getAllDeskTopAssessors = async () => {
-    const pagination = {
-      offsetNo: paginationInfo.offsetNo,
-      limit: paginationInfo.limit,
-      role: 'Desktop-Assessor'
-    };
+  const getAllUserRoles = async () => {
+    const reqBody =  {
+      object: {
+          active: {
+              _eq: true
+          }
+      },
+      offsetNo: 0,
+      limit: 10
+  }
+   
     try {
       setSpinner(true);
-      const res = await fetchAllDeskTopAssessors(pagination);
+      const res = await fetchAllUserRoles(reqBody);
       setPaginationInfo((prevState) => ({
         ...prevState,
-        totalCount: res.data.regulator_aggregate.aggregate.totalCount,
+        totalCount: res.data.role_aggregate.aggregate.count,
       }));
-      console.log(res?.data?.regulator)
+      console.log(res?.data?.role)
      // setUsersList(res?.data?.regulator);
-      const data = res?.data?.regulator;
+      const data = res?.data?.role;
       data.forEach(setTableData);
       console.log(resUserData);
       setUserTableList(resUserData);
@@ -665,44 +605,12 @@ export default function ManageRolesList({
     try {
       setSpinner(true);
       const res = await searchUsers(pagination);
-      if (state.menu_selected === "Assessor") {
         setPaginationInfo((prevState) => ({
           ...prevState,
           totalCount: res.data.assessors_aggregate.aggregate.totalCount,
         }));
        // setUsersList(res?.data?.assessors);
         res?.data?.assessors.forEach(setTableData);
-      }
-      if (state.menu_selected === "Desktop-Admin") {
-       
-        const newData = res?.data?.regulator.filter(obj => {
-          return obj.role === "Desktop-Admin";
-        });
-      
-       // setUsersList(newData);
-        
-        newData.forEach(setAdminTableData);
-       
-        setPaginationInfo((prevState) => ({
-          ...prevState,
-          totalCount: resUserData.length,
-        }));
-        
-      }
-      if (state.menu_selected === "Desktop-Assessor") {
-        
-      //  setUsersList(res?.data?.regulator);
-        
-        const newData =  res?.data?.regulator.filter(obj => {
-          return obj.role === "Desktop-Assessor";
-        });
-        
-        newData.forEach(setAdminTableData);
-        setPaginationInfo((prevState) => ({
-          ...prevState,
-          totalCount: resUserData.length,
-        }));
-      }
       setUserTableList(resUserData);
     } catch (error) {
       console.log("error - ", error);
@@ -768,7 +676,7 @@ export default function ManageRolesList({
         await fetchAllRegulators();
       }
       if (state.menu_selected === "Desktop-Assessor") {
-        await getAllDeskTopAssessors();
+       // await getAllDeskTopAssessors();
       }
       setDeleteFlag(false);
       setSelectedUserId([]);
@@ -914,15 +822,7 @@ export default function ManageRolesList({
 
   useEffect(() => {
     if (!isSearchOpen && !isFilterOpen) {
-      if (state.menu_selected === "Assessor") {
-        fetchAllAssessors();
-      }
-      if (state.menu_selected === "Desktop-Admin") {
-        fetchAllRegulators();
-      }
-      if (state.menu_selected === "Desktop-Assessor") {
-        getAllDeskTopAssessors();
-      }
+        getAllUserRoles();
     }
   }, [paginationInfo.offsetNo, paginationInfo.limit, state.menu_selected]);
 
@@ -935,7 +835,7 @@ export default function ManageRolesList({
         fetchAllRegulators();
       }
       if (state.menu_selected === "Desktop-Assessor") {
-        getAllDeskTopAssessors();
+       // getAllDeskTopAssessors();
       }
     }
     setUsersCreated(false);
@@ -972,7 +872,7 @@ export default function ManageRolesList({
                       text="Activate / Inactivate Role"
                     ></Button>
                   )} */}
-                  {<Button
+                 {/*  {<Button
                     // moreClass="text-white"
                     otherProps={{
                       disabled: listArray == 0 ? true : false,
@@ -988,7 +888,7 @@ export default function ManageRolesList({
                         : setDeleteBulkUsersModel(false)
                     }
                     text="Delete Role"
-                  ></Button>}
+                  ></Button>} */}
                   {/* <button
                     onClick={() => setBulkUploadUsersModel(true)}
                     className="flex flex-wrap items-center justify-center gap-2 border border-gray-500 text-gray-900 bg-white w-[200px] h-[45px] text-md font-medium rounded-[4px]"

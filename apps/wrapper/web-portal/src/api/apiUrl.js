@@ -68,6 +68,12 @@ const API_URL = {
     editUser: `${rest}editUser`,
     viewSchedule: `${rest}viewSchedule`,
   },
+  manageRoles: {
+    getAll: `${rest}getAllRolesWithPermissions`,
+    editRole: `${rest}updateRoleById`,
+    addRole: `${rest}addNewRoleAndPermissions`,
+  
+  },
   desktopAnalysis: {
     getUsersForSchedulingAssessment: `${rest}getUsersForSchedulingAssessment`,
     scheduleAssessment: `${rest}addAssessmentSchedule`,
@@ -88,7 +94,8 @@ const API_URL = {
     filterAssessments: `${rest}filterAssessments`,
     addAssessmentSchedule: `${rest}addAssessmentSchedule`,
     deleteSchedule: `${rest}deleteSchedule`,
-    getAllSchedule: `${rest}getUpcomingSchedules`
+    getAllSchedule: `${rest}getUpcomingSchedules`,
+    uploadAssessmentSchedule: `${rest}upload`,
   },
   viewStatus: {
     getViewStatus: `${rest}getEvents`,

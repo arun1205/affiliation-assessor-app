@@ -48,7 +48,7 @@ const MyApplications = () => {
   }, [applications]);
 
 
-  const getProfileDetails = () => {
+  const getProfileDetails = async () => {
     if (!instituteDetails || !instituteDetails?.length) {
       return;
     }
@@ -169,25 +169,38 @@ const MyApplications = () => {
     }
 
     setLoadingApplications(true);
-    const requestPayload = {
-       applicant_id: instituteDetails?.[0].id || 11 
-      };
-    const applicationsResponse = await applicationService.getData(
-      requestPayload
-    );
+    
 
-   /*  applicationsResponse?.data?.form_submissions.forEach((item, index) => {
-      //console.log(item)
-      if (item.form_id === 706) {
-        item.noc_Path = "noc-path-isthere";
-        item.noc_fileName = "noc-filename";
+      try {
+        const requestPayload = {
+          applicant_id: instituteDetails?.[0].id
+         };
+        const applicationsResponse = await applicationService.getData(
+          requestPayload
+        );
+    
+       /*  applicationsResponse?.data?.form_submissions.forEach((item, index) => {
+          //console.log(item)
+          if (item.form_id === 706) {
+            item.noc_Path = "noc-path-isthere";
+            item.noc_fileName = "noc-filename";
+          }
+        }); */
+    console.log(applicationsResponse)
+        if (applicationsResponse?.data?.form_submissions) {
+          setApplications(applicationsResponse?.data?.form_submissions);
+        }//arun
+        setLoadingApplications(false);
+
+      } catch (error) {
+        setToast((prevState) => ({
+          ...prevState,
+          toastOpen: true,
+          toastMsg: "Something went wrong.",
+          toastType: "error",
+        }));
       }
-    }); */
-
-    if (applicationsResponse?.data?.form_submissions) {
-      setApplications(applicationsResponse?.data?.form_submissions);
-    }//arun
-    setLoadingApplications(false);
+   
   };
 
   const getAllAvailableForms = async (round) => {

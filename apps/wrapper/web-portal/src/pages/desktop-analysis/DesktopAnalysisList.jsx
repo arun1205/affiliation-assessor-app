@@ -231,6 +231,10 @@ const DesktopAnalysisList = () => {
         ...prevState,
         totalCount: res.data.form_submissions_aggregate.aggregate.totalCount,
       }));
+      //console.log(res?.data?.form_submissions);
+       res?.data?.form_submissions.forEach(element => {
+     //   element["reverted_count"] = 1;//revertedCount
+      });
       console.log(res?.data?.form_submissions);
       setFormsList(res?.data?.form_submissions);
     } catch (error) {
@@ -495,15 +499,18 @@ const DesktopAnalysisList = () => {
                 </div>
               </div>
             </div>
-            <div className="sm:col-span-3 flex justify-end">
-              <Button
-                onClick={() => {
-                  downloadReport();
-                }}
-                moreClass="border boevent_namerder-blue-500 bg-white text-blue-500 "
-                text="Download DA Completed forms as excel file"
-              ></Button>
-              </div>
+            {state.menu_selected === "DA Completed" && (
+             <div className="sm:col-span-3 flex justify-end">
+             <Button
+               onClick={() => {
+                 downloadReport();
+               }}
+               moreClass="border boevent_namerder-blue-500 bg-white text-blue-500 "
+               text="Download DA Completed forms as excel file"
+             ></Button>
+             </div>)
+            }
+            
           </div>
 
           <div className="flex flex-col gap-4">

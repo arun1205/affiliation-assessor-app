@@ -11,70 +11,86 @@ import { ContextAPI } from "../../utils/ContextAPI";
 import {
   createBulkUserHasura,
   createBulkUsersKeyCloak,
-  editUserHasura,
-  editUserKeycloak,
-  getSpecificUser,
+  createRole,
+  editRole,
+  fetchAllUserRoles,
   sendEmailNotification,
   checkIsEmailExist
 } from "../../api";
-import { userService } from "../../api/userService";
-import { getCookie, removeCookie, setCookie } from "../../utils";
 import messages from "../../assets/json-files/messages.json";
 
 export default function CreateUpdateRole() {
-  let { userId } = useParams();
+  const { roleId } = useParams();
   const { setSpinner, setToast } = useContext(ContextAPI);
   const [user, setUser] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    phonenumber: "",
-    role: "",
+    name: "",
+   
   });
   const navigation = useNavigate();
 
   const [availableTabsList, setAvailableTabsList] = useState([
 
-    { value: 'Desktop Analysis screen', label: 'Desktop Analysis' },
-    { value: 'Form Management Screen', label: 'Form Management' },
-    { value: 'User Management Screen', label: 'User Management' },
-    { value: 'Schedule Management Screen', label: 'Schedule Management' },
   ]);
 
   const [selectedTabsList, setSelectedTabsList] = useState([
-    { value: 'On-Ground Management Screen', label: 'On-Ground Management' },
-    { value: 'Certificate Management Screen', label: 'Certificate Management' },
-    { value: 'Dashboard Management Screen', label: 'Dashboard Management' },
   ]);
 
   const [selectedAvailableOptions, setSelectedAvailableOptions] = useState([]);
   const [chosenSelectedTabs, setChosenSelectedTabs] = useState([]);
 
-  const fetchUser = async () => {
+  
+  const [selectedModules, setSelectedModules] = useState([]);
+  const [selectedModuleName, setSelectedModuleName] = useState("");
+  
+  const [modulesList, setModulesList] = useState([
+    { value: 'Regulator-portal', label: 'Regulator-portal' },
+    { value: 'assessor-app', label: 'assessor-app' },
+  ]);
+
+  const fetchRole = async () => {
     try {
       setSpinner(true);
-      const res = await getSpecificUser({ userId });
-      if (res.data.assessors.length) {
+      const reqBody = {
+        object: {
+            active: {
+                _eq: true
+            },
+                id: {
+                    _eq: roleId
+                }
+        },
+        offsetNo: 0,
+        limit: 100
+    }
+    // fetchAllUserRoles returns unique role if roleid is passed
+      const res = await fetchAllUserRoles(reqBody); 
+      console.log(res.data.role[0].permissions)
+      if (res.data.role_aggregate.aggregate.count === 1) {
         setUser({
-          firstname:
-            res.data.assessors[0]["fname"] || res.data.assessors[0]["name"],
-          lastname: res.data.assessors[0]["lname"],
-          email: res.data.assessors[0]["email"],
-          phonenumber: res.data.assessors[0]["phonenumber"],
-          role: res.data.assessors[0]["role"],
+          name:
+            res.data.role[0].name,
         });
-      }
-      if (res.data.regulator.length) {
-        setUser({
-          firstname:
-            res.data.regulator[0]["fname"] ||
-            res.data.regulator[0]["full_name"],
-          lastname: res.data.regulator[0]["lname"],
-          email: res.data.regulator[0]["email"],
-          phonenumber: res.data.regulator[0]["phonenumber"],
-          role: res.data.regulator[0]["role"],
+      const currentModulesArr= [];
+        res.data.role[0].permissions?.module?.forEach(element => {
+        const currentModule = {
+          label: element,
+          value: element
+        }
+        currentModulesArr.push(currentModule)
         });
+
+        setSelectedModules(currentModulesArr)
+       /*  setModulesList( [  { value: 'Desktop Analysis screen', label: 'Desktop Analysisssss' },
+        { value: 'Form Management Screen', label: 'Form Management' },
+        { value: 'User Management Screen', label: 'User Management' },
+        { value: 'Schedule Management Screen', label: 'Schedule Management' }]) */
+
+        setModulesList(removeFromArray(modulesList, ...selectedModules));
+
+        //fetchAllAvailablePages();
+        fetchDefaultSelectedPages(res.data.role[0].permissions.action[0].pages);
       }
+     
     } catch (error) {
       console.log(error);
     } finally {
@@ -82,13 +98,86 @@ export default function CreateUpdateRole() {
     }
   };
 
-  const isEmail = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(user.email);
-  const isPhoneNumber = /^(?:(?:\(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/.test(
-    user.phonenumber
-  );
-  console.log("isPhone", isPhoneNumber);
-  // setEmailValue(isEmail)
-  // console.log("emailValue",emailValue)
+  const fetchAllAvailablePages =async() => {
+    
+ /*    { value: 'Desktop Analysis screen', label: 'Desktop Analysis' },
+    { value: 'Form Management Screen', label: 'Form Management' },
+    { value: 'User Management Screen', label: 'User Management' },
+    { value: 'Schedule Management Screen', label: 'Schedule Management' }, */
+
+    
+
+    const data = [ 
+      {
+        "id": 1,
+        "name": "DASHBOARD",
+        "module": "Regulator-portal"
+      },
+      {
+        "id": 2,
+        "name": "USER-MANAGEMENT",
+        "module": "Regulator-Portal"
+      },
+      {
+        "id": 3,
+        "name": "FORM-MANAGEMENT",
+        "module": "Regulator-Portal"
+      },
+      {
+        "id": 2,
+        "name": "DESKTOP-ANALYSIS",
+        "module": "Regulator-Portal"
+      },,
+      {
+        "id": 2,
+        "name": "SCHEDULE-MANAGEMENT",
+        "module": "Regulator-Portal"
+      },,
+      {
+        "id": 2,
+        "name": "ON-GROUND-INSPECTION-ANALYSIS",
+        "module": "Regulator-Portal"
+      },,
+      {
+        "id": 2,
+        "name": "CERTIFICATE-MANAGEMENT",
+        "module": "Regulator-Portal"
+      },,
+      {
+        "id": 2,
+        "name": "ROLE-MANAGEMENT",
+        "module": "Regulator-Portal"
+      }
+    ]
+    const arr = []
+      data.forEach(elem => {
+          
+          arr.push({
+            label: elem.name,
+            value: elem.name 
+          })
+     
+  });
+console.log(arr)
+    setAvailableTabsList(getDifferenceFromArray(arr, selectedTabsList));
+   // setAvailableTabsList(arr)
+  }
+
+
+  const fetchDefaultSelectedPages = async(pages) => {
+
+    const arr = []
+    pages.forEach(element => {
+      arr.push({
+        label: element,
+        value: element
+      })
+    });
+    setSelectedTabsList(arr)
+    if(selectedTabsList.length){
+       fetchAllAvailablePages()
+    }
+  };
 
   const handleChange = (name, value) => {
    
@@ -97,21 +186,26 @@ export default function CreateUpdateRole() {
   const removeFromArray = function (arr, ...theArgs) {
     return arr.filter( val => !theArgs.includes(val) )
   };
-  
 
+  const getDifferenceFromArray = function(array1, array2) {
+    return array1.filter(object1 => {
+      return !array2.some(object2 => {
+        return object1.label === object2.label;
+      });
+    });
+  } 
 
   const addToSelectedTabsList = (e) => {
-    console.log(selectedAvailableOptions )
+    //console.log(selectedAvailableOptions )
     setSelectedTabsList(prevState => [...prevState, ...selectedAvailableOptions]);
-    console.log(selectedTabsList)
+    
+    //console.log(selectedTabsList)
     setAvailableTabsList(removeFromArray(availableTabsList, ...selectedAvailableOptions));
     setSelectedAvailableOptions([]); 
   }
 
   const addToAvailableTabsList = (e) => {
-    console.log(chosenSelectedTabs )
     setAvailableTabsList(prevState => [...prevState, ...chosenSelectedTabs]);
-    console.log(availableTabsList)
     setSelectedTabsList(removeFromArray(selectedTabsList, ...chosenSelectedTabs))
     setChosenSelectedTabs([])
   }
@@ -124,15 +218,7 @@ export default function CreateUpdateRole() {
 
   const isFieldsValid = () => {
     if (
-      user.firstname === "" ||
-      user.lastname === "" ||
-      !isEmail ||
-      user.email === "" ||
-      user.role === "" ||
-      user.phonenumber === "" ||
-      !isPhoneNumber ||
-      user.phonenumber.length > 10 ||
-      user.phonenumber.length < 10
+      user.firstname === "" 
     ) {
       //  setErrMsg("Please fill in valid information");
       return false;
@@ -154,104 +240,78 @@ export default function CreateUpdateRole() {
   }
 
   const submitUserData = async (e) => {
-    e.preventDefault();
     let errorFlag = false;
-    let accessTokenObj = {
-      grant_type: "client_credentials",
-      client_id: "admin-api",
-      client_secret: "edd0e83d-56b9-4c01-8bf8-bad1870a084a",
-    };
-    setCookie("access_token", process.env.REACT_APP_AUTH_TOKEN);
-
-    if (userId) {
+console.log(selectedTabsList)
+console.log(selectedModuleName)
+    if (roleId) {
       //for edit user
-
       try {
         setSpinner(true);
-        let postDataKeyCloak = {
-          userName: getCookie("regulator")[0]["user_id"],
-          request: {
-            firstName: user.firstname,
-            lastName: user.lastname,
-            enabled: true,
-            email: user.email,
-            emailVerified: false,
-            credentials: [
-              {
-                type: "password",
-                value: `${user.phonenumber}`,
-                temporary: "false",
-              },
+        //hasura edit role
+        const postDataHasura = {
+          id: roleId,
+          param:
+          {
+            "role":"Super-Admin",
+            "module":[
+               "Regultor-Portal"
             ],
-            attributes: {
-              Role: user.role,
-            },
-          },
+            "action":[
+               {
+                  "module":"Regultor-Portal",
+                  "pages":[
+                     "FORM-MANAGEMENT",
+               "DESKTOP-ANALYSIS",
+               "SCHEDULE-MANAGEMENT","ON-GROUND-INSPECTION-ANALYSIS",
+               "CERTIFICATE-MANAGEMENT","ROLE-MANAGEMENT"
+                  ],
+                  "sub-pages":[
+                     {
+                        "name":"Rejected",
+                        "action":[
+                           "read"
+                        ]
+                     },
+                     {
+                        "name":"Approved",
+                        "action":[
+                           "read",
+                           "write"
+                        ]
+                     }
+                  ]
+               },
+            ]
+         }
         };
-        //keycloak edit user
-        const singleEditKeycloak = await editUserKeycloak(postDataKeyCloak);
-        if (singleEditKeycloak.status !== 200) {
-          errorFlag = true;
-        }
-
-        //hasura edit user
-        let postDataHasura = {
-          user_id: userId,
-          fname: user.firstname,
-          lname: user.lastname,
-          full_name: user.firstname + " " + user.lastname,
-          phno: user.phonenumber,
-        };
-        const singleEditHasura = await editUserHasura(postDataHasura);
-        if (singleEditHasura.status !== 200) {
+        const editEditHasuraResp = await editRole(postDataHasura);
+        if (editEditHasuraResp.status !== 200) {
           errorFlag = true;
         }
         if (!errorFlag) {
           setToast((prevState) => ({
             ...prevState,
             toastOpen: true,
-            toastMsg: "User updated successfully!",
+            toastMsg: "Role updated successfully! It would take 1 hour to reflect the changes",
             toastType: "success",
           }));
-          navigation(ADMIN_ROUTE_MAP.adminModule.manageUsers.home);
+          navigation(ADMIN_ROUTE_MAP.adminModule.roleManagement.home);
         }
       } catch (error) {
-        const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage
+       // const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage
         setToast((prevState) => ({
           ...prevState,
           toastOpen: true,
-          toastMsg: errorMessage,
+          toastMsg: "Failed to update role details.",
           toastType: "error",
         }));
       } finally {
         setSpinner(false);
       }
     } else {
-      // for create user
-      let postDataKeyCloak = {};
+      // for create role
       try {
         setSpinner(true);
-        postDataKeyCloak = {
-          request: {
-            firstName: user.firstname,
-            lastName: user.lastname,
-            email: user.email,
-            username: user.email,
-            enabled: true,
-            emailVerified: false,
-            credentials: [
-              {
-                type: "password",
-                value: `${user.phonenumber}`,
-                temporary: "false",
-              },
-            ],
-            attributes: {
-              Role: user.role,
-            },
-          },
-        };
-
         const checkIsEmailExistRes = await checkIsEmailExist({ email: user.email });
         if (checkIsEmailExistRes.data
           && (checkIsEmailExistRes.data.assessors.length
@@ -260,19 +320,34 @@ export default function CreateUpdateRole() {
           setToast((prevState) => ({
             ...prevState,
             toastOpen: true,
-            toastMsg: 'Email is Already Registered.',
+            toastMsg: 'Role exists in the system.',
             toastType: "error",
           }));
         } else {
 
-          //keycloak API call
-          const keycloakRes = await createBulkUsersKeyCloak(postDataKeyCloak);
-
-          if (keycloakRes?.status !== 200) {
-            errorFlag = true;
-          } else {
-            createHasuraUser(keycloakRes)
-          }
+         const reqBody = {
+            "role":{
+               "name":"Dashboard_Analyser2",
+               "active":true,
+               "created_by":1,
+               "updated_by":1,
+               "permissions":{
+                  "role":"Dashboard_Analyser2",
+                  "action":[
+                     {
+                        "pages":[
+                           "DASHBOARD",
+                        ],
+                        "module":"Regulator-portal",
+                        "sub-pages":[ ]
+                     }
+                  ],
+                  "module":[ "Regulator-portal"]
+               }
+            }
+         }
+         
+            createHasuraRole(reqBody)
         }
 
       } catch (error) {
@@ -281,7 +356,7 @@ export default function CreateUpdateRole() {
         setToast((prevState) => ({
           ...prevState,
           toastOpen: true,
-          toastMsg: error.message,
+          toastMsg: "Failed to update role details.",
           toastType: "error",
         }));
       } finally {
@@ -291,58 +366,30 @@ export default function CreateUpdateRole() {
 
   };
 
-  const createHasuraUser = (async (keycloakRes) => {
-    let postDataHasura = {
-      assessors: [],
-      regulators: [],
-    };
+  const createHasuraRole = (async (reqBody) => {
+ 
     try {
       //Hasura API call
-      if (keycloakRes.data) {
-        if (user.role === "Assessor") {
-          postDataHasura["assessors"].push({
-            code: `${Math.floor(1000 + Math.random() * 9000)}`,
-            user_id: keycloakRes.data,
-            email: user.email,
-            name: user.firstname + " " + user.lastname,
-            phonenumber: user.phonenumber,
-            fname: user.firstname,
-            lname: user.lastname,
-            role: user.role,
-          });
-        }
-        if (user.role === "Desktop-Admin" || user.role === "Desktop-Assessor") {
-          postDataHasura["regulators"].push({
-            user_id: keycloakRes.data,
-            email: user.email,
-            full_name: user.firstname + " " + user.lastname,
-            phonenumber: user.phonenumber,
-            fname: user.firstname,
-            lname: user.lastname,
-            role: user.role,
-          });
-        }
-      }
-      const hasuraRes = await createBulkUserHasura(postDataHasura);
+      const hasuraRes = await createRole(reqBody);
       if (hasuraRes.status === 200) {
         setToast((prevState) => ({
           ...prevState,
           toastOpen: true,
-          toastMsg: "User created successfully!",
+          toastMsg: "Role created successfully!",
           toastType: "success",
         }));
-        sendAccountCreationNotification(user)
-        navigation(ADMIN_ROUTE_MAP.adminModule.manageUsers.home);
-        removeCookie("access_token");;
+       // sendAccountCreationNotification(user)
+        navigation(ADMIN_ROUTE_MAP.adminModule.roleManagement.home);
+       // removeCookie("access_token");;
       }
 
 
     } catch (error) {
-      const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage
+      //const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage
       setToast((prevState) => ({
         ...prevState,
         toastOpen: true,
-        toastMsg: errorMessage,
+        toastMsg: "Failed to create new user role.",
         toastType: "error",
       }));
     }
@@ -373,13 +420,11 @@ export default function CreateUpdateRole() {
   }
 
   useEffect(() => {
-    if (userId) {
-      fetchUser();
+    console.log(roleId)
+    if (roleId) {
+      fetchRole();
     }
-  }, [userId]);
-
-
-
+  }, [roleId]);
 
   return (
     <>
@@ -406,13 +451,12 @@ export default function CreateUpdateRole() {
         <div
           className={`container m-auto min-h-[calc(100vh-148px)] px-3 py-12`}
         >
-          <form>
             <div className="flex flex-row mb-4 justify-between">
               <h1 className="text-2xl font-bold">Role details</h1>
 
             </div>
-            <div className="flex flex-row justify-between bg-white h-[700px] rounded-[4px] p-8 mx-auto">
-              <div className="w-1/2">
+            <div className="flex flex-row justify-between bg-white h-[800px] rounded-[4px] p-8 mx-auto">
+              <div className="w-3/4">
                 <h1 className="text-xl font-semibold">Role details</h1>
                 <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                   <div className="sm:col-span-3">
@@ -427,7 +471,7 @@ export default function CreateUpdateRole() {
                         placeholder="Type here"
                         id="firstname"
                         name="firstname"
-                        value={user.firstname}
+                        value={user.name}
                         onChange={(e) =>
                           handleAlphaOnly(e.target.value, "firstname")
                         }
@@ -455,18 +499,18 @@ export default function CreateUpdateRole() {
                   </div> */}
                 </div>
 
-                <div className="mt-9 grid grid-cols-1  sm:grid-cols-3">
-               {/*  <Label
+                <div className="  mt-9 grid grid-cols-1  sm:grid-cols-2">
+                {/* <Label
                       required
                       text="Module"
                       htmlFor="role"
                       moreClass=" text-sm font-medium text-gray-900 dark:text-gray-400"
                     /> */}
 
-                    <select
+                   {/*  <select
                       required
                       value={user.role}
-                      disabled={userId ? true : false}
+                     // disabled={roleId ? true : false}
                       name="role"
                       id="role"
                       onChange={(e) => handleChange("role", e.target.value)}
@@ -476,13 +520,21 @@ export default function CreateUpdateRole() {
                       <option value="Assessor">OGA Assessor App</option>
                       <option value="Desktop-Admin">Regulator Portal</option>
                       <option value="Desktop-Assessor">Applicant Portal</option>
-                    </select>
+                    </select> */}
+                    <Select
+                          name="modules"
+                          label="Module"
+                          value={selectedModuleName}
+                          onChange={setSelectedModuleName}
+                          options={modulesList}
+                          className="w-[450px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        />
                 </div>
-                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div className="sm:col-span-3 ">
+                <div className="mt-10  ">
+                  <div className="">
                    
-                    <div class="flex-parent-element">
-                      <div class="flex-child-element border border-gray-200">
+                    <div className="flex-parent-element">
+                      <div className="flex-child-element border border-gray-200">
                         <p className="m-2"> Available Screens</p>
                         <hr />
                         <Select
@@ -492,20 +544,19 @@ export default function CreateUpdateRole() {
                           value={selectedAvailableOptions}
                           onChange={setSelectedAvailableOptions}
                           options={availableTabsList}
-                          className="w-[350px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          className="w-[380px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         />
                       </div>
-                      <div class="flex-child-element green">
-                        <Button
-                          onClick={() => {addToSelectedTabsList()
-                          }}
+                      <div className="flex-child-element green">
+                        <Button type="button"
+                          onClick={() =>{addToSelectedTabsList()}}
                           moreClass="border border-gray-200 bg-white text-blue-600 w-[120px]"
                           text=">"
                         ></Button>
 
                         <Button
-                          onClick={() => {addToAvailableTabsList()
-                          }}
+                          onClick={() => addToAvailableTabsList()
+                          }
                           moreClass="mt-3 border border-gray-200 bg-white text-blue-600 w-[120px]"
                           text="<"
                         ></Button>
@@ -527,7 +578,7 @@ export default function CreateUpdateRole() {
 
                       </div>
 
-                      <div class="flex-child-element border border-gray-200">
+                      <div className="flex-child-element border border-gray-200">
                         <p className="m-2"> Selected Screens</p>
                         <hr />
                         <Select
@@ -537,7 +588,7 @@ export default function CreateUpdateRole() {
                           value={chosenSelectedTabs} 
                           onChange={setChosenSelectedTabs}
                           options={selectedTabsList}
-                          className="w-[350px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          className="w-[400px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         />
 
                       </div>
@@ -556,7 +607,7 @@ export default function CreateUpdateRole() {
                   ></Button>
                   <Button
                     moreClass="border text-white w-[120px]"
-                    text={!userId ? "Submit" : "Save"}
+                    text={!roleId ? "Submit" : "Save"}
                     otherProps={{
                       disabled: !isFieldsValid(),
                     }}
@@ -569,7 +620,6 @@ export default function CreateUpdateRole() {
             </div>
 
 
-          </form>
         </div>
       </div>
     </>
