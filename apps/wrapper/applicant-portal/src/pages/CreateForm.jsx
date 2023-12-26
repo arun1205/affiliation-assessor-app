@@ -340,7 +340,7 @@ const CreateForm = (props) => {
     );
     try {
     const commonPayload = formDATA?.common_payload
-    if (applicantStatus === 'draft' || applicantStatus === undefined) { //new form
+    if (applicantStatus === 'draft' || applicantStatus === "undefined") { //new form
       console.log("Saving new form..")
      const response = await saveFormSubmission({
         schedule_id: null,
@@ -356,7 +356,7 @@ const CreateForm = (props) => {
       if(response) {
         const draft = await getFromLocalForage('draft');
         console.log("draft ===>", draft);
-        if(draft !== undefined) {
+        if(draft && draft.draftId !== "") {
         const request = {
           id: draft.draftId
         }
