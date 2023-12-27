@@ -148,7 +148,7 @@ const MyApplications = () => {
       requestPayload
     );
 
-  /*   applicationsResponse?.data?.form_submissions.forEach((item, index) => {
+ /*    draftApplicationResponse?.data?.institute_form_drafts.forEach((item, index) => {
       console.log(item)
       if (item.form_id === 706) {
         item.noc_Path = "noc-path-isthere";

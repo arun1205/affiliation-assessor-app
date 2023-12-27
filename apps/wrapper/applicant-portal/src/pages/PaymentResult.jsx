@@ -80,25 +80,30 @@ export default function PaymentResult() {
     const formDATA = await getFromLocalForage(
       `common_payload`
     );
-   console.log(formDATA.paymentStage )
-    if (params.get("resp") && formDATA.paymentStage === "firstStage") {
-
-      try {
-      navigate(
-        `${APPLICANT_ROUTE_MAP.dashboardModule.createForm}/${formDATA?.common_payload.form_name
-        }/${undefined}/${undefined}/${formDATA?.paymentStage}`
-      );
-      } catch (error) {
-        console.log(error)
-      } finally {
-        removeItemFromLocalForage(formDATA.paymentStage);
+    try {
+      console.log(formDATA.paymentStage )
+      if (params.get("resp") && formDATA.paymentStage === "firstStage") {
+  
+        try {
+        navigate(
+          `${APPLICANT_ROUTE_MAP.dashboardModule.createForm}/${formDATA?.common_payload.form_name
+          }/${undefined}/${undefined}/${formDATA?.paymentStage}`
+        );
+        } catch (error) {
+          console.log(error)
+        }
+        
+       
+      } else if (params.get("resp")&& formDATA.paymentStage === "secStage")  {
+        console.log("...secStage.......")
+        applicantTransaction();
       }
-      
-     
-    } else if (params.get("resp")&& formDATA.paymentStage === "secStage")  {
-      console.log("...secStage.......")
-      applicantTransaction();
+    } catch (error) {
+      console.log(error)
+    } finally {
+      removeItemFromLocalForage(formDATA.paymentStage)
     }
+ 
   }
 
   useEffect(() => {
