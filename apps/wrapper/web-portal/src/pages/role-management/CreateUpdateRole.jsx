@@ -22,9 +22,9 @@ import messages from "../../assets/json-files/messages.json";
 export default function CreateUpdateRole() {
   const { roleId } = useParams();
   const { setSpinner, setToast } = useContext(ContextAPI);
-  const [user, setUser] = useState({    name: ""  });
+  const [user, setUser] = useState({ name: "" });
   const [roleName, setRoleName] = useState("");
-  
+
   const navigation = useNavigate();
 
   const [availableTabsList, setAvailableTabsList] = useState([
@@ -37,56 +37,58 @@ export default function CreateUpdateRole() {
   const [selectedAvailableOptions, setSelectedAvailableOptions] = useState([]);
   const [chosenSelectedTabs, setChosenSelectedTabs] = useState([]);
 
-  
+
   const [selectedModules, setSelectedModules] = useState([]);
   const [selectedModuleName, setSelectedModuleName] = useState("");
-  
+
   const [modulesList, setModulesList] = useState([
     { value: 'Regulator-portal', label: 'Regulator-portal' },
-    { value: 'assessor-app', label: 'assessor-app' },
+    /*  { value: 'assessor-app', label: 'assessor-app' }, */
   ]);
+   
+  let callCheckVar = true;
 
   const fetchRole = async () => {
     try {
       setSpinner(true);
       const reqBody = {
         object: {
-            active: {
-                _eq: true
-            },
-                id: {
-                    _eq: roleId
-                }
+          active: {
+            _eq: true
+          },
+          id: {
+            _eq: roleId
+          }
         },
         offsetNo: 0,
         limit: 100
-    }
-    // fetchAllUserRoles returns unique role if roleid is passed
-      const res = await fetchAllUserRoles(reqBody); 
+      }
+      // fetchAllUserRoles returns unique role if roleid is passed
+      const res = await fetchAllUserRoles(reqBody);
       console.log(res.data.role[0].permissions)
       if (res.data.role_aggregate.aggregate.count === 1) {
         setRoleName(res.data.role[0].name)
-      const currentModulesArr= [];
+        const currentModulesArr = [];
         res.data.role[0].permissions?.module?.forEach(element => {
-        const currentModule = {
-          label: element,
-          value: element
-        }
-        currentModulesArr.push(currentModule)
+          const currentModule = {
+            label: element,
+            value: element
+          }
+          currentModulesArr.push(currentModule)
         });
 
         setSelectedModules(currentModulesArr)
-       /*  setModulesList( [  { value: 'Desktop Analysis screen', label: 'Desktop Analysisssss' },
-        { value: 'Form Management Screen', label: 'Form Management' },
-        { value: 'User Management Screen', label: 'User Management' },
-        { value: 'Schedule Management Screen', label: 'Schedule Management' }]) */
+        /*  setModulesList( [  { value: 'Desktop Analysis screen', label: 'Desktop Analysisssss' },
+         { value: 'Form Management Screen', label: 'Form Management' },
+         { value: 'User Management Screen', label: 'User Management' },
+         { value: 'Schedule Management Screen', label: 'Schedule Management' }]) */
 
         setModulesList(removeFromArray(modulesList, ...selectedModules));
 
-        //fetchAllAvailablePages();
+
         fetchDefaultSelectedPages(res.data.role[0].permissions.action[0].pages);
       }
-     
+
     } catch (error) {
       console.log(error);
     } finally {
@@ -94,16 +96,17 @@ export default function CreateUpdateRole() {
     }
   };
 
-  const fetchAllAvailablePages =async() => {
-    
- /*    { value: 'Desktop Analysis screen', label: 'Desktop Analysis' },
-    { value: 'Form Management Screen', label: 'Form Management' },
-    { value: 'User Management Screen', label: 'User Management' },
-    { value: 'Schedule Management Screen', label: 'Schedule Management' }, */
+  const fetchAllAvailablePages = async () => {
+    console.log("caaaal....")
 
-    
+    /*    { value: 'Desktop Analysis screen', label: 'Desktop Analysis' },
+       { value: 'Form Management Screen', label: 'Form Management' },
+       { value: 'User Management Screen', label: 'User Management' },
+       { value: 'Schedule Management Screen', label: 'Schedule Management' }, */
 
-    const data = [ 
+
+
+    const data = [
       {
         "id": 1,
         "name": "DASHBOARD",
@@ -123,22 +126,22 @@ export default function CreateUpdateRole() {
         "id": 2,
         "name": "DESKTOP-ANALYSIS",
         "module": "Regulator-Portal"
-      },,
+      }, ,
       {
         "id": 2,
         "name": "SCHEDULE-MANAGEMENT",
         "module": "Regulator-Portal"
-      },,
+      }, ,
       {
         "id": 2,
         "name": "ON-GROUND-INSPECTION-ANALYSIS",
         "module": "Regulator-Portal"
-      },,
+      }, ,
       {
         "id": 2,
         "name": "CERTIFICATE-MANAGEMENT",
         "module": "Regulator-Portal"
-      },,
+      }, ,
       {
         "id": 2,
         "name": "ROLE-MANAGEMENT",
@@ -146,21 +149,21 @@ export default function CreateUpdateRole() {
       }
     ]
     const arr = []
-      data.forEach(elem => {
-          
-          arr.push({
-            label: elem.name,
-            value: elem.name 
-          })
-     
-  });
-console.log(arr)
+    data.forEach(elem => {
+
+      arr.push({
+        label: elem.name,
+        value: elem.name
+      })
+
+    });
+    console.log(arr)
     setAvailableTabsList(getDifferenceFromArray(arr, selectedTabsList));
-   // setAvailableTabsList(arr)
+    // setAvailableTabsList(arr)
   }
 
 
-  const fetchDefaultSelectedPages = async(pages) => {
+  const fetchDefaultSelectedPages = async (pages) => {
 
     const arr = []
     pages.forEach(element => {
@@ -170,49 +173,50 @@ console.log(arr)
       })
     });
     setSelectedTabsList(arr)
-    if(selectedTabsList.length){
-       fetchAllAvailablePages()
-    }
+    /*   if(selectedTabsList.length){
+         fetchAllAvailablePages()
+      } */
   };
 
   const handleChange = (name, value) => {
-   
+
   };
 
   const removeFromArray = function (arr, ...theArgs) {
-    return arr.filter( val => !theArgs.includes(val) )
+    return arr.filter(val => !theArgs.includes(val))
   };
 
-  const getDifferenceFromArray = function(array1, array2) {
+  const getDifferenceFromArray = function (array1, array2) {
     return array1.filter(object1 => {
       return !array2.some(object2 => {
         return object1.label === object2.label;
       });
     });
-  } 
+  }
 
   const addToSelectedTabsList = (e) => {
     //console.log(selectedAvailableOptions )
     setSelectedTabsList(prevState => [...prevState, ...selectedAvailableOptions]);
-    
+
     //console.log(selectedTabsList)
     setAvailableTabsList(removeFromArray(availableTabsList, ...selectedAvailableOptions));
-    setSelectedAvailableOptions([]); 
+    setSelectedAvailableOptions([]);
+    callCheckVar = false
   }
 
   const addToAvailableTabsList = (e) => {
     setAvailableTabsList(prevState => [...prevState, ...chosenSelectedTabs]);
     setSelectedTabsList(removeFromArray(selectedTabsList, ...chosenSelectedTabs))
     setChosenSelectedTabs([])
+    callCheckVar = false
   }
 
   const refreshTabsList = (e) => {
-   
+
   }
 
   const isFieldsValid = () => {
-    console.log(selectedTabsList)
-    if (roleName === "" || selectedModuleName === "" || !selectedTabsList?.length 
+    if (roleName === "" || selectedModuleName === "" || !selectedTabsList?.length
     ) {
       //  setErrMsg("Please fill in valid information");
       return false;
@@ -222,7 +226,7 @@ console.log(arr)
   const handleAlphaOnly = (value) => {
     const re = /^[a-zA-Z ]*$/;
     if (re.test(value)) {
-     // handleChange(nameFlag, value)
+      // handleChange(nameFlag, value)
       setRoleName(value)
     }
   }
@@ -237,6 +241,15 @@ console.log(arr)
   const submitRoleData = async (e) => {
     let errorFlag = false;
     console.log(roleName)
+    console.log(selectedTabsList)
+    console.log(selectedModuleName.value)
+    let moduleArr = []
+    moduleArr.push(selectedModuleName.value)
+    let selectedTabsArr = []
+    selectedTabsList.forEach(element => {
+      selectedTabsArr.push(element.value)
+    });
+
     if (roleId) {
       //for edit user
       try {
@@ -244,39 +257,35 @@ console.log(arr)
         //hasura edit role
         const postDataHasura = {
           id: roleId,
-          param:
-          {
-            "role":"Super-Admin",
-            "module":[
-               "Regultor-Portal"
-            ],
-            "action":[
-               {
-                  "module":"Regultor-Portal",
-                  "pages":[
-                     "FORM-MANAGEMENT",
-               "DESKTOP-ANALYSIS",
-               "SCHEDULE-MANAGEMENT","ON-GROUND-INSPECTION-ANALYSIS",
-               "CERTIFICATE-MANAGEMENT","ROLE-MANAGEMENT"
-                  ],
-                  "sub-pages":[
-                     {
-                        "name":"Rejected",
-                        "action":[
-                           "read"
-                        ]
-                     },
-                     {
-                        "name":"Approved",
-                        "action":[
-                           "read",
-                           "write"
-                        ]
-                     }
+          "param": {
+            "active": true,
+            "name": roleName,
+            "permissions": {
+              "role": roleName,
+              "action": [
+                {
+                  "pages": selectedTabsArr,
+                  "module": selectedModuleName.value,
+                  "sub-pages": [
+                    {
+                      "name": "Rejected",
+                      "action": [
+                        "read"
+                      ]
+                    },
+                    {
+                      "name": "Approved",
+                      "action": [
+                        "read",
+                        "write"
+                      ]
+                    }
                   ]
-               },
-            ]
-         }
+                }
+              ],
+              "module": moduleArr
+            }
+          }
         };
         const editEditHasuraResp = await editRole(postDataHasura);
         if (editEditHasuraResp.status !== 200) {
@@ -292,7 +301,7 @@ console.log(arr)
           navigation(ADMIN_ROUTE_MAP.adminModule.roleManagement.home);
         }
       } catch (error) {
-       // const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage
+        // const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage
         setToast((prevState) => ({
           ...prevState,
           toastOpen: true,
@@ -308,14 +317,14 @@ console.log(arr)
         setSpinner(true);
         let reqBody = {
           "object": {
-              "name": {
-                  "_eq": roleName
-              }
+            "name": {
+              "_eq": roleName
+            }
           },
           "offsetNo": 0,
           "limit": 100
-      }
-      
+        }
+
         const checkIsRoleExistRes = await fetchAllUserRoles(reqBody);
         console.log(checkIsRoleExistRes)
         if (checkIsRoleExistRes.data
@@ -328,30 +337,30 @@ console.log(arr)
           }));
         } else {
 
-         const reqBody = {
-            "role":{
-               "name":"Dashboard_Analyser2",
-               "active":true,
-               "created_by":1,
-               "updated_by":1,
-               "permissions":{
-                  "role":"Dashboard_Analyser2",
-                  "action":[
-                     {
-                        "pages":[
-                           "DASHBOARD",
-                           "FORM-MANAGEMENT"
-                        ],
-                        "module":"Regulator-portal",
-                        "sub-pages":[ ]
-                     }
-                  ],
-                  "module":[ "Regulator-portal"]
-               }
+          const reqBody = {
+            "role": {
+              "name": "Dashboard_Analyser2",
+              "active": true,
+              "created_by": 1,
+              "updated_by": 1,
+              "permissions": {
+                "role": "Dashboard_Analyser2",
+                "action": [
+                  {
+                    "pages": [
+                      "DASHBOARD",
+                      "FORM-MANAGEMENT"
+                    ],
+                    "module": "Regulator-portal",
+                    "sub-pages": []
+                  }
+                ],
+                "module": ["Regulator-portal"]
+              }
             }
-         }
-         
-            createHasuraRole(reqBody)
+          }
+
+          createHasuraRole(reqBody)
         }
 
       } catch (error) {
@@ -373,7 +382,7 @@ console.log(arr)
   const createHasuraRole = async (reqBody) => {
 
     console.log(reqBody)
- 
+
     try {
       //Hasura API call
       const hasuraRes = await createRole(reqBody);
@@ -384,9 +393,9 @@ console.log(arr)
           toastMsg: "Role created successfully!",
           toastType: "success",
         }));
-       // sendAccountCreationNotification(user)
+        // sendAccountCreationNotification(user)
         navigation(ADMIN_ROUTE_MAP.adminModule.roleManagement.home);
-       // removeCookie("access_token");;
+        // removeCookie("access_token");;
       }
 
 
@@ -401,7 +410,7 @@ console.log(arr)
     }
 
   }
-  
+
 
   const sendAccountCreationNotification = async (userDetails) => {
     if (userDetails.email) {
@@ -434,6 +443,17 @@ console.log(arr)
     }
   }, [roleId]);
 
+  useEffect(() => {
+    console.log(callCheckVar)
+    if(callCheckVar){
+      fetchAllAvailablePages();
+      callCheckVar = false
+    }
+  }, [selectedTabsList]);
+
+
+
+
   return (
     <>
       {/* Breadcrum */}
@@ -459,31 +479,31 @@ console.log(arr)
         <div
           className={`container m-auto min-h-[calc(100vh-148px)] px-3 py-12`}
         >
-            <div className="flex flex-row mb-4 justify-between">
-              <h1 className="text-2xl font-bold">Role details</h1>
+          <div className="flex flex-row mb-4 justify-between">
+            <h1 className="text-2xl font-bold">Role details</h1>
 
-            </div>
-            <div className="flex flex-row justify-between bg-white h-[800px] rounded-[4px] p-8 mx-auto">
-              <div className="w-3/4">
-                <h1 className="text-xl font-semibold">Role details</h1>
-                <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div className="sm:col-span-3">
-                    <Label
-                      htmlFor="firstname"
-                      text="Role name"
-                      required
-                    ></Label>
-                    <div className="mt-2">
-                      <input
-                        type="text"
-                        placeholder="Type here"
-                        value={roleName} 
-                        onChange={(e) =>handleAlphaOnly(e.target.value) }
-                        disabled={roleId ? true : false}
-                        className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
+          </div>
+          <div className="flex flex-row justify-between bg-white h-[800px] rounded-[4px] p-8 mx-auto">
+            <div className="w-3/4">
+              <h1 className="text-xl font-semibold">Role details</h1>
+              <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <div className="sm:col-span-3">
+                  <Label
+                    htmlFor="firstname"
+                    text="Role name"
+                    required
+                  ></Label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      placeholder="Type here"
+                      value={roleName}
+                      onChange={(e) => handleAlphaOnly(e.target.value)}
+                      disabled={roleId ? true : false}
+                      className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
                   </div>
+                </div>
                 {/*   <div className="sm:col-span-3">
                     <Label htmlFor="lastname" text="Last name" required></Label>
                     <div className="mt-2">
@@ -501,17 +521,17 @@ console.log(arr)
                       />
                     </div>
                   </div> */}
-                </div>
+              </div>
 
-                <div className="  mt-9 grid grid-cols-1  sm:grid-cols-2">
-                {/* <Label
-                      required
-                      text="Module"
-                      htmlFor="role"
-                      moreClass=" text-sm font-medium text-gray-900 dark:text-gray-400"
-                    /> */}
+              <div className="w-[230px] mt-9 grid grid-cols-1">
 
-                   {/*  <select
+                <Label
+                  required
+                  text="Module"
+                  htmlFor="role"
+                  moreClass="text-sm font-medium text-gray-900 dark:text-gray-400"
+                />
+                {/*  <select
                       required
                       value={user.role}
                      // disabled={roleId ? true : false}
@@ -525,53 +545,53 @@ console.log(arr)
                       <option value="Desktop-Admin">Regulator Portal</option>
                       <option value="Desktop-Assessor">Applicant Portal</option>
                     </select> */}
-                    <Select
-                          name="modules"
-                          label="Module"
-                          value={selectedModuleName}
-                          onChange={setSelectedModuleName}
-                          options={modulesList}
-                          className="w-[450px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        />
-                </div>
-                <div className="mt-10  ">
-                  <div className="">
-                   
-                    <div className="flex-parent-element">
-                      <div className="flex-child-element border border-gray-200">
-                        <p className="m-2"> Available Screens</p>
-                        <hr />
-                        <Select
-                          isMulti
-                          name="allTabsList"
-                          label="Available tabs"
-                          value={selectedAvailableOptions}
-                          onChange={setSelectedAvailableOptions}
-                          options={availableTabsList}
-                          className="w-[380px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        />
-                      </div>
-                      <div className="flex-child-element green">
-                        <Button type="button"
-                          onClick={() =>{addToSelectedTabsList()}}
-                          moreClass="border border-gray-200 bg-white text-blue-600 w-[120px]"
-                          text=">"
-                        ></Button>
+                <Select
+                  name="modules"
+                  label="Module"
+                  value={selectedModuleName}
+                  onChange={setSelectedModuleName}
+                  options={modulesList}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                />
+              </div>
+              <div className="mt-10  ">
+                <div className="w-[777px]">
 
-                        <Button
-                          onClick={() => addToAvailableTabsList()
-                          }
-                          moreClass="mt-3 border border-gray-200 bg-white text-blue-600 w-[120px]"
-                          text="<"
-                        ></Button>
+                  <div className="flex-parent-element">
+                    <div className="flex-child-element border border-gray-200">
+                      <p className="m-2"> Available Screens</p>
+                      <hr />
+                      <Select
+                        isMulti
+                        name="allTabsList"
+                        label="Available tabs"
+                        value={selectedAvailableOptions}
+                        onChange={setSelectedAvailableOptions}
+                        options={availableTabsList}
+                        className="w-[380px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      />
+                    </div>
+                    <div className="w-[230px] flex-child-element green">
+                      <Button type="button"
+                        onClick={() => { addToSelectedTabsList() }}
+                        moreClass="border border-gray-200 bg-white text-blue-600 w-[120px]"
+                        text=">"
+                      ></Button>
 
-{/* <Button
+                      <Button
+                        onClick={() => addToAvailableTabsList()
+                        }
+                        moreClass="mt-3 border border-gray-200 bg-white text-blue-600 w-[120px]"
+                        text="<"
+                      ></Button>
+
+                      {/* <Button
                           onClick={() => {refreshTabsList()
                           }}
                           moreClass="mt-3 border border-gray-200 bg-white text-blue-600 w-[120px]"
                           text="<"
                         ></Button> */}
-                       {/*  <NavLink
+                      {/*  <NavLink
                         moreClass="border border-gray-200">
                         <MdRefresh className="text-white text-xl ml-12 mt-2" 
                         
@@ -580,48 +600,48 @@ console.log(arr)
                          />
                       </NavLink> */}
 
-                      </div>
+                    </div>
 
-                      <div className="flex-child-element border border-gray-200">
-                        <p className="m-2"> Selected Screens</p>
-                        <hr />
-                        <Select
-                          isMulti
-                          name="selectedTabsList"
-                          label="Selected tabs"
-                          value={chosenSelectedTabs} 
-                          onChange={setChosenSelectedTabs}
-                          options={selectedTabsList}
-                          className="w-[400px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        />
+                    <div className="flex-child-element border border-gray-200">
+                      <p className="m-2"> Selected Screens</p>
+                      <hr />
+                      <Select
+                        isMulti
+                        name="selectedTabsList"
+                        label="Selected tabs"
+                        value={chosenSelectedTabs}
+                        onChange={setChosenSelectedTabs}
+                        options={selectedTabsList}
+                        className="w-[400px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      />
 
-                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-4 ">
-                <div className="footer flex flex-row gap-4 justify-end">
-                  <Button
-                    onClick={() => {
-                      navigation(ADMIN_ROUTE_MAP.adminModule.roleManagement.home);
-                    }}
-                    moreClass="border border-gray-200 bg-white text-blue-600 w-[120px]"
-                    text="Cancel"
-                  ></Button>
-                  <Button
-                    moreClass="border text-white w-[120px]"
-                    text={!roleId ? "Submit" : "Save"}
-                    otherProps={{
-                      disabled: !isFieldsValid(),
-                    }}
-                    onClick={submitRoleData}
-                  ></Button>
-                </div>
-              </div>
-
-
             </div>
+            <div className="flex flex-col  ">
+              <div className="footer flex flex-row gap-4 justify-end">
+                <Button
+                  onClick={() => {
+                    navigation(ADMIN_ROUTE_MAP.adminModule.roleManagement.home);
+                  }}
+                  moreClass="border border-gray-200 bg-white text-blue-600 w-[120px]"
+                  text="Cancel"
+                ></Button>
+                <Button
+                  moreClass="border text-white w-[120px]"
+                  text={!roleId ? "Submit" : "Save"}
+                  otherProps={{
+                    disabled: !isFieldsValid(),
+                  }}
+                  onClick={submitRoleData}
+                ></Button>
+              </div>
+            </div>
+
+
+          </div>
 
 
         </div>
