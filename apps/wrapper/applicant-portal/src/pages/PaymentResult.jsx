@@ -47,6 +47,10 @@ export default function PaymentResult() {
     }
 
     //email notify
+    await sendEmailNotification();
+  };
+
+  const sendEmailNotification= async () =>{
     const emailData = {
       recipientEmail: [`${getCookie("userData")?.userRepresentation?.email}`],
       emailSubject: `Payment Details`,
@@ -74,7 +78,7 @@ export default function PaymentResult() {
 
     applicantService.sendEmailNotification(emailData);
     removeCookie("payment_ref_no");
-  };
+  }
 
   const getDataFromLocalForage = async () =>{
     const formDATA = await getFromLocalForage(
@@ -85,6 +89,7 @@ export default function PaymentResult() {
       if (params.get("resp") && formDATA.paymentStage === "firstStage") {
   
         try {
+        await sendEmailNotification();
         navigate(
           `${APPLICANT_ROUTE_MAP.dashboardModule.createForm}/${formDATA?.common_payload.form_name
           }/${undefined}/${undefined}/${formDATA?.paymentStage}`
