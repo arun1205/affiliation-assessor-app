@@ -457,9 +457,7 @@ export default function DesktopAnalysisView() {
   };
 
   const checkIframeLoaded = () => {
-    console.log()
     console.log(formDataFromApi.reverted_count)
-    let rrr =3;
     if (window.location.host.includes("regulator.upsmfac")) {
       const iframeElem = document?.getElementById("enketo_DA_preview");
       var iframeContent =
@@ -498,7 +496,7 @@ export default function DesktopAnalysisView() {
       //   alert("Hello world!");
       // });
    
-      if(rrr >= 2){
+      if(formDataFromApi?.form_status?.toLowerCase() === "returned" && formDataFromApi?.reverted_count >= 2){
         iframeContent.getElementById("submit-form").style.display = "none";
       }
     }
@@ -607,6 +605,20 @@ export default function DesktopAnalysisView() {
                   </Tooltip>
                 )}
               {paymentStatus?.toLowerCase() === "paid" &&
+                formDataFromApi?.form_status?.toLowerCase() ===
+                  "da completed" && loggedInUserRole !== "Desktop-Assessor" && (
+                  <button
+                    onClick={() => setOpenSheduleInspectionModel(true)}
+                    className="flex flex-wrap items-center justify-center gap-2 border border-gray-500 bg-white text-gray-500 w-fit h-fit p-2 font-semibold rounded-[4px]"
+                  >
+                    Send for inspection
+                    <span>
+                      <BsArrowRight />
+                    </span>
+                  </button>
+                )}
+             { console.log(paymentStatus)}
+                 {paymentStatus?.toLowerCase() === "initiated" && formDataFromApi?.round === 2 &&
                 formDataFromApi?.form_status?.toLowerCase() ===
                   "da completed" && loggedInUserRole !== "Desktop-Assessor" && (
                   <button
