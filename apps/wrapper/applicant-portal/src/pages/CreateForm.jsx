@@ -591,10 +591,11 @@ const CreateForm = (props) => {
       if(applicantStatus && applicantStatus?.toLowerCase() === 'returned') {
         var formSection = iframeContent?.getElementsByClassName("or-group");
         if (!formSection) return;
-        console.log(section)
-        for (var j = 0; j < section?.length; j++) {
-          var inputElements1 = section[j].querySelectorAll("input");
-          var buttonElements1 = section[j].querySelectorAll("button");
+
+        for (var j = 0; j < formSection?.length; j++) {
+
+          var inputElements1 = formSection[j].querySelectorAll("input");
+          var buttonElements1 = formSection[j].querySelectorAll("button");
           
           buttonElements1.forEach((button) => {
             if((button.name.towLowerCase().includes('admin') || button.name.towLowerCase().includes('desktop')) && button.value !== undefined) {
