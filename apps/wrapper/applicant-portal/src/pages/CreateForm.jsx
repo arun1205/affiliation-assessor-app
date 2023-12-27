@@ -598,13 +598,13 @@ const CreateForm = (props) => {
           var buttonElements1 = formSection[j].querySelectorAll("button");
           
           buttonElements1.forEach((button) => {
-            if((button.name.towLowerCase().includes('admin') || button.name.towLowerCase().includes('desktop')) && button.value !== undefined) {
+            if((button.name.toLowerCase().includes('admin') || button.name.toLowerCase().includes('desktop')) && button.value !== undefined) {
               console.log("Input has value", button.value);
             }
           });
           inputElements1.forEach((input) => {
             input.disabled = true;
-            if((input.name.towLowerCase().includes('admin') || input.name.towLowerCase().includes('desktop')) && input.value !== undefined) {
+            if((input.name.toLowerCase().includes('admin') || input.name.toLowerCase().includes('desktop')) && input.value !== undefined) {
               console.log("Input has value", input.value);
             }
           });
