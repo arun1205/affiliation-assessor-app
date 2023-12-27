@@ -36,14 +36,14 @@ export default function CreateUpdateRole() {
 
   const [selectedAvailableOptions, setSelectedAvailableOptions] = useState([]);
   const [chosenSelectedTabs, setChosenSelectedTabs] = useState([]);
-
+  const [hideSelectBox, setHideSelectBox] = useState("initial");
 
   const [selectedModules, setSelectedModules] = useState([]);
   const [selectedModuleName, setSelectedModuleName] = useState("");
 
   const [modulesList, setModulesList] = useState([
     { value: 'Regulator-portal', label: 'Regulator-portal' },
-    /*  { value: 'assessor-app', label: 'assessor-app' }, */
+     { value: 'Assessor-app', label: 'Assessor-app' },
   ]);
    
   let callCheckVar = true;
@@ -216,11 +216,21 @@ export default function CreateUpdateRole() {
   }
 
   const isFieldsValid = () => {
-    if (roleName === "" || selectedModuleName === "" || !selectedTabsList?.length
-    ) {
-      //  setErrMsg("Please fill in valid information");
-      return false;
-    } else return true;
+    if(setSelectedModuleName?.value?.toLowerCase() === "regulator-portal"){
+      if (roleName === "" || selectedModuleName === "" || !selectedTabsList?.length
+      ) {
+        //  setErrMsg("Please fill in valid information");
+        return false;
+      } else return true;
+    } else 
+    {
+      if (roleName === "" || selectedModuleName === "" 
+      ) {
+        //  setErrMsg("Please fill in valid information");
+        return false;
+      } else return true;
+    }
+   
   };
 
   const handleAlphaOnly = (value) => {
@@ -251,7 +261,7 @@ export default function CreateUpdateRole() {
     });
 
     if (roleId) {
-      //for edit user
+      //for edit role
       try {
         setSpinner(true);
         //hasura edit role
@@ -338,24 +348,35 @@ export default function CreateUpdateRole() {
         } else {
 
           const reqBody = {
-            "role": {
-              "name": "Dashboard_Analyser2",
+            object: {
+              "name": roleName,
               "active": true,
               "created_by": 1,
               "updated_by": 1,
               "permissions": {
-                "role": "Dashboard_Analyser2",
+                "role": roleName,
                 "action": [
                   {
-                    "pages": [
-                      "DASHBOARD",
-                      "FORM-MANAGEMENT"
-                    ],
-                    "module": "Regulator-portal",
-                    "sub-pages": []
+                    "pages": selectedTabsArr,
+                    "module": selectedModuleName.value,
+                    "sub-pages": [
+                      {
+                        "name": "Rejected",
+                        "action": [
+                          "read"
+                        ]
+                      },
+                      {
+                        "name": "Approved",
+                        "action": [
+                          "read",
+                          "write"
+                        ]
+                      }
+                    ]
                   }
                 ],
-                "module": ["Regulator-portal"]
+                "module": moduleArr
               }
             }
           }
@@ -450,6 +471,15 @@ export default function CreateUpdateRole() {
       callCheckVar = false
     }
   }, [selectedTabsList]);
+
+  useEffect(() => {
+    console.log(selectedModuleName?.value)
+    if(selectedModuleName?.value?.toLowerCase() === "assessor-app"){
+      setHideSelectBox("none")
+    } else {
+      setHideSelectBox("initial")
+    }
+  }, [selectedModuleName]);
 
 
 
@@ -555,7 +585,7 @@ export default function CreateUpdateRole() {
                 />
               </div>
               <div className="mt-10  ">
-                <div className="w-[777px]">
+                <div className="w-[777px]"  style={{ display: hideSelectBox }}>
 
                   <div className="flex-parent-element">
                     <div className="flex-child-element border border-gray-200">
@@ -563,6 +593,7 @@ export default function CreateUpdateRole() {
                       <hr />
                       <Select
                         isMulti
+                      
                         name="allTabsList"
                         label="Available tabs"
                         value={selectedAvailableOptions}
@@ -570,6 +601,7 @@ export default function CreateUpdateRole() {
                         options={availableTabsList}
                         className="w-[380px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       />
+                   
                     </div>
                     <div className="w-[230px] flex-child-element green">
                       <Button type="button"
@@ -614,7 +646,6 @@ export default function CreateUpdateRole() {
                         options={selectedTabsList}
                         className="w-[400px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       />
-
                     </div>
                   </div>
                 </div>

@@ -708,7 +708,7 @@ export const editRole = async (postData) => {
 }
 
 export const createRole = async (postData) => {
-  return await adminCustomPost.post(
+  return await adminCustomPost.put(
     API_URL.manageRoles.addRole,
     postData
   )

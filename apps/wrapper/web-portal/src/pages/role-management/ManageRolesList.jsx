@@ -165,7 +165,7 @@ export default function ManageRolesList({
     let usersData = {
       full_name: e.fname || e.lname ? e.fname + " " + e.lname : e.name,
       // pages: pagesArr.length ? `${pagesArr} , ` : "-",
-      pages: `${e.permissions?.action[0].pages} , `,
+      pages: `${e.permissions?.action[0].pages} , ` || "ALL",
       module: e.permissions?.module?.length ? `${e.permissions?.module}` : "-",
       status:
         e.active

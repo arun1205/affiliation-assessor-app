@@ -71,7 +71,7 @@ const API_URL = {
   manageRoles: {
     getAll: `${rest}getAllRolesWithPermissions`,
     editRole: `${rest}updateRoleById`,
-    addRole: `${rest}addNewRoleAndPermissions`,
+    addRole: `${rest}addNewRoleWithPermission`,
     toggleRoleStatus: `${rest}updateRoleById`,
   },
   desktopAnalysis: {
