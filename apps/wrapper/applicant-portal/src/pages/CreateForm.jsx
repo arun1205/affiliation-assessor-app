@@ -348,7 +348,7 @@ const CreateForm = (props) => {
         applicant_id: instituteDetails?.[0]?.id,
         submitted_on: new Date().toJSON().slice(0, 10),
         reverted_count: 0,
-        form_status: "Application Submitted",
+        form_status: commonPayload.round === 1 ? "Application Submitted" : "Inspection Scheduled",
         ...commonPayload,
       });
       console.log("applicantStatus =>", applicantStatus);
@@ -417,6 +417,9 @@ const CreateForm = (props) => {
       console.log('Something went wrong');
       
     }
+  /*   finally {
+      removeAllFromLocalForage();
+    } */
   }
 
   const handleDownloadNocOrCertificate = () => {

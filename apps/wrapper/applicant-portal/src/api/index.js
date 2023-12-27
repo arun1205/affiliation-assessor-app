@@ -88,6 +88,11 @@ export const deleteApplicationDraft = async (postData) => {
   );
   return res.data;
 }
+
+export const updateFormStatus = async (postData) => {
+  const res = await customPost.put(APIS.FORMS.UPDATE_FORM, postData);
+  return res;
+};
 //#endregion
 
 //#endregion
