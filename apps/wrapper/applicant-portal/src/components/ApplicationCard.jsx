@@ -52,6 +52,13 @@ const ApplicationCard = (props) => {
           refNo: paymentRes?.data?.referenceNo
         }
       );
+      
+      await setToLocalForage(
+        `common_payload`,
+        {
+          "paymentStage":"secStage",
+        }
+      );
        window.open(paymentRes?.data?.redirectUrl);
     } catch (error) {}
   };

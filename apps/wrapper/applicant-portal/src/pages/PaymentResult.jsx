@@ -12,7 +12,8 @@ import { getCookie, removeCookie } from "../utils";
 import Header from "../components/Header";
 import { applicantService } from "../services";
 import {
-  getFromLocalForage
+  getFromLocalForage,
+  removeItemFromLocalForage,
 } from "./../forms";
 
 
@@ -79,21 +80,23 @@ export default function PaymentResult() {
     const formDATA = await getFromLocalForage(
       `common_payload`
     );
-   
+   console.log(formDATA.paymentStage )
     if (params.get("resp") && formDATA.paymentStage === "firstStage") {
 
       try {
-        
       navigate(
         `${APPLICANT_ROUTE_MAP.dashboardModule.createForm}/${formDATA?.common_payload.form_name
         }/${undefined}/${undefined}/${formDATA?.paymentStage}`
       );
       } catch (error) {
         console.log(error)
+      } finally {
+        removeItemFromLocalForage(formDATA.paymentStage);
       }
       
      
-    } else if (params.get("resp"))  {
+    } else if (params.get("resp")&& formDATA.paymentStage === "secStage")  {
+      console.log("...secStage.......")
       applicantTransaction();
     }
   }

@@ -714,6 +714,14 @@ export const createRole = async (postData) => {
   )
 }
 
+export const updateRoleById = async (postData) => {
+  const res = await adminCustomPost.post(
+    API_URL.manageRoles.toggleRoleStatus,
+    postData
+  );
+  return res;
+};
+
 
 
 

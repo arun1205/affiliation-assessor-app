@@ -18,7 +18,7 @@ import {
   sendEmailNotification,
   fetchAllUserRoles,
   handleActiveRegulatorUser,
-  handleInctiveRegulatorUser
+  updateRoleById
 } from "../../api";
 
 import { userService } from "../../api/userService";
@@ -39,14 +39,10 @@ import { ContextAPI } from "../../utils/ContextAPI";
 import data from "../../assets/json-files/messages.json";
 
 export default function ManageRolesList({
-  closeDeleteUsersModal,
-  closeBulkUploadUsersModal,
-  closeViewSchedulesModal,
-  setDeleteFlags,
+  
 }) {
   const navigation = useNavigate();
   let resUserData = [];
-  const [deleteUsersModel, setDeleteUsersModel] = useState(false);
   const [deleteBulkUsersModel, setDeleteBulkUsersModel] = useState(false);
 
   // const[onRowSelected,setOnRowSelected] = useState([])
@@ -54,18 +50,12 @@ export default function ManageRolesList({
   const [bulkDeleteFlag, setBulkDeleteFlag] = useState(false);
   const [listArray, setListArray] = useState();
 
-  const [bulkUploadUsersModel, setBulkUploadUsersModel] = useState(false);
-  const [viewScheduleModal, setViewScheduleModal] = useState(false);
-  const [scheduleUserData, setScheduleUserData] = useState({});
-  const [usersList, setUsersList] = useState();
+  const [roleStatus, setRoleStatus] = useState(false);
   const [userTableList, setUserTableList] = useState([]);
 
   const [invalidUserRowFlag] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState([{ userId: "" }]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [state, setState] = useState({
-    menu_selected: "Assessor",
-  });
+
 
   const [paginationInfo, setPaginationInfo] = useState({
     offsetNo: 0,
@@ -76,7 +66,6 @@ export default function ManageRolesList({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const { setSpinner, setToast } = useContext(ContextAPI);
-  const [usersCreated, setUsersCreated] = useState(false);
   let selectedRows = [];
 
   const COLUMNS = [
@@ -110,112 +99,31 @@ export default function ManageRolesList({
   ];
 
 
-  const handleSelectMenu = (menuItem) => {
-    setState((prevState) => ({ ...prevState, menu_selected: menuItem }));
-    setPaginationInfo((prevState) => ({ ...prevState, offsetNo: 0 }));
-    setIsFilterOpen(false);
-    setIsSearchOpen(false);
-  };
+  const handleRoleStatusUpdate = async (role) => {
 
-  const handleUsersetInvalid = async (user) => {
-    const userId = user?.user_id;
-    const formData = new FormData();
-    if (state.menu_selected === 'Assessor') {
-      formData.append("assessorId", userId);
-    } else {
-      formData.append("requlatorId", userId);
-    }
-    let e = user;
     try {
       setSpinner(true);
 
       const reqBody = {
-        "request": {
-          "userName": userId
+        id: role?.id,
+        param: {
+          active: role.active ? false : true
         }
       }
+      console.log(reqBody.param.active)
+      const response = await updateRoleById(reqBody)
+      console.log(response.data.update_role.returning[0].active)
+      //let roleStatus1 = response.data.update_role.returning[0].active
+      setRoleStatus(roleStatus => !roleStatus)
+      setToast((prevState) => ({
+        ...prevState,
+        toastOpen: true,
+        toastMsg: response.data.update_role.returning[0].active ? "Role activated successfully" : "Role deactivated successfully" ,
+        toastType: `success`,
+      }));
 
-      const res = await userService.deActivateUserKeycloak(reqBody)
-      if(res){
-        const response = state.menu_selected === 'Assessor' ? await handleInctiveUser(formData) : await handleInctiveRegulatorUser(formData);
-        e["workingstatus"] = "Invalid";
-        resUserData.forEach((item) => {
-          if (item.id === userId) {
-            item.status = "Inactive";
-            item.more_actions = (
-              <div className="flex flex-row text-2xl font-semibold">
-                <Menu placement="bottom-end">
-                  <MenuHandler>
-                    <button className="leading-3 relative top-[-8px]">...</button>
-                  </MenuHandler>
-                  <MenuList className="p-2">
-                    <MenuItem
-                      onClick={() =>
-                        navigation(
-                          `${ADMIN_ROUTE_MAP.adminModule.roleManagement.updateRole}/${e.user_id}`
-                        )
-                      }
-                    >
-                      <div className="flex flex-row gap-4 mt-4">
-                        <div>
-                          <MdEdit />
-                        </div>
-                        <div className="text-semibold m-">
-                          <span>Edit</span>
-                        </div>
-                      </div>{" "}
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() =>
-                        e?.workingstatus === "Invalid"
-                          ? handleUserSetValid(e)
-                          : handleUsersetInvalid(e)
-                      }
-                    >
-                      <div className="flex flex-row gap-4">
-                        <div>
-                          <MdSwapHoriz />
-                        </div>
-                        <div className="text-semibold m-">
-                          <span>
-                            {e?.workingstatus === "Invalid"
-                              ? "Activate"
-                              : "Deactivate"}
-                          </span>
-                        </div>
-                      </div>
-                    </MenuItem>
-                   {/*  <MenuItem onClick={() => handleUserDelete(e)}>
-                      <div className="flex flex-row gap-4">
-                        <div>
-                          <MdDelete />
-                        </div>
-                        <div className="text-semibold m-">
-                          <span>Delete</span>
-                        </div>
-                      </div>{" "}
-                    </MenuItem> */}
-                  </MenuList>
-                </Menu>
-              </div>
-            );
-          }
-        });
-       // console.log("data", resUserData);
-        setUserTableList(resUserData);
-        const userDetails = response?.data?.update_assessors?.returning[0] ? response?.data?.update_assessors?.returning[0] : response?.data?.update_regulator?.returning[0]
-        if (userDetails) {
-          sendActivationStatusNotification(userDetails, 'inactive');
-          setToast((prevState) => ({
-            ...prevState,
-            toastOpen: true,
-            toastMsg: "User deactivated successfully",
-            toastType: "success",
-          }));
-        }
-      }
 
-     
+
     } catch (error) {
       const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage;
       setToast((prevState) => ({
@@ -229,161 +137,42 @@ export default function ManageRolesList({
     }
   };
 
-  const handleViewSchedule = (data) => {
-    setScheduleUserData(data);
-    setViewScheduleModal(true);
-  };
-
-  const handleUserSetValid = async (user) => {
-    const userId = user?.user_id;
-    const formData = new FormData();
-    if (state.menu_selected === 'Assessor') {
-      formData.append("assessorId", userId);
-    } else {
-      formData.append("requlatorId", userId);
-    }
-    let e = user;
-    try {
-      setSpinner(true);
-
-      const reqBody = {
-        "request": {
-          "userName": userId
-        }
-      }
-
-      const res = await userService.activateUserKeycloak(reqBody)
-
-      if (res.status === 200) {
-        const validResponse = state.menu_selected === 'Assessor' ? await handleActiveUser(formData) : await handleActiveRegulatorUser(formData);
-        e["workingstatus"] = "Valid";
-        resUserData.forEach((item) => {
-          if (item.id === userId) {
-            item.status = "Active";
-            item.more_actions = (
-              <div className="flex flex-row text-2xl font-semibold">
-                <Menu placement="bottom-end">
-                  <MenuHandler>
-                    <button className="leading-3 relative top-[-8px]">...</button>
-                  </MenuHandler>
-                  <MenuList className="p-2">
-                    <MenuItem
-                      onClick={() =>
-                        navigation(
-                          `${ADMIN_ROUTE_MAP.adminModule.roleManagement.updateRole}/${e.user_id}`
-                        )
-                      }
-                    >
-                      <div className="flex flex-row gap-4">
-                        <div>
-                          <MdEdit />
-                        </div>
-                        <div className="text-semibold m-">
-                          <span>Edit</span>
-                        </div>
-                      </div>{" "}
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() =>
-                        e?.workingstatus === "Invalid"
-                          ? handleUserSetValid(e)
-                          : handleUsersetInvalid(e)
-                      }
-                    >
-                      <div className="flex flex-row gap-4">
-                        <div>
-                          <MdSwapHoriz />
-                        </div>
-                        <div className="text-semibold m-">
-                          <span>
-                            {e?.workingstatus === "Invalid"
-                              ? "Activate"
-                              : "Deactivate"}
-                          </span>
-                        </div>
-                      </div>{" "}
-                    </MenuItem>
-                   
-                  </MenuList>
-                </Menu>
-              </div>
-            );
-          }
-        });
-        setUserTableList(resUserData);
-        const userDetails = validResponse?.data?.update_assessors?.returning[0] ? validResponse?.data?.update_assessors?.returning[0] : validResponse?.data?.update_regulator?.returning[0]
-        if (userDetails) {
-
-          sendActivationStatusNotification(userDetails, 'active');
-          setToast((prevState) => ({
-            ...prevState,
-            toastOpen: true,
-            toastMsg: "User activated successfully",
-            toastType: "success",
-          }));
-        }
-      }
-     
-    } catch (error) {
-      console.log("error - ", error);
-      const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage
-      setToast((prevState) => ({
-        ...prevState,
-        toastOpen: true,
-        toastMsg: errorMessage,
-        toastType: "error",
-      }));
-    } finally {
-      setSpinner(false);
-    }
-  };
 
   const sendActivationStatusNotification = async (userDetails, status) => {
     // let mailBody = require('./json-files/mail-body.json');
     if (userDetails.email) {
       const emailBody = status === 'active' ? data.ACTIVATION_MAIL : data.INACTIVATION_MAIL;
-      if (state.menu_selected === 'Assessor') {
         const emailData = {
           recipientEmail: [`${userDetails.email}`],
           emailSubject: `${emailBody.SUBJECT}`,
-          emailBody:  `${emailBody.BODY.part1}${userDetails.name}${emailBody.BODY.part2}`
+          emailBody: `${emailBody.BODY.part1}${userDetails.name}${emailBody.BODY.part2}`
         };
         sendEmailNotification(emailData)
-      } else {
-        const emailData = {
-          recipientEmail: [`${userDetails.email}`],
-          emailSubject: `${emailBody.SUBJECT}`,
-          emailBody:  `${emailBody.BODY.part1}${userDetails.full_name}${emailBody.BODY.part2}`
-        };
-        sendEmailNotification(emailData)
-      }
+     
     }
   }
 
-  const handleUserDelete = (e) => {
-    setSelectedUserId(e.user_id);
-    setDeleteUsersModel(true);
-  };
 
   const setTableData = (e) => {
-    console.log(e)
-    let pagesArr= []
+    //console.log(e)
+    let pagesArr = []
     e.permissions?.action[0].pages.forEach(element => {
-      console.log(element)
+     // console.log(element)
       pagesArr.push(`<p>${element}</p>`)
-      
+
     });
-    var usersData = {
+   
+    let usersData = {
       full_name: e.fname || e.lname ? e.fname + " " + e.lname : e.name,
-     // pages: pagesArr.length ? `${pagesArr} , ` : "-",
-     pages: `${e.permissions?.action[0].pages} , `,
-      module: e.permissions?.module?.length ? `${e.permissions?.module}` : "-", 
+      // pages: pagesArr.length ? `${pagesArr} , ` : "-",
+      pages: `${e.permissions?.action[0].pages} , `,
+      module: e.permissions?.module?.length ? `${e.permissions?.module}` : "-",
       status:
-        e.active 
+        e.active
           ? "Active"
           : !e.active
-          ? "Inactive"
-          : "-",
+            ? "Inactive"
+            : "-",
       id: e.id,
       more_actions: (
         <div className="flex flex-row text-2xl font-semibold">
@@ -409,10 +198,7 @@ export default function ManageRolesList({
                 </div>{" "}
               </MenuItem>
               <MenuItem
-                onClick={() =>
-                  e?.active
-                    ? handleUsersetInvalid(e.id)
-                    : handleUserSetValid(e.id)
+                onClick={() => handleRoleStatusUpdate(e)
                 }
               >
                 <div className="flex flex-row gap-4 p-1">
@@ -428,88 +214,7 @@ export default function ManageRolesList({
                   </div>
                 </div>{" "}
               </MenuItem>
-            
-            </MenuList>
-          </Menu>
-        </div>
-      ),
-    };
-    resUserData.push(usersData);
-  };
-  const setAdminTableData = (e) => {
-    var usersData = {
-      full_name: e.fname || e.lname ? e.fname + " " + e.lname : e.name,
-      email: e.email?.toLowerCase(),
-      mobile_number: e.phonenumber,
-      role: e.role === "Desktop-Admin" ? "Admin" : "Desktop-Assessor",
-      status:
-        e.workingstatus === "Valid"
-          ? "Active"
-          : e.workingstatus === "Invalid"
-          ? "Inactive"
-          : "-",
-      id: e.user_id,
-     /*  schedule: (
-        <div
-          className={`px-6 text-primary-600 pl-0`}
-          onClick={() => handleViewSchedule(e)}
-        >
-          View Schedule
-        </div>
-      ), */
-      more_actions: (
-        <div className="flex flex-row text-2xl font-semibold">
-          <Menu placement="bottom-end">
-            <MenuHandler>
-              <button className="leading-3 relative top-[-8px]">...</button>
-            </MenuHandler>
-            <MenuList className="p-2">
-              <MenuItem
-                onClick={() =>
-                  navigation(
-                    `${ADMIN_ROUTE_MAP.adminModule.roleManagement.updateRole}/${e.user_id}`
-                  )
-                }
-              >
-                <div className="flex flex-row gap-4 p-1">
-                  <div>
-                    <MdEdit />
-                  </div>
-                  <div className="text-semibold">
-                    <span>Edit</span>
-                  </div>
-                </div>{" "}
-              </MenuItem>
-              <MenuItem
-                onClick={() =>
-                  e?.workingstatus === "Invalid"
-                    ? handleUserSetValid(e)
-                    : handleUsersetInvalid(e)
-                }
-              >
-                <div className="flex flex-row gap-4 p-1">
-                  <div>
-                    <MdSwapHoriz />
-                  </div>
-                  <div className="text-semibold">
-                    <span>
-                      {e?.workingstatus === "Invalid"
-                        ? "Activate"
-                        : "Deactivate"}
-                    </span>
-                  </div>
-                </div>{" "}
-              </MenuItem>
-              <MenuItem onClick={() => handleUserDelete(e)}>
-                <div className="flex flex-row gap-4 p-1">
-                  <div>
-                    <MdDelete />
-                  </div>
-                  <div className="text-semibold">
-                    <span>Delete</span>
-                  </div>
-                </div>{" "}
-              </MenuItem>
+
             </MenuList>
           </Menu>
         </div>
@@ -518,64 +223,16 @@ export default function ManageRolesList({
     resUserData.push(usersData);
   };
 
-  const fetchAllAssessors = async () => {
-    const pagination = {
-      offsetNo: paginationInfo.offsetNo,
-      limit: paginationInfo.limit,
-    };
-    try {
-      setSpinner(true);
-      const res = await getAllAssessors(pagination);
-      setPaginationInfo((prevState) => ({
-        ...prevState,
-        totalCount: res.data.assessors_aggregate.aggregate.totalCount,
-      }));
-     // setUsersList(res?.data?.assessors);
-      const data = res?.data?.assessors;
-      data.forEach(setTableData);
-      setUserTableList(resUserData);
-    } catch (error) {
-      console.log("error - ", error);
-    } finally {
-      setSpinner(false);
-    }
-  };
-
-  const fetchAllRegulators = async () => {
-    const pagination = {
-      offsetNo: paginationInfo.offsetNo,
-      limit: paginationInfo.limit,
-    };
-    try {
-      setSpinner(true);
-      const res = await getAllRegulators(pagination);
-      setPaginationInfo((prevState) => ({
-        ...prevState,
-        totalCount: res.data.regulator_aggregate.aggregate.totalCount,
-      }));
-      //setUsersList(res?.data?.regulator);
-      const data = res?.data?.regulator;
-      data.forEach(setAdminTableData);
-      const newData = resUserData.filter(user => user.role === "Admin");
-      setUserTableList(newData);
-    } catch (error) {
-      console.log("error - ", error);
-    } finally {
-      setSpinner(false);
-    }
-  };
 
   const getAllUserRoles = async () => {
-    const reqBody =  {
+    //resUserData=[];
+    const reqBody = {
       object: {
-          active: {
-              _eq: true
-          }
       },
       offsetNo: 0,
       limit: 10
-  }
-   
+    }
+
     try {
       setSpinner(true);
       const res = await fetchAllUserRoles(reqBody);
@@ -583,15 +240,14 @@ export default function ManageRolesList({
         ...prevState,
         totalCount: res.data.role_aggregate.aggregate.count,
       }));
-      console.log(res?.data?.role)
-     // setUsersList(res?.data?.regulator);
-      const data = res?.data?.role;
-      data.forEach(setTableData);
-      console.log(resUserData);
+     
+      res?.data?.role.forEach(setTableData);
+      //console.log(resUserData);
       setUserTableList(resUserData);
     } catch (error) {
       console.log("error - ", error);
     } finally {
+      resUserData=[];
       setSpinner(false);
     }
   };
@@ -605,12 +261,12 @@ export default function ManageRolesList({
     try {
       setSpinner(true);
       const res = await searchUsers(pagination);
-        setPaginationInfo((prevState) => ({
-          ...prevState,
-          totalCount: res.data.assessors_aggregate.aggregate.totalCount,
-        }));
-       // setUsersList(res?.data?.assessors);
-        res?.data?.assessors.forEach(setTableData);
+      setPaginationInfo((prevState) => ({
+        ...prevState,
+        totalCount: res.data.assessors_aggregate.aggregate.totalCount,
+      }));
+      // setUsersList(res?.data?.assessors);
+      res?.data?.assessors.forEach(setTableData);
       setUserTableList(resUserData);
     } catch (error) {
       console.log("error - ", error);
@@ -632,7 +288,7 @@ export default function ManageRolesList({
         ...prevState,
         totalCount: res?.data?.assessors_aggregate?.aggregate?.totalCount,
       }));
-     // setUsersList(res?.data?.assessors);
+      // setUsersList(res?.data?.assessors);
       const data = res?.data?.assessors;
       data.forEach(setTableData);
       setUserTableList(resUserData);
@@ -669,15 +325,8 @@ export default function ManageRolesList({
       if (response.status === 200) {
         hasuraResponse = await handleDeleteUser(hasuraPostData);
       }
-      if (state.menu_selected === "Assessor") {
-        await fetchAllAssessors();
-      }
-      if (state.menu_selected === "Desktop-Admin") {
-        await fetchAllRegulators();
-      }
-      if (state.menu_selected === "Desktop-Assessor") {
-       // await getAllDeskTopAssessors();
-      }
+    
+    
       setDeleteFlag(false);
       setSelectedUserId([]);
 
@@ -764,7 +413,7 @@ export default function ManageRolesList({
         });
       }
 
-      fetchAllAssessors();
+      // fetchAllAssessors();
       setBulkDeleteFlag(false);
       setDeleteBulkUsersModel(false);
       selectedRows = [];
@@ -796,22 +445,22 @@ export default function ManageRolesList({
         const postData = { assessorId: selectedRows[x].user_id };
         const validResponse = await handleInctiveUser(postData);
 
-        
+
       } else if (selectedRows[x].status.toLowerCase() === "inactive") {
         const postData = { assessorId: selectedRows[x].user_id };
         const validResponse = await handleActiveUser(postData);
-        
+
       }
     }
-    await fetchAllAssessors();
-   
+    // await fetchAllAssessors();
+
   };
 
   useEffect(() => {
-    if (deleteFlag) {
-      handleDelete(selectedUserId);
-    }
-  }, [deleteFlag]);
+   
+    getAllUserRoles();
+   //setUserTableList(resUserData);
+  }, [roleStatus]);
 
   useEffect(() => {
     if (bulkDeleteFlag) {
@@ -822,24 +471,11 @@ export default function ManageRolesList({
 
   useEffect(() => {
     if (!isSearchOpen && !isFilterOpen) {
-        getAllUserRoles();
+      getAllUserRoles();
     }
-  }, [paginationInfo.offsetNo, paginationInfo.limit, state.menu_selected]);
+  }, [paginationInfo.offsetNo, paginationInfo.limit]);
 
-  useEffect(() => {
-    if (usersCreated) {
-      if (state.menu_selected === "Assessor") {
-        fetchAllAssessors();
-      }
-      if (state.menu_selected === "Desktop-Admin") {
-        fetchAllRegulators();
-      }
-      if (state.menu_selected === "Desktop-Assessor") {
-       // getAllDeskTopAssessors();
-      }
-    }
-    setUsersCreated(false);
-  }, [usersCreated]);
+
 
   return (
     <>
@@ -854,7 +490,7 @@ export default function ManageRolesList({
               </div>
               <div className="flex justify-end">
                 <span className="flex gap-4">
-                 {/*  {state.menu_selected === "Assessor" && (
+                  {/*  {state.menu_selected === "Assessor" && (
                     <Button
                       otherProps={{
                         disabled: listArray == 0 ? true : false,
@@ -872,7 +508,7 @@ export default function ManageRolesList({
                       text="Activate / Inactivate Role"
                     ></Button>
                   )} */}
-                 {/*  {<Button
+                  {/*  {<Button
                     // moreClass="text-white"
                     otherProps={{
                       disabled: listArray == 0 ? true : false,
@@ -929,16 +565,16 @@ export default function ManageRolesList({
 
               </ul> */}
               {/* filtering table here */}
-              {state.menu_selected === "Assessor" && (
+             
                 <div className="flex flex-col gap-3">
                   <FilteringTable
                     dataList={userTableList}
                     columns={COLUMNS}
-                    navigateFunc={() => {}}
-                    showCheckbox={true}
+                    navigateFunc={() => { }}
+                    showCheckbox={false}
                     paginationInfo={paginationInfo}
                     setPaginationInfo={setPaginationInfo}
-                    setOnRowSelect={() => {}}
+                    setOnRowSelect={() => { }}
                     setSelectedRows={setSelectedRows}
                     showFilter={false}
                     showSearch={true}
@@ -949,36 +585,33 @@ export default function ManageRolesList({
                     setIsFilterOpen={setIsFilterOpen}
                   />
                 </div>
-              )}
-           
-              
             </div>
           </div>
         </div>
       </div>
 
-     {/*  {deleteUsersModel && (
+      {/*  {deleteUsersModel && (
         <DeleteUsersModal
           setDeleteFlags={setDeleteFlag}
           closeDeleteUsersModal={setDeleteUsersModel}
         />
       )} */}
 
-     {/*  {deleteBulkUsersModel && (
+      {/*  {deleteBulkUsersModel && (
         <DeleteUsersModal
           setDeleteFlags={setBulkDeleteFlag}
           closeDeleteUsersModal={setDeleteBulkUsersModel}
         />
       )} */}
 
-     {/*  {bulkUploadUsersModel && (
+      {/*  {bulkUploadUsersModel && (
         <BulkUploadUsersModal
           closeBulkUploadUsersModal={setBulkUploadUsersModel}
           setUsersCreated={setUsersCreated}
         />
       )} */}
 
-    {/*   {viewScheduleModal && (
+      {/*   {viewScheduleModal && (
         <ViewScheduleModal
           closeViewSchedulesModal={setViewScheduleModal}
           scheduleUserData={scheduleUserData}

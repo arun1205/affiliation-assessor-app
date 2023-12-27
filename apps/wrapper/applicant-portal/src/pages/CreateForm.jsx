@@ -714,7 +714,7 @@ const CreateForm = (props) => {
               </button>
             </div>
             <div className="flex">
-            {(paymentStage === undefined && encodedFormURI !== "") && (<iframe
+            {paymentStage === undefined && (<iframe
                 id="enketo-applicant-form"
                 title="form"
                 ref={iframeRef}
