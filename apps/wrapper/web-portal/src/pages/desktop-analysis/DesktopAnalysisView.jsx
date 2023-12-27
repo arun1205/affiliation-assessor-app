@@ -457,6 +457,9 @@ export default function DesktopAnalysisView() {
   };
 
   const checkIframeLoaded = () => {
+    console.log()
+    console.log(formDataFromApi.reverted_count)
+    let rrr =3;
     if (window.location.host.includes("regulator.upsmfac")) {
       const iframeElem = document?.getElementById("enketo_DA_preview");
       var iframeContent =
@@ -494,6 +497,10 @@ export default function DesktopAnalysisView() {
       // draftButton?.addEventListener("click", function () {
       //   alert("Hello world!");
       // });
+   
+      if(rrr >= 2){
+        iframeContent.getElementById("submit-form").style.display = "none";
+      }
     }
     setSpinner(false);
   };
