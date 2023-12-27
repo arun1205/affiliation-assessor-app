@@ -472,12 +472,14 @@ export default function DesktopAnalysisView() {
         for (var i = 0; i < section?.length; i++) {
           var inputElements = section[i].querySelectorAll("input");
           var buttonElements = section[i].querySelectorAll("button");
+          
           buttonElements.forEach((button) => {
             button.disabled = true;
           });
           inputElements.forEach((input) => {
             input.disabled = true;
           });
+          /* partial logic to test disabling fields */
         }
         iframeContent.getElementById("submit-form").style.display = "none";
       }
@@ -701,7 +703,7 @@ export default function DesktopAnalysisView() {
                 <span>{isDownloading ? "Downloading..." : "Download"}</span>
               </button>
             </div>
-                <iframe
+                {encodedFormURI!== "" && (<iframe
                   id="enketo_DA_preview"
                   title="form"
                   onLoad={checkIframeLoaded}
@@ -709,7 +711,7 @@ export default function DesktopAnalysisView() {
                     JSON.stringify(formSpec)
                   )}&xform=${encodedFormURI}&userId=${userId}`}
                   style={{ minHeight: "100vh", width: "100%" }}
-                />
+                />)}
               </Card>
             </div>
           </div>

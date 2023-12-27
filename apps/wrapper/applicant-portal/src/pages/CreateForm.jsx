@@ -585,6 +585,27 @@ const CreateForm = (props) => {
           });
         }
       }
+      if(applicantStatus && applicantStatus?.toLowerCase() === 'returned') {
+        var formSection = iframeContent?.getElementsByClassName("or-group");
+        if (!formSection) return;
+        for (var j = 0; j < section?.length; j++) {
+          var inputElements1 = section[j].querySelectorAll("input");
+          var buttonElements1 = section[j].querySelectorAll("button");
+          
+          buttonElements1.forEach((button) => {
+            if((button.name.towLowerCase().includes('admin') || button.name.towLowerCase().includes('desktop')) && button.value !== undefined) {
+              console.log("Input has value", button.value);
+            }
+          });
+          inputElements1.forEach((input) => {
+            input.disabled = true;
+            if((input.name.towLowerCase().includes('admin') || input.name.towLowerCase().includes('desktop')) && input.value !== undefined) {
+              console.log("Input has value", input.value);
+            }
+          });
+          /* partial logic to test disabling fields */
+        }
+      }
 
       // Need to work on Save draft...
       // iframeContent.getElementById("save-draft").style.display = "none";

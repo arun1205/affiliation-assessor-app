@@ -458,13 +458,13 @@ const GenericOdkForm = (props) => {
           <div className="flex flex-col items-center">
             {encodedFormURI && assData && (
               <>
-                <iframe
+                {encodedFormURI!== "" && (<iframe
                   title="form"
                   id="enketo-form"
                   onLoad={checkIframeLoaded}
                   src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
                   style={{ height: "80vh", width: "100%" }}
-                />
+                />)}
               </>
             )}
           </div>
@@ -530,13 +530,13 @@ const GenericOdkForm = (props) => {
           <div className="flex flex-col justify-center w-full py-4">
             {surveyUrl && (
               <>
-              <iframe
+              {encodedFormURI!== "" && (<iframe
                 title="form"
                 onLoad={checkIframeLoaded}
                 id="preview-enketo-form"
                 src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
                 style={{ height: "80vh", width: "100%", marginTop: "20px" }}
-              />
+              />)}
               </>
             )}
           </div>
