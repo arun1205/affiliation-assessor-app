@@ -128,7 +128,7 @@ const ApplicationCard = (props) => {
               ? props?.application?.payment_status
               : "NA"}
           </span>
-          <div>
+          <div className="w-[84px]">
             <span
               className={`text-xs py-1 px-2  rounded-md ${
                 props.application.round === 1
@@ -137,7 +137,7 @@ const ApplicationCard = (props) => {
               }`}
               style={{ backgroundColor: "#eee" }}
             >
-              Round: {props.application.round}
+              Round: <span> {props.application.round}</span>
             </span> 
           </div>
         </div>
@@ -167,7 +167,8 @@ const ApplicationCard = (props) => {
           text="Pay"
           onClick={handlePayment}
           otherProps={{
-            disabled: props?.application?.payment_status !== "Pending",
+           // disabled: props?.application?.payment_status !== "Pending",
+            hidden: props?.application?.payment_status !== "Pending",
           }}
         ></Button>
       </div>
