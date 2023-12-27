@@ -588,7 +588,7 @@ const CreateForm = (props) => {
       if(applicantStatus && applicantStatus?.toLowerCase() === 'returned') {
         var formSection = iframeContent?.getElementsByClassName("or-group");
         if (!formSection) return;
-        for (var j = 0; j < section?.length; j++) {
+        for (var j = 0; j < formSection?.length; j++) {
           var inputElements1 = section[j].querySelectorAll("input");
           var buttonElements1 = section[j].querySelectorAll("button");
           
