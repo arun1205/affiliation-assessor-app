@@ -186,9 +186,11 @@ const MyApplications = () => {
             item.noc_fileName = "noc-filename";
           }
         }); */
-    console.log(applicationsResponse)
+    console.log(applicationsResponse?.data?.form_submissions.sort( (a,b) => b.form_id - a.form_id ))
+   // let arr = applicationsResponse?.data?.form_submissions.sort( (a,b) => b.form_status - a.form_status )
         if (applicationsResponse?.data?.form_submissions) {
-          setApplications(applicationsResponse?.data?.form_submissions);
+          setApplications( applicationsResponse?.data?.form_submissions.sort( (a,b) => b.form_status - a.form_status ));
+          
         }//arun
         setLoadingApplications(false);
 
