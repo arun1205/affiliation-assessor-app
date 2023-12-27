@@ -250,6 +250,7 @@ const CreateForm = (props) => {
           handleRenderPreview();
         } else {
           console.log("aaaaaa")
+          console.log(applicantStatus)
           handleSubmit();
       
         }
@@ -306,7 +307,7 @@ const CreateForm = (props) => {
    
     const updatedFormData = await updateFormData(formSpec.start, userId);
     const course_details = await getSpecificDataFromForage("course_details");
-    
+    console.log(course_details.course)
     const common_payload = {
       form_data: updatedFormData,
       assessment_type: "applicant",
@@ -315,7 +316,8 @@ const CreateForm = (props) => {
       round: course_details?.round,
       course_type: course_details?.course_type,
       course_level: course_details?.course_level,
-      course_id: course_details?.course_id,
+      course_id: course_details?.course?.course_id,
+      reverted_count: course_details?.reverted_count
     };
 
     await setToLocalForage(
@@ -329,8 +331,13 @@ const CreateForm = (props) => {
       }
     );
     
-   
+   console.log(common_payload)
+   if(!applicantStatus){
     initiatePaymentForNewForm();
+   }  else {
+    triggerFormSubmission();
+   }
+    
  
   };
 
@@ -384,6 +391,7 @@ const CreateForm = (props) => {
     await applicantService.updateTransactionStatusByRefNo(reqBody);
     } else {
       console.log("Updating existing form..",formId)
+      console.log( commonPayload)
       await updateFormSubmission({
         form_id: formId,
         applicant_id: instituteDetails?.[0]?.id,
@@ -414,7 +422,7 @@ const CreateForm = (props) => {
     ); 
     }
     catch(error) {
-      console.log('Something went wrong');
+      console.log('Something went wrong',error);
       
     }
   /*   finally {
@@ -432,7 +440,7 @@ const CreateForm = (props) => {
 
   const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
     const eventFormData = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
-    console.log("eventFormData", eventFormData.formData);
+   // console.log("eventFormData", eventFormData.formData);
     if(eventFormData?.formData?.draft !== '' && eventFormData?.formData?.draft === true) {
       const course_details = await getSpecificDataFromForage("course_details");
       console.log("courseDetails ===>", course_details);

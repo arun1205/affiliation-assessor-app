@@ -244,7 +244,8 @@ const MyApplications = () => {
   };
 
   const handleViewApplicationHandler = async (formObj) => {
-    await setToLocalForage("course_details", formObj.course);
+    console.log(formObj)
+    await setToLocalForage("course_details", formObj);
     if(formObj?.form_id) {
       navigate(
         `${APPLICANT_ROUTE_MAP.dashboardModule.createForm}/${formObj?.form_name

@@ -186,6 +186,10 @@ export default function DesktopAnalysisView() {
       assessment_type: "applicant",
       form_name: formName?.replace("admin", "applicant"),
       submission_status: true,
+      course_type: formDataFromApi?.course_type,
+      course_level: formDataFromApi?.course_level,
+      course_id: formDataFromApi?.course_id,
+      round:formDataFromApi?.round,
       applicant_id: formDataFromApi?.institute?.id,
       updated_at: getLocalTimeInISOFormat(),
       reverted_count: formDataFromApi?.reverted_count + 1,
@@ -444,6 +448,12 @@ export default function DesktopAnalysisView() {
         () => navigate(`${ADMIN_ROUTE_MAP.adminModule.desktopAnalysis.home}`),
         1500
       );
+  /*     setToast((prevState) => ({
+        ...prevState,
+        toastOpen: true,
+        toastMsg: "Form approved successfully.",
+        toastType: "success",
+      })); */
     } catch (error) {
       setToast((prevState) => ({
         ...prevState,
