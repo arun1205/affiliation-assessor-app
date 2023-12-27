@@ -348,7 +348,7 @@ const CreateForm = (props) => {
         applicant_id: instituteDetails?.[0]?.id,
         submitted_on: new Date().toJSON().slice(0, 10),
         reverted_count: 0,
-        form_status: commonPayload.round === 1 ? "Application Submitted" : "Inspection Scheduled",
+        form_status: commonPayload.round === 1 ? "Application Submitted" : "DA Completed",
         ...commonPayload,
       });
       console.log("applicantStatus =>", applicantStatus);
