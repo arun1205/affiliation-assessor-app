@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Select, Option } from "@material-tailwind/react";
+import Select from "react-select";
 
 import { FaAngleRight } from "react-icons/fa";
 
@@ -17,7 +17,8 @@ import {
   editUserKeycloak,
   getSpecificUser,
   sendEmailNotification,
-  checkIsEmailExist
+  checkIsEmailExist,
+  fetchAllUserRoles
 } from "./../../api";
 import { userService } from "../../api/userService";
 import { getCookie, removeCookie, setCookie } from "../../utils";
@@ -34,6 +35,9 @@ export default function AdminCreateUser() {
     phonenumber: "",
     role: "",
   });
+  const [selectedRoleName, setSelectedRoleName] = useState("");
+
+  const [availableRoleNames, setAvailableRoleNames] = useState([]);
   const navigation = useNavigate();
 
   const fetchUser = async () => {
@@ -80,6 +84,12 @@ export default function AdminCreateUser() {
     setUser((prevState) => ({
       ...prevState,
       [name]: value,
+    }));
+  };
+  const upDateUserObj = () => {
+    setUser((prevState) => ({
+      ...prevState,
+      role: selectedRoleName.value,
     }));
   };
   const isFieldsValid = () => {
@@ -227,17 +237,17 @@ export default function AdminCreateUser() {
           },
         };
 
-        const checkIsEmailExistRes = await checkIsEmailExist({email: user.email});
-        if (checkIsEmailExistRes.data 
-          && (checkIsEmailExistRes.data.assessors.length 
-          || checkIsEmailExistRes.data.institutes.length
-          || checkIsEmailExistRes.data.regulator.length) ) {
-            setToast((prevState) => ({
-              ...prevState,
-              toastOpen: true,
-              toastMsg: 'Email is Already Registered.',
-              toastType: "error",
-            }));
+        const checkIsEmailExistRes = await checkIsEmailExist({ email: user.email });
+        if (checkIsEmailExistRes.data
+          && (checkIsEmailExistRes.data.assessors.length
+            || checkIsEmailExistRes.data.institutes.length
+            || checkIsEmailExistRes.data.regulator.length)) {
+          setToast((prevState) => ({
+            ...prevState,
+            toastOpen: true,
+            toastMsg: 'Email is Already Registered.',
+            toastType: "error",
+          }));
         } else {
 
           //keycloak API call
@@ -252,7 +262,7 @@ export default function AdminCreateUser() {
 
       } catch (error) {
         console.log(error)
-       // const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage
+        // const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage
         setToast((prevState) => ({
           ...prevState,
           toastOpen: true,
@@ -285,8 +295,7 @@ export default function AdminCreateUser() {
             lname: user.lastname,
             role: user.role,
           });
-        }
-        if (user.role === "Desktop-Admin" || user.role === "Desktop-Assessor") {
+        } else {
           postDataHasura["regulators"].push({
             user_id: keycloakRes.data,
             email: user.email,
@@ -297,6 +306,9 @@ export default function AdminCreateUser() {
             role: user.role,
           });
         }
+     /*    if (user.role === "Desktop-Admin" || user.role === "Desktop-Assessor") {
+        
+        } */
       }
       const hasuraRes = await createBulkUserHasura(postDataHasura);
       if (hasuraRes.status === 200) {
@@ -328,23 +340,51 @@ export default function AdminCreateUser() {
   const sendAccountCreationNotification = async (userDetails) => {
     if (userDetails.email) {
       let emailData = {}
-      if(userDetails.role === 'Assessor') {
+      if (userDetails.role === 'Assessor') {
         const emailBody = messages.ACCOUNT_CREATED_PASSWORD_BASED_LOGIN_MAIL;
         emailData = {
           recipientEmail: [`${userDetails.email}`],
           emailSubject: `${emailBody.SUBJECT}`,
-          emailBody:  `${emailBody.BODY.part1}${userDetails.firstname} ${userDetails.lastname}${emailBody.BODY.part2}${userDetails.email}${emailBody.BODY.part3}${userDetails.phonenumber}${emailBody.BODY.part4}`
+          emailBody: `${emailBody.BODY.part1}${userDetails.firstname} ${userDetails.lastname}${emailBody.BODY.part2}${userDetails.email}${emailBody.BODY.part3}${userDetails.phonenumber}${emailBody.BODY.part4}`
         };
       } else {
         const emailBody = messages.ACCOUNT_CREATED_OTP_BASED_LOGIN_MAIL;
         emailData = {
           recipientEmail: [`${userDetails.email}`],
           emailSubject: `${emailBody.SUBJECT}`,
-          emailBody:  `${emailBody.BODY.part1}${userDetails.firstname} ${userDetails.lastname}${emailBody.BODY.part2}${userDetails.email}${emailBody.BODY.part3}${userDetails.phonenumber}${emailBody.BODY.part4}`
+          emailBody: `${emailBody.BODY.part1}${userDetails.firstname} ${userDetails.lastname}${emailBody.BODY.part2}${userDetails.email}${emailBody.BODY.part3}${userDetails.phonenumber}${emailBody.BODY.part4}`
         };
       }
       sendEmailNotification(emailData)
     }
+  }
+  const fetchUserRoleNames = async (userDetails) => {
+
+    const reqBody = {
+      object: {
+      },
+      offsetNo: 0,
+      limit: 10
+    }
+
+    try {
+      setSpinner(true);
+      const res = await fetchAllUserRoles(reqBody);
+      let arr = []
+      res.data.role.forEach(elem => {
+        console.log(elem.name)
+        arr.push({
+          label: elem.name,
+          value: elem.name
+        })
+      });
+      setAvailableRoleNames(arr)
+    } catch (e) {
+      console.log(e)
+    } finally {
+      setSpinner(false);
+    }
+
   }
 
   useEffect(() => {
@@ -352,6 +392,14 @@ export default function AdminCreateUser() {
       fetchUser();
     }
   }, [userId]);
+
+  useEffect(() => {
+    fetchUserRoleNames();
+  }, []);
+
+  useEffect(() => {
+    upDateUserObj();
+  }, [selectedRoleName]);
 
 
   return (
@@ -474,7 +522,7 @@ export default function AdminCreateUser() {
                       moreClass="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
                     />
 
-                    <select
+                    {/*  <select
                       required
                       value={user.role}
                       disabled={userId ? true : false}
@@ -487,7 +535,15 @@ export default function AdminCreateUser() {
                       <option value="Assessor">On Ground Assessor</option>
                       <option value="Desktop-Admin">Admin</option>
                       <option value="Desktop-Assessor">Desktop Assessor</option>
-                    </select>
+                    </select> */}
+                    <Select
+                      name="allRolesList"
+                      label="Role"
+                      value={selectedRoleName}
+                      onChange={setSelectedRoleName}
+                      options={availableRoleNames}
+                      className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    />
                   </div>
                 </div>
               </div>
