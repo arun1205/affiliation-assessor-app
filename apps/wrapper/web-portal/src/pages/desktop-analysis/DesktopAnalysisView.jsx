@@ -491,7 +491,7 @@ export default function DesktopAnalysisView() {
           var buttonElements1 = section[j].querySelectorAll("button");
           
           buttonElements1.forEach((button) => {
-            if((button.name.towLowerCase().includes('admin') || button.name.towLowerCase().includes('desktop')) && input.value !== undefined) {
+            if((button.name.towLowerCase().includes('admin') || button.name.towLowerCase().includes('desktop')) && button.value !== undefined) {
               console.log("Input has value", button.value);
             }
           });
@@ -724,7 +724,7 @@ export default function DesktopAnalysisView() {
                 <span>{isDownloading ? "Downloading..." : "Download"}</span>
               </button>
             </div>
-                <iframe
+                {encodedFormURI!== "" && (<iframe
                   id="enketo_DA_preview"
                   title="form"
                   onLoad={checkIframeLoaded}
@@ -732,7 +732,7 @@ export default function DesktopAnalysisView() {
                     JSON.stringify(formSpec)
                   )}&xform=${encodedFormURI}&userId=${userId}`}
                   style={{ minHeight: "100vh", width: "100%" }}
-                />
+                />)}
               </Card>
             </div>
           </div>
