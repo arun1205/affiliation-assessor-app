@@ -8,6 +8,8 @@ import { Button } from "../../components";
 import Nav from "../../components/Nav";
 import { ContextAPI } from "../../utils/ContextAPI";
 import * as XLSX from "xlsx";
+import { getCookie } from  "../../utils/common";
+
 
 import {
   filterAssessments,
@@ -332,7 +334,8 @@ const ScheduleManagementList = () => {
       );
       setFileTypeError(false);
       setFile(fileUploaded);
-      showFileDataInTable(fileUploaded)
+     // showFileDataInTable(fileUploaded)
+    // handleFileUploadSubmit();
     }
   };
 
@@ -359,14 +362,14 @@ const ScheduleManagementList = () => {
     hiddenFileInput.current.click();
   };
 
-  const handleFileUploadSubmit = (uploadFile) => {
-    const formData = {
-      file: uploadFile,
-      // type: selectedRound,
-      // prefix: selectInstituteName,
-    };
-
-    submitAssessmentSchedule(formData);
+  const handleFileUploadSubmit = () => {
+    if(file){
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("userId", getCookie("userData")?.userRepresentation?.id);
+     console.log(formData)
+      submitAssessmentSchedule(formData);
+    }
   };
 
   const submitAssessmentSchedule = async (postData) => {
@@ -374,18 +377,25 @@ const ScheduleManagementList = () => {
     try {
       setSpinner(true);
       res = await uploadAssessmentSchedule(postData);
+   
     } catch (error) {
       console.log("error - ", error);
     } finally {
       setSpinner(false);
-      setFile({});
+      //setFile({});
       setFileName("");
+     
       setToast((prevState) => ({
         ...prevState,
         toastOpen: true,
-        toastMsg: res.status === 200 ? "Schedule uploaded successfully !" : "Failed to upload schedule !!",
+        toastMsg: res.status === 200 ? "Schedule uploaded successfully! Please check your email after some time." : "Failed to upload schedule !!",
         toastType: res.status === 200 ? "success" : "error"
       }));
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    
     }
   };
 
@@ -400,9 +410,15 @@ const ScheduleManagementList = () => {
   }, []);
 
   useEffect(() => {
-    console.log(jsonData)
+    //console.log(jsonData)
   }, [jsonData]);
 
+  useEffect(() => {
+    //console.log(jsonData)
+    if(fileName === ""){
+      setFile()
+    }
+  }, [fileName]);
   
 
   return (
@@ -436,19 +452,19 @@ const ScheduleManagementList = () => {
           )}
         </div>
 
-        <span className="flex justify-end ml-4">{fileName}</span>
+        <div className="flex justify-end ml-4">{fileName}</div>
 
         <div className="footer flex flex-row justify-end ">
           <button
                onClick={() => {
-                setFile({});setFileName("");
+                setFileName("");    window.location.reload();
               }} 
             className="border border-blue-900 bg-white text-blue-900 w-[140px] h-[40px] font-medium rounded-[4px] m-3"
           >
             Cancel
           </button>
           <button
-            onClick={() => handleFileUploadSubmit(file)}
+            onClick={() => handleFileUploadSubmit()}
             disabled={fileName && !fileTypeError ? false : true}
             // className="border border-blue-900 text-white bg-blue-900 w-[140px] h-[40px] font-medium rounded-[4px]"
             className={`${fileName && !fileTypeError
