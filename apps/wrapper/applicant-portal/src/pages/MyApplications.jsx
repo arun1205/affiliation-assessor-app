@@ -100,7 +100,7 @@ const MyApplications = () => {
       const courseIdsToOmit = [];
       for (let i = 0; i < formsToOmit.length; i++) {
         courseIdsToOmit.push(availableForms?.filter((el) => {
-          if (el?.form.form_id === formsToOmit[i].course.form.form_id) {
+          if (el?.form.form_id === formsToOmit[i].course?.form?.form_id) {
             return el.course_id
           }
         }))
