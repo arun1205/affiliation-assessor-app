@@ -577,7 +577,7 @@ export default function ManageRolesList({
                     setOnRowSelect={() => { }}
                     setSelectedRows={setSelectedRows}
                     showFilter={false}
-                    showSearch={true}
+                    showSearch={false}
                     pagination={true}
                     filterApiCall={filterApiCall}
                     searchApiCall={searchApiCall}
