@@ -11,6 +11,9 @@ import {
   MenuItem,
 } from "@material-tailwind/react";
 import Overlay from "../pages/notifications/Overlay";
+import {
+  removeAllFromLocalForage,
+} from "./../forms";
 
 const Header = () => {
   const [showButtons, setshowButtons] = useState(false);
@@ -23,6 +26,7 @@ const Header = () => {
     removeCookie("institutes");
     removeCookie("firebase_client_token")
     removeCookie("formId");
+    removeAllFromLocalForage();
     navigate(APPLICANT_ROUTE_MAP.loginModule.login);
   };
 

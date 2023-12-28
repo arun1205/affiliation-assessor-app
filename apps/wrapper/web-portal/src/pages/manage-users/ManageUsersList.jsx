@@ -1058,6 +1058,22 @@ export default function ManageUsersList({
                     Desktop Assessor
                   </a>
                 </li>
+                <li
+                  className="mr-2"
+                  onClick={() => handleSelectMenu("Super-Admin")}
+                >
+                  <a
+                    href="#"
+                    className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
+                      state.menu_selected === "Super-Admin"
+                        ? "text-blue-600 border-b-2 border-blue-600"
+                        : ""
+                    }`}
+                    aria-current="page"
+                  >
+                    Super Admin
+                  </a>
+                </li>
               </ul>
               {/* filtering table here */}
               {state.menu_selected === "Assessor" && (
@@ -1102,7 +1118,29 @@ export default function ManageUsersList({
                   />
                 </div>
               )}
+               
                {state.menu_selected === "Desktop-Assessor" && (
+                <div className="flex flex-col gap-3">
+                  <FilteringTable
+                    dataList={userTableList}
+                    columns={ADMIN_COLUMN}
+                    navigateFunc={() => {}}
+                    showCheckbox={true}
+                    paginationInfo={paginationInfo}
+                    setPaginationInfo={setPaginationInfo}
+                    setOnRowSelect={() => {}}
+                    setSelectedRows={setSelectedRows}
+                    showFilter={false}
+                    showSearch={true}
+                    pagination={true}
+                    filterApiCall={filterApiCall}
+                    searchApiCall={searchApiCall}
+                    setIsSearchOpen={setIsSearchOpen}
+                    setIsFilterOpen={setIsFilterOpen}
+                  />
+                </div>
+              )}
+              {state.menu_selected === "Super-Admin" && (
                 <div className="flex flex-col gap-3">
                   <FilteringTable
                     dataList={userTableList}

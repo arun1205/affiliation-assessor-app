@@ -148,7 +148,7 @@ const MyApplications = () => {
       requestPayload
     );
 
-  /*   applicationsResponse?.data?.form_submissions.forEach((item, index) => {
+ /*    draftApplicationResponse?.data?.institute_form_drafts.forEach((item, index) => {
       console.log(item)
       if (item.form_id === 706) {
         item.noc_Path = "noc-path-isthere";
@@ -186,9 +186,11 @@ const MyApplications = () => {
             item.noc_fileName = "noc-filename";
           }
         }); */
-    console.log(applicationsResponse)
+    console.log(applicationsResponse?.data?.form_submissions.sort( (a,b) => b.form_id - a.form_id ))
+   // let arr = applicationsResponse?.data?.form_submissions.sort( (a,b) => b.form_status - a.form_status )
         if (applicationsResponse?.data?.form_submissions) {
-          setApplications(applicationsResponse?.data?.form_submissions);
+          setApplications( applicationsResponse?.data?.form_submissions.sort( (a,b) => b.form_status - a.form_status ));
+          
         }//arun
         setLoadingApplications(false);
 
@@ -242,7 +244,8 @@ const MyApplications = () => {
   };
 
   const handleViewApplicationHandler = async (formObj) => {
-    await setToLocalForage("course_details", formObj.course);
+    console.log(formObj)
+    await setToLocalForage("course_details", formObj);
     if(formObj?.form_id) {
       navigate(
         `${APPLICANT_ROUTE_MAP.dashboardModule.createForm}/${formObj?.form_name

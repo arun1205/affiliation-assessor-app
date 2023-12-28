@@ -186,6 +186,10 @@ export default function DesktopAnalysisView() {
       assessment_type: "applicant",
       form_name: formName?.replace("admin", "applicant"),
       submission_status: true,
+      course_type: formDataFromApi?.course_type,
+      course_level: formDataFromApi?.course_level,
+      course_id: formDataFromApi?.course_id,
+      round:formDataFromApi?.round,
       applicant_id: formDataFromApi?.institute?.id,
       updated_at: getLocalTimeInISOFormat(),
       reverted_count: formDataFromApi?.reverted_count + 1,
@@ -444,6 +448,12 @@ export default function DesktopAnalysisView() {
         () => navigate(`${ADMIN_ROUTE_MAP.adminModule.desktopAnalysis.home}`),
         1500
       );
+  /*     setToast((prevState) => ({
+        ...prevState,
+        toastOpen: true,
+        toastMsg: "Form approved successfully.",
+        toastType: "success",
+      })); */
     } catch (error) {
       setToast((prevState) => ({
         ...prevState,
@@ -457,6 +467,7 @@ export default function DesktopAnalysisView() {
   };
 
   const checkIframeLoaded = () => {
+    console.log(formDataFromApi.reverted_count)
     if (window.location.host.includes("regulator.upsmfac")) {
       const iframeElem = document?.getElementById("enketo_DA_preview");
       var iframeContent =
@@ -494,6 +505,10 @@ export default function DesktopAnalysisView() {
       // draftButton?.addEventListener("click", function () {
       //   alert("Hello world!");
       // });
+   
+      if(formDataFromApi?.form_status?.toLowerCase() === "returned" && formDataFromApi?.reverted_count >= 2){
+        iframeContent.getElementById("submit-form").style.display = "none";
+      }
     }
     setSpinner(false);
   };
@@ -600,6 +615,20 @@ export default function DesktopAnalysisView() {
                   </Tooltip>
                 )}
               {paymentStatus?.toLowerCase() === "paid" &&
+                formDataFromApi?.form_status?.toLowerCase() ===
+                  "da completed" && loggedInUserRole !== "Desktop-Assessor" && (
+                  <button
+                    onClick={() => setOpenSheduleInspectionModel(true)}
+                    className="flex flex-wrap items-center justify-center gap-2 border border-gray-500 bg-white text-gray-500 w-fit h-fit p-2 font-semibold rounded-[4px]"
+                  >
+                    Send for inspection
+                    <span>
+                      <BsArrowRight />
+                    </span>
+                  </button>
+                )}
+             { console.log(paymentStatus)}
+                 {paymentStatus?.toLowerCase() === "initiated" && formDataFromApi?.round === 2 &&
                 formDataFromApi?.form_status?.toLowerCase() ===
                   "da completed" && loggedInUserRole !== "Desktop-Assessor" && (
                   <button
