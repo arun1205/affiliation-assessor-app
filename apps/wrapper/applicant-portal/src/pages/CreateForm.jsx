@@ -348,8 +348,10 @@ const CreateForm = (props) => {
     );
     try {
     const commonPayload = formDATA?.common_payload
+    console.log("applicantStatus =>", applicantStatus);
     if (applicantStatus === 'draft' || applicantStatus === "undefined") { //new form
       console.log("Saving new form..")
+      console.log(commonPayload);
      const response = await saveFormSubmission({
         schedule_id: null,
         assessor_id: null,
@@ -359,9 +361,9 @@ const CreateForm = (props) => {
         form_status: commonPayload.round === 1 ? "Application Submitted" : "DA Completed",
         ...commonPayload,
       });
-      console.log("applicantStatus =>", applicantStatus);
+      console.log(response);
       // if the application is drafted, remove it's entry post form submission
-      if(response) {
+  /*     if(response) {
         const draft = await getFromLocalForage('draft');
         console.log("draft ===>", draft);
         if(draft && draft.draftId !== "") {
@@ -377,7 +379,7 @@ const CreateForm = (props) => {
         }
       }
       //  await removeAllFromLocalForage();
-      }
+      } */
      // console.log(response?.data?.insert_form_submissions?.returning[0]?.form_id)
       const tempStore = await getFromLocalForage(
         `refNo`
