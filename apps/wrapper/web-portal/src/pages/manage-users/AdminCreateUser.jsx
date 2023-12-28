@@ -239,9 +239,9 @@ export default function AdminCreateUser() {
 
         const checkIsEmailExistRes = await checkIsEmailExist({ email: user.email });
         if (checkIsEmailExistRes.data
-          && (checkIsEmailExistRes.data.assessors.length
-            || checkIsEmailExistRes.data.institutes.length
-            || checkIsEmailExistRes.data.regulator.length)) {
+          && (!checkIsEmailExistRes.data.assessors.length
+            || !checkIsEmailExistRes.data.institutes.length
+            || !checkIsEmailExistRes.data.regulator.length)) {
           setToast((prevState) => ({
             ...prevState,
             toastOpen: true,
