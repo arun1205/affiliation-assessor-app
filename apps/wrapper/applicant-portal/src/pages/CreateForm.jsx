@@ -606,11 +606,11 @@ const CreateForm = (props) => {
           var selectElements1 = formSection[j].querySelectorAll("select");
           selectElements1.forEach((select) => {
             select.disabled = true;
-            if((select.type !== 'radio' && (select.name.towLowerCase().includes('admin') || select.name.towLowerCase().includes('desktop'))) && select.value !== undefined) {
-              console.log("Input has value", select.value);
-              const parentNode = select.parentNode;
+            if((select?.type !== 'radio' && (select?.name?.toLowerCase().includes('admin') || select?.name?.toLowerCase().includes('desktop'))) && select?.value !== undefined) {
+              console.log("Input has value", select?.value);
+              const parentNode = select?.parentNode;
               if(parentNode) {
-                const siblings = parentNode.previousSibling;
+                const siblings = parentNode?.previousSibling;
                 console.log("siblings", siblings);
               }
             }
@@ -618,22 +618,22 @@ const CreateForm = (props) => {
 
           buttonElements1.forEach((button) => {
             button.disabled = true;
-            if((button.type !== 'radio' && (button.name.towLowerCase().includes('admin') || button.name.towLowerCase().includes('desktop'))) && button.value !== undefined) {
-              console.log("Input has value", button.value);
-              const parentNode = button.parentNode;
+            if((button?.type !== 'radio' && (button?.name?.toLowerCase().includes('admin') || button?.name?.toLowerCase().includes('desktop'))) && button?.value !== undefined) {
+              console.log("Input has value", button?.value);
+              const parentNode = button?.parentNode;
               if(parentNode) {
-                const siblings = parentNode.previousSibling;
+                const siblings = parentNode?.previousSibling;
                 console.log("siblings", siblings);
               }
             }
           });
           inputElements1.forEach((input) => {
             input.disabled = true;
-            if((input.type !== 'radio' && (input.name.towLowerCase().includes('admin') || input.name.towLowerCase().includes('desktop'))) && input.value !== undefined) {
-              console.log("Input has value", input.value);
-              const parentNode = input.parentNode;
+            if((input?.type !== 'radio' && (input?.name?.toLowerCase().includes('admin') || input?.name?.toLowerCase().includes('desktop'))) && input?.value !== undefined) {
+              console.log("Input has value", input?.value);
+              const parentNode = input?.parentNode;
               if(parentNode) {
-              const siblings = parentNode.previousSibling;
+              const siblings = parentNode?.previousSibling;
 		          console.log("siblings", siblings);
               }
             }
