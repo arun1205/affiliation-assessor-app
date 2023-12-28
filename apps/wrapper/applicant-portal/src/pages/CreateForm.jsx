@@ -316,8 +316,7 @@ const CreateForm = (props) => {
       round: course_details?.round,
       course_type: course_details?.course_type,
       course_level: course_details?.course_level,
-      course_id: course_details?.course?.course_id,
-      course_name: course_details?.course_name,
+      course_id: course_details?.course_id || course_details?.course?.course_id,
       reverted_count: course_details?.reverted_count
     };
 
