@@ -1,6 +1,7 @@
 import API_URL from "./apiUrl";
 import adminCustomPost from "./adminCustomApi";
 import fileConversionCustomPost from "./fileConversionCustomApi";
+import fileUploadAdminCustomApi from "./fileUploadAdminCustomApi";
 import axios from "axios";
 import { getCookie } from "../utils/common";
 import { utils, writeFile } from 'xlsx';
@@ -389,9 +390,9 @@ export const getScheduledList = async (postData) => {
 };
 
 export const uploadAssessmentSchedule = async (postData) => {
-  const res = await fileConversionCustomPost.post(
+  const res = await fileUploadAdminCustomApi.post(
     API_URL.scheduleManagement.uploadAssessmentSchedule,
-    postData
+    postData,
   );
   return res;
 };
