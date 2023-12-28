@@ -360,12 +360,7 @@ export default function AdminCreateUser() {
   }
   const fetchUserRoleNames = async (userDetails) => {
 
-    const reqBody = {
-      object: {
-      },
-      offsetNo: 0,
-      limit: 10
-    }
+    const reqBody =   {object:{active: {_eq: true}}, offsetNo: 0, limit: 100}
 
     try {
       setSpinner(true);
