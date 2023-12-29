@@ -35,7 +35,7 @@ export default function AdminCreateUser() {
     phonenumber: "",
     role: "",
   });
-  const [selectedRoleName, setSelectedRoleName] = useState("");
+  const [selectedRoleName, setSelectedRoleName] = useState();
 
   const [availableRoleNames, setAvailableRoleNames] = useState([]);
   const navigation = useNavigate();
@@ -45,6 +45,9 @@ export default function AdminCreateUser() {
       setSpinner(true);
       const res = await getSpecificUser({ userId });
       if (res.data.assessors.length) {
+        setSelectedRoleName({value: res.data.assessors[0]["role"],
+        label: res.data.assessors[0]["role"],
+      })
         setUser({
           firstname:
             res.data.assessors[0]["fname"] || res.data.assessors[0]["name"],
@@ -55,6 +58,8 @@ export default function AdminCreateUser() {
         });
       }
       if (res.data.regulator.length) {
+        setSelectedRoleName({value: res.data.regulator[0]["role"],
+        label: res.data.regulator[0]["role"],})
         setUser({
           firstname:
             res.data.regulator[0]["fname"] ||
@@ -62,7 +67,7 @@ export default function AdminCreateUser() {
           lastname: res.data.regulator[0]["lname"],
           email: res.data.regulator[0]["email"],
           phonenumber: res.data.regulator[0]["phonenumber"],
-          role: res.data.regulator[0]["role"],
+          //role: res.data.regulator[0]["role"],
         });
       }
     } catch (error) {
@@ -89,7 +94,7 @@ export default function AdminCreateUser() {
   const upDateUserObj = () => {
     setUser((prevState) => ({
       ...prevState,
-      role: selectedRoleName.value,
+      role: selectedRoleName?.value,
     }));
   };
   const isFieldsValid = () => {
@@ -166,7 +171,8 @@ export default function AdminCreateUser() {
               },
             ],
             attributes: {
-              Role: user.role,
+             // Role: user.role,
+              Role:   selectedRoleName.value
             },
           },
         };
@@ -232,7 +238,8 @@ export default function AdminCreateUser() {
               },
             ],
             attributes: {
-              Role: user.role,
+             // Role: user.role,
+              Role:  selectedRoleName.value
             },
           },
         };
@@ -367,7 +374,7 @@ export default function AdminCreateUser() {
       const res = await fetchAllUserRoles(reqBody);
       let arr = []
       res.data.role.forEach(elem => {
-        console.log(elem.name)
+      //  console.log(elem.name)
         arr.push({
           label: elem.name,
           value: elem.name
@@ -393,6 +400,7 @@ export default function AdminCreateUser() {
   }, []);
 
   useEffect(() => {
+    console.log(selectedRoleName)
     upDateUserObj();
   }, [selectedRoleName]);
 
@@ -533,6 +541,7 @@ export default function AdminCreateUser() {
                     <Select
                       name="allRolesList"
                       label="Role"
+                      isDisabled={userId ? true : false}
                       value={selectedRoleName}
                       onChange={setSelectedRoleName}
                       options={availableRoleNames}

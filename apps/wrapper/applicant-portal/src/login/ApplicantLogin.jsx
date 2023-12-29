@@ -43,7 +43,7 @@ const ApplicantLogin = () => {
     //setSpinner(true);
     try {
       const res = await userService.isUserActive(data);
-      if (res?.data[0]?.enabled) {
+      if (res?.data[0]?.enabled && res?.data[0]?.attributes.Role[0] === "Institute") {
         login(data);
         //setSpinner(false);
       } else {

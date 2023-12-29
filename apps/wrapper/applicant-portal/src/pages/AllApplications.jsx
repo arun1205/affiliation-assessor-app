@@ -10,7 +10,7 @@ import { Select, Option } from "@material-tailwind/react";
 import { FaAngleRight } from "react-icons/fa";
 import { Switch, Tooltip } from "@material-tailwind/react";
 
-import { formService } from "../services";
+import { formService , applicationService} from "../services";
 import { getCookie } from "../utils";
 import APPLICANT_ROUTE_MAP from "../routes/ApplicantRoute";
 
@@ -96,6 +96,47 @@ const AllApplications = () => {
     setLoadingForms(false);
   };
 
+
+  const checkAvailableFormsToShow = async (roundSelected) => {
+
+    const requestPayload = {
+      "round": roundSelected,
+      "applicant_id": instituteDetails?.[0].id,
+      "noc_path": true
+      // NOTE:   "noc_path"=  true returns the forms for which
+         //    no noc is generated for this applicant_id for given round 
+    }
+    const formsToOmitResp = await applicationService.formsToOmit(
+      requestPayload
+    );
+
+    const formsToOmit = formsToOmitResp?.data?.form_submissions
+    if (formsToOmitResp?.data?.form_submissions) {
+      const courseIdsToOmit = [];
+      for (let i = 0; i < formsToOmit.length; i++) {
+        courseIdsToOmit.push(availableForms?.filter((el) => {
+          if (el?.form.form_id === formsToOmit[i].course?.form?.form_id) {
+            return el.course_id
+          }
+        }))
+      }
+      const unique = [...new Set(courseIdsToOmit.flat().map((item) => item?.course_id))];
+      for (let i = 0; i < unique.length; i++) {
+        setAvailableForms(availableForms?.filter(object => {
+          return object?.course_id !== unique[i];
+        }));
+      }
+
+     // setAvailableForms(rrr?.slice(0,4))
+    }
+  /*   applications.forEach((item, index) => {
+     // console.log(item)
+      if (item.noc_Path !== null && item.round === 1) {
+        setSwitchDisabled(false)
+      } 
+    }); */
+  }
+
   const applyFormHandler = async (obj) => {
     await setToLocalForage("course_details", obj);
     let form_obj = obj?.formObject;
@@ -143,6 +184,10 @@ const AllApplications = () => {
       setDefaultChecked(true);
     }
   }, [selectedRound,formData,]);
+
+  useEffect(() => {
+    checkAvailableFormsToShow(selectedRound);
+  }, [availableForms]);
 
 /*   useEffect(() => {
     checkAvailableFormsToShow();
