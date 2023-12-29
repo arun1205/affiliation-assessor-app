@@ -495,9 +495,9 @@ export default function DesktopAnalysisView() {
         iframeContent.getElementById("submit-form").style.display = "none";
       }
       // manipulate span element text content
-     /*   const buttonElement = document.getElementById('submit-form');
+      const buttonElement = iframeContent.getElementById('submit-form');
        const spanElement = buttonElement?.children[1];
-       spanElement.textContent = 'Return to applicant'; */
+       spanElement.textContent = 'Return to applicant';
 
       // Need to work on Save draft...
       iframeContent.getElementById("save-draft").style.display = "none";

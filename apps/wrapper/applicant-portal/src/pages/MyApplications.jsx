@@ -5,7 +5,7 @@ import { Button, ApplicationCard, FormCard } from "../components";
 import APPLICANT_ROUTE_MAP from "../routes/ApplicantRoute";
 import { applicationService, formService } from "../services";
 import { getCookie } from "../utils";
-import { setToLocalForage } from "../forms";
+import { removeAllFromLocalForage, setToLocalForage } from "../forms";
 import { Switch, Tooltip } from "@material-tailwind/react";
 import { ContextAPI } from "../utils/contextAPI";
 
@@ -26,6 +26,7 @@ const MyApplications = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    removeAllFromLocalForage();
     getProfileDetails();
   }, []);
 
