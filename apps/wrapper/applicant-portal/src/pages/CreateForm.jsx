@@ -113,8 +113,6 @@ const CreateForm = (props) => {
     let data = await getFromLocalForage(
       `${userId}_${formName}_${new Date().toISOString().split("T")[0]}`
     );
-    console.log("Dataaaaa ====>", data);
-
     if (data) {
       formData = data;
     } else {
@@ -122,6 +120,13 @@ const CreateForm = (props) => {
         const postData = { form_id: formId };
         const res = await getFormData(postData);
         formData = res?.data?.form_submissions[0];
+        await setToLocalForage(
+          `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
+          {
+            formData: formData.form_data,
+            imageUrls: { ...formData.imageUrls },
+          }
+        );
         setPaymentDetails(formData?.payment_status);
         setFormDataNoc(formData);
       }
@@ -144,8 +149,6 @@ const CreateForm = (props) => {
       let data = await getFromLocalForage(
         `${userId}_${formName}_${new Date().toISOString().split("T")[0]}`
       );
-      console.log("Dataaaaa ====>", data);
-  
       if (data) {
         formData = data;
       } else {
@@ -164,11 +167,16 @@ const CreateForm = (props) => {
         const draftApplicationResponse = await applicationService.getDraftForms(
           requestPayload
         );
-        console.log("response =>", draftApplicationResponse);
+        // console.log("response =>", draftApplicationResponse);
           formData = draftApplicationResponse?.data?.institute_form_drafts[0];
           // setPaymentDetails(formData?.payment_status);
-
-          console.log("formData ==>", formData);
+          await setToLocalForage(
+            `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
+            {
+              formData: formData.form_data,
+              imageUrls: { ...formData.imageUrls },
+            }
+          );
           setFormDataNoc(formData);
       }
   
@@ -303,9 +311,8 @@ const CreateForm = (props) => {
   };
 
   const handleSubmit = async () => {
-
-   
     const updatedFormData = await updateFormData(formSpec.start, userId);
+    console.log("updatedFormData ====>", updatedFormData);
     const course_details = await getSpecificDataFromForage("course_details");
     console.log(course_details)
     const common_payload = {
@@ -347,7 +354,6 @@ const CreateForm = (props) => {
     );
     try {
     const commonPayload = formDATA?.common_payload
-    console.log("applicantStatus =>", applicantStatus);
     if (applicantStatus === 'draft' || applicantStatus === "undefined") { //new form
       console.log("Saving new form..")
       console.log(commonPayload);
@@ -360,7 +366,7 @@ const CreateForm = (props) => {
         form_status: commonPayload.round === 1 ? "Application Submitted" : "DA Completed",
         ...commonPayload,
       });
-      console.log(response);
+      // console.log(response);
       // if the application is drafted, remove it's entry post form submission
       if(response) {
         const draft = await getFromLocalForage('draft');
@@ -379,7 +385,7 @@ const CreateForm = (props) => {
       }
       //  await removeAllFromLocalForage();
       }
-     // console.log(response?.data?.insert_form_submissions?.returning[0]?.form_id)
+     console.log(response?.data?.insert_form_submissions?.returning[0]?.form_id)
       const tempStore = await getFromLocalForage(
         `refNo`
       );
@@ -392,8 +398,6 @@ const CreateForm = (props) => {
 
     await applicantService.updateTransactionStatusByRefNo(reqBody);
     } else {
-      console.log("Updating existing form..",formId)
-      console.log( commonPayload)
       await updateFormSubmission({
         form_id: formId,
         applicant_id: instituteDetails?.[0]?.id,
@@ -427,9 +431,6 @@ const CreateForm = (props) => {
       console.log('Something went wrong',error);
       
     }
-  /*   finally {
-      removeAllFromLocalForage();
-    } */
   }
 
   const handleDownloadNocOrCertificate = () => {
@@ -442,7 +443,6 @@ const CreateForm = (props) => {
 
   const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
     const eventFormData = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
-   // console.log("eventFormData", eventFormData.formData);
     if(eventFormData?.formData?.draft !== '' && eventFormData?.formData?.draft === true) {
       const course_details = await getSpecificDataFromForage("course_details");
       console.log("courseDetails ===>", course_details);
@@ -502,7 +502,6 @@ const CreateForm = (props) => {
     if (typeof e.data === "string" && e.data.includes("webpackHot")) {
       return;
     }
-
     if (
       (ENKETO_URL === `${e.origin}/enketo` ||
         ENKETO_URL === `${e.origin}/enketo/`) &&
@@ -520,7 +519,6 @@ const CreateForm = (props) => {
         // let prevData = await getFromLocalForage(
         //   `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`
         // );
-
         await setToLocalForage(
           `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
           {
@@ -534,7 +532,6 @@ const CreateForm = (props) => {
   };
 
   const handleEventTrigger = async (e) => {
-//console.log("Instance Load event =>", e);
     handleFormEvents(startingForm, afterFormSubmit, e);
   };
 
@@ -543,6 +540,7 @@ const CreateForm = (props) => {
   };
 
   const handleGoBack = () => {
+    removeAllFromLocalForage();
     navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.my_applications}`);
   };
 
@@ -606,40 +604,40 @@ const CreateForm = (props) => {
           var inputElements1 = formSection[j].querySelectorAll("input");
           var buttonElements1 = formSection[j].querySelectorAll("button");
           var selectElements1 = formSection[j].querySelectorAll("select");
-          selectElements1.forEach((select) => {
-            select.disabled = true;
-            if((select?.type !== 'radio' && (select?.name?.toLowerCase().includes('admin') || select?.name?.toLowerCase().includes('desktop'))) && select?.value !== undefined) {
-              console.log("Input has value", select?.value);
-              const parentNode = select?.parentNode;
-              if(parentNode) {
-                const siblings = parentNode?.previousSibling;
-                console.log("siblings", siblings);
-              }
-            }
-          });
+          // selectElements1.forEach((select) => {
+          //   select.disabled = true;
+          //   if((select?.type !== 'radio' && (select?.name?.toLowerCase().includes('admin') || select?.name?.toLowerCase().includes('desktop'))) && select?.value !== undefined) {
+          //     console.log("Input has value", select?.value);
+          //     const parentNode = select?.parentNode;
+          //     if(parentNode) {
+          //       const siblings = parentNode?.previousSibling;
+          //       console.log("siblings", siblings);
+          //     }
+          //   }
+          // });
 
-          buttonElements1.forEach((button) => {
-            button.disabled = true;
-            if((button?.type !== 'radio' && (button?.name?.toLowerCase().includes('admin') || button?.name?.toLowerCase().includes('desktop'))) && button?.value !== undefined) {
-              console.log("Input has value", button?.value);
-              const parentNode = button?.parentNode;
-              if(parentNode) {
-                const siblings = parentNode?.previousSibling;
-                console.log("siblings", siblings);
-              }
-            }
-          });
-          inputElements1.forEach((input) => {
-            input.disabled = true;
-            if((input?.type !== 'radio' && (input?.name?.toLowerCase().includes('admin') || input?.name?.toLowerCase().includes('desktop'))) && input?.value !== undefined) {
-              console.log("Input has value", input?.value);
-              const parentNode = input?.parentNode;
-              if(parentNode) {
-              const siblings = parentNode?.previousSibling;
-		          console.log("siblings", siblings);
-              }
-            }
-          });
+          // buttonElements1.forEach((button) => {
+          //   button.disabled = true;
+          //   if((button?.type !== 'radio' && (button?.name?.toLowerCase().includes('admin') || button?.name?.toLowerCase().includes('desktop'))) && button?.value !== undefined) {
+          //     console.log("Input has value", button?.value);
+          //     const parentNode = button?.parentNode;
+          //     if(parentNode) {
+          //       const siblings = parentNode?.previousSibling;
+          //       console.log("siblings", siblings);
+          //     }
+          //   }
+          // });
+          // inputElements1.forEach((input) => {
+          //   input.disabled = true;
+          //   if((input?.type !== 'radio' && (input?.name?.toLowerCase().includes('admin') || input?.name?.toLowerCase().includes('desktop'))) && input?.value !== undefined) {
+          //     console.log("Input has value", input?.value);
+          //     const parentNode = input?.parentNode;
+          //     if(parentNode) {
+          //     const siblings = parentNode?.previousSibling;
+		      //     console.log("siblings", siblings);
+          //     }
+          //   }
+          // });
           /* partial logic to test disabling fields */
         }
       }
@@ -660,7 +658,6 @@ const CreateForm = (props) => {
       fetchFormData();
     }
     bindEventListener();
-
     if (spinner) {
       spinner.style.display = "flex";
     }
