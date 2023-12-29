@@ -455,7 +455,7 @@ export const getFormSubmissions = () => {
 
 export const isUserActive = async (email) => {
   try {
-    const res = await keyCloakAxiosService.post(
+    return await keyCloakAxiosService.post(
       KEYCLOAK_BASE_URL + "emaildetails",
       {
         request:{
@@ -470,11 +470,7 @@ export const isUserActive = async (email) => {
         },
       }
     );
-    if(res.data[0]){
-      return res.data[0].enabled;
-    } else {
-      return false;
-    }
+  
    
   } catch (err) {
     console.log(err);
