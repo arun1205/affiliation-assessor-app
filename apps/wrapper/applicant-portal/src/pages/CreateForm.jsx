@@ -307,7 +307,7 @@ const CreateForm = (props) => {
    
     const updatedFormData = await updateFormData(formSpec.start, userId);
     const course_details = await getSpecificDataFromForage("course_details");
-    console.log(course_details.course)
+    console.log(course_details)
     const common_payload = {
       form_data: updatedFormData,
       assessment_type: "applicant",
@@ -316,7 +316,7 @@ const CreateForm = (props) => {
       round: course_details?.round,
       course_type: course_details?.course_type,
       course_level: course_details?.course_level,
-      course_id: course_details?.course?.course_id,
+      course_id: course_details?.course_id || course_details?.course?.course_id,
       reverted_count: course_details?.reverted_count
     };
 
@@ -347,8 +347,10 @@ const CreateForm = (props) => {
     );
     try {
     const commonPayload = formDATA?.common_payload
+    console.log("applicantStatus =>", applicantStatus);
     if (applicantStatus === 'draft' || applicantStatus === "undefined") { //new form
       console.log("Saving new form..")
+      console.log(commonPayload);
      const response = await saveFormSubmission({
         schedule_id: null,
         assessor_id: null,
@@ -358,7 +360,7 @@ const CreateForm = (props) => {
         form_status: commonPayload.round === 1 ? "Application Submitted" : "DA Completed",
         ...commonPayload,
       });
-      console.log("applicantStatus =>", applicantStatus);
+      console.log(response);
       // if the application is drafted, remove it's entry post form submission
       if(response) {
         const draft = await getFromLocalForage('draft');

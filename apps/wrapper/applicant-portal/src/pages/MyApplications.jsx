@@ -100,7 +100,7 @@ const MyApplications = () => {
       const courseIdsToOmit = [];
       for (let i = 0; i < formsToOmit.length; i++) {
         courseIdsToOmit.push(availableForms?.filter((el) => {
-          if (el?.form.form_id === formsToOmit[i].course.form.form_id) {
+          if (el?.form.form_id === formsToOmit[i].course?.form?.form_id) {
             return el.course_id
           }
         }))
@@ -179,9 +179,9 @@ const MyApplications = () => {
           requestPayload
         );
     
-       /*  applicationsResponse?.data?.form_submissions.forEach((item, index) => {
+      /*   applicationsResponse?.data?.form_submissions.forEach((item, index) => {
           //console.log(item)
-          if (item.form_id === 706) {
+          if (item.form_id === 833) {
             item.noc_Path = "noc-path-isthere";
             item.noc_fileName = "noc-filename";
           }

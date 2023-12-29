@@ -239,9 +239,9 @@ export default function AdminCreateUser() {
 
         const checkIsEmailExistRes = await checkIsEmailExist({ email: user.email });
         if (checkIsEmailExistRes.data
-          && (checkIsEmailExistRes.data.assessors.length
-            || checkIsEmailExistRes.data.institutes.length
-            || checkIsEmailExistRes.data.regulator.length)) {
+          && (!checkIsEmailExistRes.data.assessors.length
+            || !checkIsEmailExistRes.data.institutes.length
+            || !checkIsEmailExistRes.data.regulator.length)) {
           setToast((prevState) => ({
             ...prevState,
             toastOpen: true,
@@ -360,12 +360,7 @@ export default function AdminCreateUser() {
   }
   const fetchUserRoleNames = async (userDetails) => {
 
-    const reqBody = {
-      object: {
-      },
-      offsetNo: 0,
-      limit: 10
-    }
+    const reqBody =   {object:{active: {_eq: true}}, offsetNo: 0, limit: 100}
 
     try {
       setSpinner(true);

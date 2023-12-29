@@ -73,10 +73,11 @@ export default function SelfRegistration() {
 
     try {
       const checkIsEmailExistRes = await applicantService.checkIsEmailExist({ email: email });
-      if (checkIsEmailExistRes.data
-        && (checkIsEmailExistRes.data.assessors.length
-          || checkIsEmailExistRes.data.institutes.length
-          || checkIsEmailExistRes.data.regulator.length)) {
+      console.log(checkIsEmailExistRes?.data?.assessors?.length)
+      if (checkIsEmailExistRes?.data
+        && (!checkIsEmailExistRes?.data?.assessors?.length 
+          || !checkIsEmailExistRes?.data?.institutes?.length
+          || !checkIsEmailExistRes?.data?.regulator?.length)) {
         setToast((prevState) => ({
           ...prevState,
           toastOpen: true,

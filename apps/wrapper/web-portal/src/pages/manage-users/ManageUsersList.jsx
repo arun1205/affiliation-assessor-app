@@ -1058,7 +1058,7 @@ export default function ManageUsersList({
                     Desktop Assessor
                   </a>
                 </li>
-                <li
+               {/*  <li
                   className="mr-2"
                   onClick={() => handleSelectMenu("Super-Admin")}
                 >
@@ -1073,7 +1073,7 @@ export default function ManageUsersList({
                   >
                     Super Admin
                   </a>
-                </li>
+                </li> */}
               </ul>
               {/* filtering table here */}
               {state.menu_selected === "Assessor" && (
