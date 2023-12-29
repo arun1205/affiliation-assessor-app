@@ -415,10 +415,10 @@ const DesktopAnalysisList = () => {
         <div
           className={`px-6 text-primary-600 pl-0`}
           onClick={
-            e?.payment_status === "Paid" || "Initiated" ? () => handleViewPayment(e) : () => { }
+            (e?.payment_status === "Paid" || e?.payment_status === "Initiated") ? () => handleViewPayment(e) : () => { }
           }
         >
-          {e?.payment_status === "Paid" || "Initiated"
+          {(e?.payment_status === "Paid" || e?.payment_status === "Initiated")
             ? "View Payment Detail"
             : e?.payment_status || "NA"}
         </div>
