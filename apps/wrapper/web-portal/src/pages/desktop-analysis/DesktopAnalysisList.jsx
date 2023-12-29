@@ -218,27 +218,43 @@ const DesktopAnalysisList = () => {
   ]);
 
   const fetchDesktopAnalysisForms = async () => {
-    const postData = {
-      offsetNo: paginationInfo.offsetNo,
-      limit: paginationInfo.limit,
-      round: selectedRound,
-      formStatus: state.menu_selected,
-    };
-    try {
-      setSpinner(true);
-      const res = await getDesktopAnalysisForms(postData);
-      setPaginationInfo((prevState) => ({
-        ...prevState,
-        totalCount: res.data.form_submissions_aggregate.aggregate.totalCount,
-      }));
-      //console.log(res?.data?.form_submissions);
-    
-      console.log(res?.data?.form_submissions);
-      setFormsList(res?.data?.form_submissions);
-    } catch (error) {
-      console.log("error - ", error);
-    } finally {
-      setSpinner(false);
+    if(state.menu_selected === "Inspection Scheduled"){
+       const  condition= {
+            assessor_id: {
+                _is_null: true
+            },
+            round: {
+                _eq: selectedRound
+            },
+            form_status: {
+                _eq: state.menu_selected,
+            }
+        }
+      filterApiCall(condition);
+    } else {
+      const postData = {
+        offsetNo: paginationInfo.offsetNo,
+        limit: paginationInfo.limit,
+        round: selectedRound,
+        formStatus: state.menu_selected,
+      };
+      try {
+        setSpinner(true);
+        const res = await getDesktopAnalysisForms(postData);
+        setPaginationInfo((prevState) => ({
+          ...prevState,
+          totalCount: res.data.form_submissions_aggregate.aggregate.totalCount,
+        }));
+        //console.log(res?.data?.form_submissions);
+      
+        console.log(res?.data?.form_submissions);
+        setFormsList(res?.data?.form_submissions);
+      } catch (error) {
+        console.log("error - ", error);
+      } finally {
+        setSpinner(false);
+      }
+
     }
   };
 
