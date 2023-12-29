@@ -192,8 +192,8 @@ export const ManageFormsFilters = ({
           className="bg-gray-50"
         >
           {/* <Option value="">Course Type</Option> */}
-          <Option value="nursing">Nursing</Option>
-          <Option value="paramedical">Paramedical</Option>
+          <Option value="Nursing">Nursing</Option>
+          <Option value="Paramedical">Paramedical</Option>
         </Select>
       </div>
       <div>
