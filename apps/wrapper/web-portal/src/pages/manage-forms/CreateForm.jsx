@@ -211,8 +211,7 @@ const CreateForm = () => {
             <Link to={ADMIN_ROUTE_MAP.adminModule.scheduleManagement.home}>
               <span className="text-gray-500">Create form</span>
             </Link>
-            {/* <FaAngleRight className="text-[16px]" />
-            <span className="text-gray-500 uppercase">User details</span> */}
+          
           </div>
         </div>
       </div>

@@ -98,7 +98,7 @@ export default function AdminCreateUser() {
       user.lastname === "" ||
       !isEmail ||
       user.email === "" ||
-      user.role === "" ||
+      user.role === "" || user.role === undefined ||
       user.phonenumber === "" ||
       !isPhoneNumber ||
       user.phonenumber.length > 10 ||
@@ -413,8 +413,7 @@ export default function AdminCreateUser() {
             {/* <Link to={ADMIN_ROUTE_MAP.adminModule.manageUsers.home}> */}
             <span className="text-gray-500">Create user</span>
             {/* </Link> */}
-            {/* <FaAngleRight className="text-[16px]" />
-            <span className="text-gray-500 uppercase">User details</span> */}
+        
           </div>
         </div>
       </div>
