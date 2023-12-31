@@ -72,6 +72,7 @@ const CreateForm = (props) => {
     longitude: null,
   });
   const [onSubmit, setOnSubmit] = useState(false);
+  const [reloadForm, setReloadForm] = useState(true);
 
   const { userRepresentation } = getCookie("userData");
   const userId = userRepresentation?.id;
@@ -443,6 +444,19 @@ const CreateForm = (props) => {
 
   const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
     const eventFormData = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+    console.log(eventFormData);
+    // if(applicantStatus === 'draft' && (eventFormData?.formData !== undefined && eventFormData?.formData?.instance !== "formLoad")) {
+    //   let fileGCPPath =
+    //   process.env.REACT_APP_GCP_AFFILIATION_LINK + formName + ".xml";
+
+    // let formURI = await getPrefillXML(
+    //   `${fileGCPPath}`,
+    //   formSpec.onSuccess,
+    //   eventFormData.formData,
+    //   eventFormData?.fileURLs
+    // );
+    // setEncodedFormURI(formURI);
+    // }
     if(eventFormData?.formData?.draft !== '' && eventFormData?.formData?.draft === true) {
       const course_details = await getSpecificDataFromForage("course_details");
       console.log("courseDetails ===>", course_details);
@@ -599,45 +613,52 @@ const CreateForm = (props) => {
       if(applicantStatus && applicantStatus?.toLowerCase() === 'returned') {
         var formSection = iframeContent?.getElementsByClassName("or-group");
         if (!formSection) return;
+          // non radio input elements 
 
-        for (var j = 0; j < formSection?.length; j++) {
-          var inputElements1 = formSection[j].querySelectorAll("input");
-          var buttonElements1 = formSection[j].querySelectorAll("button");
-          var selectElements1 = formSection[j].querySelectorAll("select");
-          // selectElements1.forEach((select) => {
-          //   select.disabled = true;
-          //   if((select?.type !== 'radio' && (select?.name?.toLowerCase().includes('admin') || select?.name?.toLowerCase().includes('desktop'))) && select?.value !== undefined) {
-          //     console.log("Input has value", select?.value);
-          //     const parentNode = select?.parentNode;
-          //     if(parentNode) {
-          //       const siblings = parentNode?.previousSibling;
-          //       console.log("siblings", siblings);
-          //     }
-          //   }
-          // });
+          for(var j = 0; j < formSection?.length; j++) {
+            var inputElements1 = formSection[j].querySelectorAll("input");
+            var buttonElements1 = formSection[j].querySelectorAll("button");
+            var selectElements1 = formSection[j].querySelectorAll("select");
+            inputElements1.forEach((input) => {
+              input.disabled = true;
+            if((input?.type !== 'radio' && (input?.name?.toLowerCase().includes('admin') || input?.name?.toLowerCase().includes('desktop'))) && input?.value !== undefined) {
+            const parentNode = input?.parentNode;
+            if(parentNode) {
+            const siblings = parentNode?.previousSibling;
+            for(let k = 0; k < siblings.children.length; k++) {
+              console.log("children =>", siblings.children[k]);
+            if(siblings.children[k].type === 'text') {
+              siblings.children[k].disabled = false;
+            }
+            }
+            }
+            }
+            })
+           
 
-          // buttonElements1.forEach((button) => {
-          //   button.disabled = true;
-          //   if((button?.type !== 'radio' && (button?.name?.toLowerCase().includes('admin') || button?.name?.toLowerCase().includes('desktop'))) && button?.value !== undefined) {
-          //     console.log("Input has value", button?.value);
-          //     const parentNode = button?.parentNode;
-          //     if(parentNode) {
-          //       const siblings = parentNode?.previousSibling;
-          //       console.log("siblings", siblings);
-          //     }
-          //   }
-          // });
-          // inputElements1.forEach((input) => {
-          //   input.disabled = true;
-          //   if((input?.type !== 'radio' && (input?.name?.toLowerCase().includes('admin') || input?.name?.toLowerCase().includes('desktop'))) && input?.value !== undefined) {
-          //     console.log("Input has value", input?.value);
-          //     const parentNode = input?.parentNode;
-          //     if(parentNode) {
-          //     const siblings = parentNode?.previousSibling;
-		      //     console.log("siblings", siblings);
-          //     }
-          //   }
-          // });
+          selectElements1.forEach((select) => {
+            select.disabled = true;
+            if((select?.type !== 'radio' && (select?.name?.toLowerCase().includes('admin') || select?.name?.toLowerCase().includes('desktop'))) && select?.value !== undefined) {
+              console.log("Input has value", select?.value);
+              const parentNode = select?.parentNode;
+              if(parentNode) {
+                const siblings = parentNode?.previousSibling;
+                console.log("siblings", siblings);
+              }
+            }
+          });
+
+          buttonElements1.forEach((button) => {
+            button.disabled = true;
+            if((button?.type !== 'radio' && (button?.name?.toLowerCase().includes('admin') || button?.name?.toLowerCase().includes('desktop'))) && button?.value !== undefined) {
+              console.log("Input has value", button?.value);
+              const parentNode = button?.parentNode;
+              if(parentNode) {
+                const siblings = parentNode?.previousSibling;
+                console.log("siblings", siblings);
+              }
+            }
+          });
           /* partial logic to test disabling fields */
         }
       }
@@ -769,7 +790,7 @@ const CreateForm = (props) => {
               </button>
             </div>
             <div className="flex">
-            {paymentStage === undefined && (<iframe
+            {(paymentStage === undefined && encodedFormURI !=="") && (<iframe
                 id="enketo-applicant-form"
                 title="form"
                 ref={iframeRef}
