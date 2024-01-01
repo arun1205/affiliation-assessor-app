@@ -354,8 +354,9 @@ const GenericOdkForm = (props) => {
     }
 
     var draftButton = iframeContent.getElementById("save-draft");
+    console.log(draftButton)
     draftButton?.addEventListener("click", function () {
-      //alert("Hello world!");
+      console.log("draft button clicked!!! !");
     });
   };
 
