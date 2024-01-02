@@ -637,7 +637,7 @@ const GenericOdkForm = (props) => {
     let openRequest = window.indexedDB.open("enketo", 3);
     openRequest.onsuccess = function() {
       let db = openRequest.result;
-      console.log(db)
+      console.log(db?.objectStoreNames[4])
       // continue working with database using db object
     };
 
