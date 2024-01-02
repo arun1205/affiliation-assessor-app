@@ -79,11 +79,19 @@ const AllApplications = () => {
     //   offsetNo: 0,
     // }));
 
-    const postData = { searchString: `%${value}%` };
+    const postData = {searchString:{_or:[{course_name:{_ilike:`%${value}%`}}],
+    _and:{round:{_eq:selectedRound},course_type:{_eq:courseType},
+    assignee:{_eq:"applicant"},form: {form_status:{_eq: "Published"}}
+  }
+}}
+
+
+    //const postData = { searchString: `%${value}%` };
     if (value.trim() == "" || value.trim().length >= 3) {
       let formsResponse = await formService.searchForm(postData);
       if (formsResponse?.data?.courses) {
         setAvailableForms(formsResponse?.data?.courses);
+      //  checkAvailableFormsToShow(selectedRound);
       }
     }
   };
@@ -148,17 +156,26 @@ const AllApplications = () => {
     navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.createForm}/${file_name}`);
   };
 
+/*   {"condition": {"round": {"_eq": 1}, 
+  "course_type": {"_eq": "Nursing"}, 
+  "course_level": {"_eq": "Degree"}, "assignee": {"_eq": "on-ground_assessor"},
+   "application_type": {"_eq": "new_institute"},
+    "form": {"labels": {"_eq": "infrastructure"}}}} */
+
   const handleClearFilter = () => {
     setFormData({
       condition: {
         _and: { form: {
           "form_status": {
             "_eq": "Published"
+          },
+          "_and": {
+            "course_type": {
+              "_eq": courseType
+            }
           }
         } },
-        assignee: {
-          _eq: "applicant"
-        },
+        assignee: { _eq: "applicant" },
         round: {
           _eq: selectedRound
         }
@@ -220,11 +237,14 @@ const AllApplications = () => {
         _and: { form: {
           "form_status": {
             "_eq": "Published"
+          },
+          "_and": {
+            "course_type": {
+              "_eq": courseType
+            }
           }
         } },
-        assignee: {
-          _eq: "applicant"
-        },
+        assignee: { _eq: "applicant" },
         round: {
           _eq: 2
         }
@@ -238,11 +258,14 @@ const AllApplications = () => {
         _and: { form: {
           "form_status": {
             "_eq": "Published"
+          },
+          "_and": {
+            "course_type": {
+              "_eq": courseType
+            }
           }
         } },
-        assignee: {
-          _eq: "applicant"
-        },
+        assignee: { _eq: "applicant" },
         round: {
           _eq: 1
         }
