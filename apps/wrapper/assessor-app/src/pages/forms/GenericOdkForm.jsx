@@ -638,7 +638,7 @@ const GenericOdkForm = (props) => {
     openRequest.onsuccess = function() {
       let db = openRequest.result;
       console.log(db)
-      console.log(db?.objectStoreNames[4].getItem(key));
+      console.log(db?.objectStoreNames[4].getItem("records"));
       
       // continue working with database using db object
     };
