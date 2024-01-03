@@ -11,7 +11,7 @@ import ROUTE_MAP from "../../routing/routeMap";
 
 import { StateContext } from "../../App";
 
-import store from '../../../../../../packages/enketo-express/public/js/src/module/store';
+import store from '../../utils/enketo/module/store';
 
 import {
 
