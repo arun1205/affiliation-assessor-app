@@ -11,7 +11,7 @@ import ROUTE_MAP from "../../routing/routeMap";
 
 import { StateContext } from "../../App";
 
-import store from '../../../../../../packages/enketo-express/public/js/src/module/store';
+import store from '../../utils/enketo/module/store';
 
 import {
 
@@ -640,7 +640,7 @@ const GenericOdkForm = (props) => {
     openRequest.onsuccess = function() {
       let db = openRequest.result;
       console.log(db)
-      console.log(store.record.get( "apjkmlEX" ));
+      console.log(store.record.get("__autoSave_apjkmlEX"));
     // return ;
       
       // continue working with database using db object
