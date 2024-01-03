@@ -11,7 +11,7 @@ import {
   FaRegTimesCircle,
 } from "react-icons/fa";
 
-import paymentConfigPostData from '../payment-config/config.json';
+import paymentConfigPostData from "../payment-config/config.json";
 
 import {
   getCookie,
@@ -30,7 +30,14 @@ import CommonModal from "../Modal";
 import Toast from "../components/Toast";
 import "./loading.css";
 
-import { getFormData, base64ToPdf, getLocalTimeInISOFormat, saveApplicationDraft, updateApplicationDraft, deleteApplicationDraft } from "../api";
+import {
+  getFormData,
+  base64ToPdf,
+  getLocalTimeInISOFormat,
+  saveApplicationDraft,
+  updateApplicationDraft,
+  deleteApplicationDraft,
+} from "../api";
 import {
   getPrefillXML,
   saveFormSubmission,
@@ -40,7 +47,7 @@ import {
 import { generate_uuidv4 } from "../utils";
 import { applicantService } from "../services";
 import { ContextAPI } from "../utils/contextAPI";
-import StatusLogModal from "./StatusLogModal"
+import StatusLogModal from "./StatusLogModal";
 
 const ENKETO_URL = process.env.REACT_APP_ENKETO_URL;
 let previewFlag = false;
@@ -78,7 +85,6 @@ const CreateForm = (props) => {
   const userId = userRepresentation?.id;
   const instituteDetails = getCookie("institutes");
   const [openStatusModel, setOpenStatusModel] = useState(false);
-
 
   const formSpec = {
     skipOnSuccessMessage: true,
@@ -146,100 +152,97 @@ const CreateForm = (props) => {
   };
 
   const getDraftApplicationDetail = async (id) => {
-      let formData = {};
-      let data = await getFromLocalForage(
-        `${userId}_${formName}_${new Date().toISOString().split("T")[0]}`
+    let formData = {};
+    let data = await getFromLocalForage(
+      `${userId}_${formName}_${new Date().toISOString().split("T")[0]}`
+    );
+    if (data) {
+      formData = data;
+    } else {
+      const requestPayload = {
+        searchString: {
+          applicant_id: {
+            _eq: instituteDetails?.[0].id || 11,
+          },
+          id: {
+            _eq: id,
+          },
+        },
+        offsetNo: 0,
+        limit: 100,
+      };
+      const draftApplicationResponse = await applicationService.getDraftForms(
+        requestPayload
       );
-      if (data) {
-        formData = data;
-      } else {
-        const requestPayload = {
-          "searchString": {
-            "applicant_id": {
-              _eq: instituteDetails?.[0].id || 11
-            },
-              "id": {
-                "_eq": id
-              }
-            },
-          offsetNo: 0,
-          limit: 100
-        }
-        const draftApplicationResponse = await applicationService.getDraftForms(
-          requestPayload
-        );
-        // console.log("response =>", draftApplicationResponse);
-          formData = draftApplicationResponse?.data?.institute_form_drafts[0];
-          // setPaymentDetails(formData?.payment_status);
-          await setToLocalForage(
-            `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
-            {
-              formData: formData.form_data,
-              imageUrls: { ...formData.imageUrls },
-            }
-          );
-          setFormDataNoc(formData);
-      }
-  
-      let fileGCPPath =
-        process.env.REACT_APP_GCP_AFFILIATION_LINK + formName + ".xml";
-  
-      let formURI = await getPrefillXML(
-        `${fileGCPPath}`,
-        formSpec.onSuccess,
-        formData?.formData || formData?.form_data,
-        formData?.imageUrls
-      );
-      setEncodedFormURI(formURI);
-    };
-  
-  const initiatePaymentForNewForm = async() => {
-
-    try {
-      const payloadFromForage =  await getFromLocalForage(
-        `common_payload`
-      );
-     // console.log(payloadFromForage)
-
-      let reqBody ={
-        "object": {
-            "form_data":payloadFromForage.common_payload.form_data,
-             "form_name": payloadFromForage.common_payload.form_name,
-            "assessment_type":payloadFromForage.common_payload.form_name,
-            "submission_status": true,
-            "applicant_id":  instituteDetails?.[0]?.id,
-            "form_status": "Initial Draft",
-            "round": payloadFromForage.common_payload.round,
-            "course_type": payloadFromForage.common_payload.course_type,
-            "course_level": payloadFromForage.common_payload.course_level,
-            "course_id": payloadFromForage.common_payload.course_id,
-            "payment_status": "Pending"
-        }
-    }
-       await applicantService.saveInitialFormSubmission(reqBody);
-     
-      paymentConfigPostData.created_by = userId;
-    
-      const paymentRes = await applicantService.initiatePaymentForNewForm(paymentConfigPostData);
+      // console.log("response =>", draftApplicationResponse);
+      formData = draftApplicationResponse?.data?.institute_form_drafts[0];
+      // setPaymentDetails(formData?.payment_status);
       await setToLocalForage(
-        `refNo`,
+        `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
         {
-          refNo: paymentRes?.data?.referenceNo
+          formData: formData.form_data,
+          imageUrls: { ...formData.imageUrls },
         }
       );
-    //  await applicantService.savePaymentRefNumber(paymentRes?.data?.referenceNo);
-      window.open(paymentRes?.data?.redirectUrl)
-    //  window.location.replace(paymentRes?.data?.redirectUrl)
+      setFormDataNoc(formData);
+    }
+
+    let fileGCPPath =
+      process.env.REACT_APP_GCP_AFFILIATION_LINK + formName + ".xml";
+
+    let formURI = await getPrefillXML(
+      `${fileGCPPath}`,
+      formSpec.onSuccess,
+      formData?.formData || formData?.form_data,
+      formData?.imageUrls
+    );
+    setEncodedFormURI(formURI);
+  };
+
+  const initiatePaymentForNewForm = async () => {
+    try {
+      const payloadFromForage = await getFromLocalForage(`common_payload`);
+      // console.log(payloadFromForage)
+
+      let reqBody = {
+        object: {
+          form_data: payloadFromForage.common_payload.form_data,
+          form_name: payloadFromForage.common_payload.form_name,
+          assessment_type: payloadFromForage.common_payload.form_name,
+          submission_status: true,
+          applicant_id: instituteDetails?.[0]?.id,
+          form_status: "Initial Draft",
+          round: payloadFromForage.common_payload.round,
+          course_type: payloadFromForage.common_payload.course_type,
+          course_level: payloadFromForage.common_payload.course_level,
+          course_id: payloadFromForage.common_payload.course_id,
+          payment_status: "Pending",
+        },
+      };
+      await applicantService.saveInitialFormSubmission(reqBody);
+
+      paymentConfigPostData.created_by = userId;
+
+      const paymentRes = await applicantService.initiatePaymentForNewForm(
+        paymentConfigPostData
+      );
+      await setToLocalForage(`refNo`, {
+        refNo: paymentRes?.data?.referenceNo,
+      });
+      //  await applicantService.savePaymentRefNumber(paymentRes?.data?.referenceNo);
+      window.open(paymentRes?.data?.redirectUrl);
+      //  window.location.replace(paymentRes?.data?.redirectUrl)
     } catch (error) {
-      console.log(error)
+      console.log(error);
       setToast((prevState) => ({
         ...prevState,
         toastOpen: true,
-        toastMsg: "Payment gateway seems to be not responding. Please try again later.",
+        toastMsg:
+          "Payment gateway seems to be not responding. Please try again later.",
         toastType: "error",
-      }))
+      }));
     }
-  }
+  };
 
   const afterFormSubmit = async (e) => {
     const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
@@ -250,18 +253,16 @@ const CreateForm = (props) => {
       if (data?.state === "ON_FORM_SUCCESS_COMPLETED") {
         isFormInPreview = true;
         if (!previewFlag) {
-          if(applicantStatus !== 'draft' || applicantStatus === undefined) {
-          await fetchFormData();
-          }
-          else {
+          if (applicantStatus !== "draft" || applicantStatus === undefined) {
+            await fetchFormData();
+          } else {
             getDraftApplicationDetail();
           }
           handleRenderPreview();
         } else {
-          console.log("aaaaaa")
-          console.log(applicantStatus)
+          console.log("aaaaaa");
+          console.log(applicantStatus);
           handleSubmit();
-      
         }
       }
 
@@ -302,7 +303,7 @@ const CreateForm = (props) => {
         var buttonElements = section[i].querySelectorAll("button");
         buttonElements.forEach((button) => {
           button.disabled = true;
-        })
+        });
         inputElements.forEach((input) => {
           input.disabled = true;
         });
@@ -315,7 +316,7 @@ const CreateForm = (props) => {
     const updatedFormData = await updateFormData(formSpec.start, userId);
     console.log("updatedFormData ====>", updatedFormData);
     const course_details = await getSpecificDataFromForage("course_details");
-    console.log(course_details)
+    console.log(course_details);
     const common_payload = {
       form_data: updatedFormData,
       assessment_type: "applicant",
@@ -325,114 +326,110 @@ const CreateForm = (props) => {
       course_type: course_details?.course_type,
       course_level: course_details?.course_level,
       course_id: course_details?.course_id || course_details?.course?.course_id,
-      reverted_count: course_details?.reverted_count
+      reverted_count: course_details?.reverted_count,
     };
 
-    await setToLocalForage(
-      `common_payload`,
-      {
-        "formSpecstart":formSpec.start, 
-        userId,
-        common_payload,
-        "paymentStage":"firstStage",
-        formId
-      }
-    );
-    
-   console.log(common_payload)
-   if(!applicantStatus){
-    initiatePaymentForNewForm();
-   }  else {
-    triggerFormSubmission();
-   }
-    
- 
+    await setToLocalForage(`common_payload`, {
+      formSpecstart: formSpec.start,
+      userId,
+      common_payload,
+      paymentStage: "firstStage",
+      formId,
+    });
+
+    console.log(common_payload);
+    if (!applicantStatus) {
+      initiatePaymentForNewForm();
+    } else {
+      triggerFormSubmission();
+    }
   };
 
   const triggerFormSubmission = async () => {
-    const formDATA = await getFromLocalForage(
-      `common_payload`
-    );
+    const formDATA = await getFromLocalForage(`common_payload`);
     try {
-    const commonPayload = formDATA?.common_payload
-    if (applicantStatus === 'draft' || applicantStatus === "undefined") { //new form
-      console.log("Saving new form..")
-      console.log(commonPayload);
-     const response = await saveFormSubmission({
-        schedule_id: null,
-        assessor_id: null,
-        applicant_id: instituteDetails?.[0]?.id,
-        submitted_on: new Date().toJSON().slice(0, 10),
-        reverted_count: 0,
-        form_status: commonPayload.round === 1 ? "Application Submitted" : "DA Completed",
-        ...commonPayload,
-      });
-      // console.log(response);
-      // if the application is drafted, remove it's entry post form submission
-      if(response) {
-        const draft = await getFromLocalForage('draft');
-        console.log("draft ===>", draft);
-        if(draft && draft.draftId !== "") {
-        const request = {
-          id: draft.draftId
+      const commonPayload = formDATA?.common_payload;
+      if (applicantStatus === "draft" || applicantStatus === "undefined") {
+        //new form
+        console.log("Saving new form..");
+        console.log(commonPayload);
+        const response = await saveFormSubmission({
+          schedule_id: null,
+          assessor_id: null,
+          applicant_id: instituteDetails?.[0]?.id,
+          submitted_on: new Date().toJSON().slice(0, 10),
+          reverted_count: 0,
+          form_status:
+            commonPayload.round === 1
+              ? "Application Submitted"
+              : "DA Completed",
+          ...commonPayload,
+        });
+        // console.log(response);
+        // if the application is drafted, remove it's entry post form submission
+        if (response) {
+          const draft = await getFromLocalForage("draft");
+          console.log("draft ===>", draft);
+          if (draft && draft.draftId !== "") {
+            const request = {
+              id: draft.draftId,
+            };
+            console.log("req", request);
+            try {
+              await deleteApplicationDraft(request);
+              removeItemFromLocalForage("draft");
+            } catch (error) {
+              console.log("error =>", error);
+            }
+          }
+          //  await removeAllFromLocalForage();
         }
-        console.log("req", request);
-        try {
-          await deleteApplicationDraft(request);
-          removeItemFromLocalForage('draft');
-        } catch (error) {
-          console.log("error =>", error);
-        }
+        console.log(
+          response?.data?.insert_form_submissions?.returning[0]?.form_id
+        );
+        const tempStore = await getFromLocalForage(`refNo`);
+        //  console.log(tempStore.refNo)
+        const reqBody = {
+          refNo: tempStore.refNo,
+          status: "Paid",
+          formId:
+            response?.data?.insert_form_submissions?.returning[0]?.form_id,
+        };
+
+        await applicantService.updateTransactionStatusByRefNo(reqBody);
+      } else {
+        await updateFormSubmission({
+          form_id: formId,
+          applicant_id: instituteDetails?.[0]?.id,
+          updated_at: getLocalTimeInISOFormat(),
+          form_status: "Resubmitted",
+          ...commonPayload,
+        });
+        removeAllFromLocalForage();
       }
-      //  await removeAllFromLocalForage();
-      }
-     console.log(response?.data?.insert_form_submissions?.returning[0]?.form_id)
-      const tempStore = await getFromLocalForage(
-        `refNo`
+
+      // Delete the form and course details data from the Local Forage
+
+      // Delete the form and course details data from the Local Forage
+      isFormInPreview = false;
+
+      setOnSubmit(false);
+      setToast((prevState) => ({
+        ...prevState,
+        toastOpen: true,
+        toastMsg: "Form Submitted Successfully!.",
+        toastType: "success",
+      }));
+
+      setTimeout(
+        () =>
+          navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.my_applications}`),
+        1500
       );
-    //  console.log(tempStore.refNo)
-    const reqBody = {
-      refNo: tempStore.refNo,
-      status: "Paid",
-      formId: response?.data?.insert_form_submissions?.returning[0]?.form_id
-  }
-
-    await applicantService.updateTransactionStatusByRefNo(reqBody);
-    } else {
-      await updateFormSubmission({
-        form_id: formId,
-        applicant_id: instituteDetails?.[0]?.id,
-        updated_at: getLocalTimeInISOFormat(),
-        form_status: "Resubmitted",
-        ...commonPayload,
-      });
-      removeAllFromLocalForage();
+    } catch (error) {
+      console.log("Something went wrong", error);
     }
-
-    // Delete the form and course details data from the Local Forage
-     
-
-    // Delete the form and course details data from the Local Forage
-    isFormInPreview = false;
-
-    setOnSubmit(false);
-    setToast((prevState) => ({
-      ...prevState,
-      toastOpen: true,
-      toastMsg: "Form Submitted Successfully!.",
-      toastType: "success",
-    }))
-
-    setTimeout(
-      () => navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.my_applications}`),
-      1500
-    ); 
-    }
-    catch(error) {
-      console.log('Something went wrong',error);
-      
-    }
-  }
+  };
 
   const handleDownloadNocOrCertificate = () => {
     if (formDataNoc.round == 1) {
@@ -443,7 +440,8 @@ const CreateForm = (props) => {
   };
 
   const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
-    const eventFormData = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+    const eventFormData =
+      typeof e.data === "string" ? JSON.parse(e.data) : e.data;
     console.log(eventFormData);
     // if(applicantStatus === 'draft' && (eventFormData?.formData !== undefined && eventFormData?.formData?.instance !== "formLoad")) {
     //   let fileGCPPath =
@@ -457,11 +455,14 @@ const CreateForm = (props) => {
     // );
     // setEncodedFormURI(formURI);
     // }
-    if(eventFormData?.formData?.draft !== '' && eventFormData?.formData?.draft === true) {
+    if (
+      eventFormData?.formData?.draft !== "" &&
+      eventFormData?.formData?.draft === true
+    ) {
       const course_details = await getSpecificDataFromForage("course_details");
       console.log("courseDetails ===>", course_details);
       const requestBody = {
-        "object": { 
+        object: {
           applicant_id: instituteDetails?.[0]?.id,
           form_status: "Draft",
           form_name: formName,
@@ -475,41 +476,46 @@ const CreateForm = (props) => {
           created_by: userId,
           form_data: eventFormData?.formData?.xml,
           // form_id: course_details?.form?.form_id,
-          created_at: new Date().toJSON().slice(0, 10),        
-        }
-      }
-      if(formId !== undefined) {
+          created_at: new Date().toJSON().slice(0, 10),
+        },
+      };
+      if (formId !== undefined) {
         const requestBody = {
           id: formId,
-          formData: eventFormData?.formData?.xml
-        }
+          formData: eventFormData?.formData?.xml,
+        };
         const res = await updateApplicationDraft(requestBody);
-        if(res) {
+        if (res) {
           console.log("record saved as draft");
-        setTimeout(
-          () => navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.my_applications}`),
-          1500
-        );
-        // to remove all data from local forage
-        removeAllFromLocalForage();
+          setTimeout(
+            () =>
+              navigate(
+                `${APPLICANT_ROUTE_MAP.dashboardModule.my_applications}`
+              ),
+            1500
+          );
+          // to remove all data from local forage
+          removeAllFromLocalForage();
+        }
+      } else {
+        const res = await saveApplicationDraft(requestBody);
+        if (res) {
+          console.log("record saved as draft");
+          setTimeout(
+            () =>
+              navigate(
+                `${APPLICANT_ROUTE_MAP.dashboardModule.my_applications}`
+              ),
+            1500
+          );
+          // to remove all data from local forage
+          removeAllFromLocalForage();
+        }
       }
-      }
-      else {
-      const res = await saveApplicationDraft(requestBody);
-      if(res) {
-        console.log("record saved as draft");
-        setTimeout(
-          () => navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.my_applications}`),
-          1500
-        );
-        // to remove all data from local forage
-        removeAllFromLocalForage();
-      }
-    }
-      
+
       return;
     }
-    if(typeof e.data === 'string' && e.data.includes('formLoad')) {
+    if (typeof e.data === "string" && e.data.includes("formLoad")) {
       setFormLoaded(true);
       return;
     }
@@ -589,19 +595,27 @@ const CreateForm = (props) => {
       var iframeContent =
         iframeElem?.contentDocument || iframeElem?.contentWindow.document;
       if (!iframeContent) return;
-      if(applicantStatus && applicantStatus?.toLowerCase() !== 'draft') {
+      if (applicantStatus && applicantStatus?.toLowerCase() !== "draft") {
         iframeContent.getElementById("save-draft").style.display = "none";
       }
-      if(applicantStatus && (applicantStatus?.toLowerCase() !== 'draft' && applicantStatus?.toLowerCase() !== "returned")) {
+      if (
+        applicantStatus &&
+        applicantStatus?.toLowerCase() !== "draft" &&
+        applicantStatus?.toLowerCase() !== "returned"
+      ) {
         iframeContent.getElementById("submit-form").style.display = "none";
       }
-      if (applicantStatus && applicantStatus?.toLowerCase() !== "returned" && applicantStatus.toLowerCase() !== "draft") {
+      if (
+        applicantStatus &&
+        applicantStatus?.toLowerCase() !== "returned" &&
+        applicantStatus.toLowerCase() !== "draft"
+      ) {
         var section = iframeContent?.getElementsByClassName("or-group");
         if (!section) return;
         for (var i = 0; i < section?.length; i++) {
           var inputElements = section[i].querySelectorAll("input");
           var buttonElements = section[i].querySelectorAll("button");
-          //disable buttons
+
           buttonElements.forEach((button) => {
             button.disabled = true;
           });
@@ -610,57 +624,103 @@ const CreateForm = (props) => {
           });
         }
       }
-      if(applicantStatus && applicantStatus?.toLowerCase() === 'returned') {
+      if (applicantStatus && applicantStatus?.toLowerCase() === "returned") {
         var formSection = iframeContent?.getElementsByClassName("or-group");
         if (!formSection) return;
-          // non radio input elements 
-
-          for(var j = 0; j < formSection?.length; j++) {
-            var inputElements1 = formSection[j].querySelectorAll("input");
-            var buttonElements1 = formSection[j].querySelectorAll("button");
-            var selectElements1 = formSection[j].querySelectorAll("select");
-            inputElements1.forEach((input) => {
-              input.disabled = true;
-            if((input?.type !== 'radio' && (input?.name?.toLowerCase().includes('admin') || input?.name?.toLowerCase().includes('desktop'))) && input?.value !== undefined) {
-            const parentNode = input?.parentNode;
-            if(parentNode) {
-            const siblings = parentNode?.previousSibling;
-            for(let k = 0; k < siblings.children.length; k++) {
-              console.log("children =>", siblings.children[k]);
-            if(siblings.children[k].type === 'text') {
-              siblings.children[k].disabled = false;
-            }
-            }
-            }
-            }
-            })
-           
-
-          selectElements1.forEach((select) => {
-            select.disabled = true;
-            if((select?.type !== 'radio' && (select?.name?.toLowerCase().includes('admin') || select?.name?.toLowerCase().includes('desktop'))) && select?.value !== undefined) {
-              console.log("Input has value", select?.value);
-              const parentNode = select?.parentNode;
-              if(parentNode) {
-                const siblings = parentNode?.previousSibling;
-                console.log("siblings", siblings);
+        // case radio elements
+        for (var j = 0; j < formSection?.length; j++) {
+          const inputElements1 = formSection[j].querySelectorAll("input");
+          // const buttonElements1 = formSection[j].querySelectorAll("button");
+          // const selectElements1 = formSection[j].querySelectorAll("select");
+          inputElements1.forEach((input) => {
+            input.disabled = true;
+            if (
+              input?.type === "radio"
+            ) {
+              if(input?.name?.toLowerCase().includes("desktop") &&
+              input?.value.toLowerCase() === "reject" &&
+              input.checked === true) {
+                const parentElement = input.parentNode.parentNode.parentNode;
+                const previousSiblingElement = parentElement.parentNode.previousSibling;
+              if (previousSiblingElement) {
+                const children = previousSiblingElement.children;
+                for (let k = 0; k < children.length; k++) {
+                  if (
+                    children[k].name !== undefined &&
+                    children[k].name?.includes("applicant")
+                  ) {
+                    if(children[k].tagName.toLowerCase() === 'select') {
+                      if (children[k + 1]) {
+                        const firstChild = children[k + 1].children[0];
+                        firstChild.disabled = false;
+                      }
+                    }
+                    else if(children[k].tagName.toLowerCase() === 'input') {
+                      children[k].disabled = false;
+                  }
+                  }
+                }
               }
             }
+          }
+          // else {
+          //   if (
+          //     input?.type !== "radio" &&
+          //     (input?.name?.toLowerCase().includes("desktop")) &&
+          //     input?.value !== undefined
+          //   ) {
+          //     const parentNode = input?.parentNode;
+          //     if (parentNode) {
+          //       const siblings = parentNode?.previousSibling;
+          //       for (let k = 0; k < siblings.children.length; k++) {
+          //         if (siblings.children[k].type === "text") {
+          //           siblings.children[k].disabled = false;
+          //         }
+          //       }
+          //     }
+          //   }
+          // }
           });
-
-          buttonElements1.forEach((button) => {
-            button.disabled = true;
-            if((button?.type !== 'radio' && (button?.name?.toLowerCase().includes('admin') || button?.name?.toLowerCase().includes('desktop'))) && button?.value !== undefined) {
-              console.log("Input has value", button?.value);
-              const parentNode = button?.parentNode;
-              if(parentNode) {
-                const siblings = parentNode?.previousSibling;
-                console.log("siblings", siblings);
-              }
-            }
-          });
-          /* partial logic to test disabling fields */
         }
+
+        // for (var j = 0; j < formSection?.length; j++) {
+         
+
+          // selectElements1.forEach((select) => {
+          //   select.disabled = true;
+          //   if (
+          //     select?.type !== "radio" &&
+          //     (select?.name?.toLowerCase().includes("admin") ||
+          //       select?.name?.toLowerCase().includes("desktop")) &&
+          //     select?.value !== undefined
+          //   ) {
+          //     console.log("Input has value", select?.value);
+          //     const parentNode = select?.parentNode;
+          //     if (parentNode) {
+          //       const siblings = parentNode?.previousSibling;
+          //       console.log("siblings", siblings);
+          //     }
+          //   }
+          // });
+
+          // buttonElements1.forEach((button) => {
+          //   button.disabled = true;
+          //   if (
+          //     button?.type !== "radio" &&
+          //     (button?.name?.toLowerCase().includes("admin") ||
+          //       button?.name?.toLowerCase().includes("desktop")) &&
+          //     button?.value !== undefined
+          //   ) {
+          //     console.log("Input has value", button?.value);
+          //     const parentNode = button?.parentNode;
+          //     if (parentNode) {
+          //       const siblings = parentNode?.previousSibling;
+          //       console.log("siblings", siblings);
+          //     }
+          //   }
+          // });
+          /* partial logic to test disabling fields */
+        // }
       }
 
       // Need to work on Save draft...
@@ -670,19 +730,17 @@ const CreateForm = (props) => {
   };
 
   useEffect(() => {
-   if(applicantStatus === 'draft') {
-    setDraftIdToLocal();
-    const draftApplicationId = formId;
-     getDraftApplicationDetail(draftApplicationId);
-    }
-    else {
+    if (applicantStatus === "draft") {
+      setDraftIdToLocal();
+      const draftApplicationId = formId;
+      getDraftApplicationDetail(draftApplicationId);
+    } else {
       fetchFormData();
     }
     bindEventListener();
     if (spinner) {
       spinner.style.display = "flex";
     }
-
 
     // To clean all variables
     return () => {
@@ -693,24 +751,21 @@ const CreateForm = (props) => {
   }, []);
 
   const setDraftIdToLocal = async () => {
-    await setToLocalForage(
-      `draft`,
-      {
-        "draftId": formId, 
-      }
-    );
-  }
+    await setToLocalForage(`draft`, {
+      draftId: formId,
+    });
+  };
 
   useEffect(() => {
-    if(formLoaded === true) {
-    checkIframeLoaded();
+    if (formLoaded === true) {
+      checkIframeLoaded();
     }
   }, [formLoaded]);
 
   useEffect(() => {
-  console.log(paymentStage);
-  if(paymentStage === "firstStage") {
-    triggerFormSubmission();
+    console.log(paymentStage);
+    if (paymentStage === "firstStage") {
+      triggerFormSubmission();
     }
   }, [paymentStage]);
 
@@ -743,37 +798,38 @@ const CreateForm = (props) => {
               Back to my application done
             </button>
 
-            {applicantStatus !== 'draft' && (
+            {applicantStatus !== "draft" && (
               <>
-            <button
-                onClick={() => setOpenStatusModel(true)}
-                className="bg-gray-100 py-2 mb-8 font-medium rounded-[4px] px-2 text-blue-900 border border-gray-500 flex flex-row items-center gap-3"
-              >
-                View status log
-              </button>
+                <button
+                  onClick={() => setOpenStatusModel(true)}
+                  className="bg-gray-100 py-2 mb-8 font-medium rounded-[4px] px-2 text-blue-900 border border-gray-500 flex flex-row items-center gap-3"
+                >
+                  View status log
+                </button>
 
-            <button
-              onClick={handleDownloadNocOrCertificate}
-              disabled={formDataNoc.form_status !== "Approved" ? true : false}
-              className={`${
-                formDataNoc.form_status !== "Approved"
-                  ? "cursor-not-allowed border border-gray-500 bg-white rounded-[4px] text-gray-200 px-2 h-[44px]"
-                  : "border border-blue-900 bg-blue-900 text-white rounded-[4px] px-2 h-[44px]"
-              }`}
-            >
-              Download NOC/Certificate
-            </button>
-          
-        </>
-        )}
-        </div>
+                <button
+                  onClick={handleDownloadNocOrCertificate}
+                  disabled={
+                    formDataNoc.form_status !== "Approved" ? true : false
+                  }
+                  className={`${
+                    formDataNoc.form_status !== "Approved"
+                      ? "cursor-not-allowed border border-gray-500 bg-white rounded-[4px] text-gray-200 px-2 h-[44px]"
+                      : "border border-blue-900 bg-blue-900 text-white rounded-[4px] px-2 h-[44px]"
+                  }`}
+                >
+                  Download NOC/Certificate
+                </button>
+              </>
+            )}
+          </div>
         </div>
         {openStatusModel && (
-            <StatusLogModal
-              closeStatusModal={setOpenStatusModel}
-              formId={formId}
-            />
-          )}
+          <StatusLogModal
+            closeStatusModal={setOpenStatusModel}
+            formId={formId}
+          />
+        )}
 
         <Card moreClass="shadow-md">
           <div className="flex flex-col gap-5">
@@ -790,16 +846,18 @@ const CreateForm = (props) => {
               </button>
             </div>
             <div className="flex">
-            {(paymentStage === undefined && encodedFormURI !=="") && (<iframe
-                id="enketo-applicant-form"
-                title="form"
-                ref={iframeRef}
-                onLoad={checkIframeLoaded}
-                src={`${ENKETO_URL}/preview?formSpec=${encodeURI(
-                  JSON.stringify(formSpec)
-                )}&xform=${encodedFormURI}&userId=${userId}`}
-                style={{ minHeight: "100vh", width: "100%" }}
-              />)}
+              {paymentStage === undefined && encodedFormURI !== "" && (
+                <iframe
+                  id="enketo-applicant-form"
+                  title="form"
+                  ref={iframeRef}
+                  onLoad={checkIframeLoaded}
+                  src={`${ENKETO_URL}/preview?formSpec=${encodeURI(
+                    JSON.stringify(formSpec)
+                  )}&xform=${encodedFormURI}&userId=${userId}`}
+                  style={{ minHeight: "100vh", width: "100%" }}
+                />
+              )}
             </div>
           </div>
         </Card>
