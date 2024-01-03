@@ -644,6 +644,7 @@ const CreateForm = (props) => {
                 const previousSiblingElement = parentElement.parentNode.previousSibling;
               if (previousSiblingElement) {
                 const children = previousSiblingElement.children;
+                console.log("children =>", children);
                 for (let k = 0; k < children.length; k++) {
                   if (
                     children[k].name !== undefined &&
@@ -656,6 +657,18 @@ const CreateForm = (props) => {
                       }
                     }
                     else if(children[k].tagName.toLowerCase() === 'input') {
+                      if(children[k].name.includes('applicant_url')) {
+                        const parentNode = children[k].parentNode;
+                        const sibling = parentNode.previousSibling;
+                        if(sibling) {
+                         const children = sibling.children;
+                         for(let l = 0; l < children.length; l++) {
+                          if(children[l].tagName === 'INPUT') {
+                            children[l+1].children[0].disabled = false;
+                          }
+                         }
+                        }
+                      }
                       children[k].disabled = false;
                   }
                   }
