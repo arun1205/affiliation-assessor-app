@@ -638,7 +638,7 @@ const GenericOdkForm = (props) => {
 
   const asssssData = async () => {
     let formDataresp = await fetchFormData();
-    console.log(formDataresp)
+    //console.log(formDataresp)
     let request;
        let openRequest = window.indexedDB.open("enketo", 3);
     openRequest.onsuccess = function(e) {
@@ -646,15 +646,23 @@ const GenericOdkForm = (props) => {
       var db =  e.target.result;
       var trans = db.transaction(["records"], 'readwrite'); //second step is opening the object store
         var store = trans.objectStore("records");
-          console.log(store)
+          console.log(store.getAll())
         request = store.get("__autoSave_apjkmlEX");
       console.log(request);
+      console.log(request.result.xml);
+      request.result.xml = formDataresp;
+    //  setNewResult(request.result.xml)
+    console.log(request.result.xml);
     };
-       console.log(request.result.xml);
-       request.result.xml = formDataresp
+     
+    
   }
 
+  
+  const setNewResult = async (newFormData) => {
 
+  }
+  
 
   useEffect(() => {
     asssssData();
