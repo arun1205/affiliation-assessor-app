@@ -636,36 +636,46 @@ const GenericOdkForm = (props) => {
     }
   };
 
-  const asssssData = async () => {
+  const updateFormDataInEnketoIndexedDB = async () => {
     let formDataresp = await fetchFormData();
-    //console.log(formDataresp)
-    let request;
-       let openRequest = window.indexedDB.open("enketo", 3);
-    openRequest.onsuccess = function(e) {
-      //let db = openRequest.result;
-      var db =  e.target.result;
-      var trans = db.transaction(["records"], 'readwrite'); //second step is opening the object store
-        var store = trans.objectStore("records");
-          console.log(store.getAll())
-        request = store.get("__autoSave_apjkmlEX");
-      console.log(request);
-      console.log(request.result.xml);
-      request.result.xml = formDataresp;
-    //  setNewResult(request.result.xml)
-    console.log(request.result.xml);
+    console.log(formDataresp)
+    let db;
+
+    const req = window.indexedDB.open('enketo', 3);
+    req.onsuccess = (e) => {
+        // Create the DB connection
+        db = req.result;
     };
-     
+   
+    const objectStore = db
+  .transaction(["records"], "readwrite")
+  .objectStore("records");
+
+  const objectStoreTitleRequest = objectStore.get("__autoSave_apjkmlEX");
+
+  objectStoreTitleRequest.onsuccess = () => {
+    // Grab the data object returned as the result
+    const data = objectStoreTitleRequest.result;
+  console.log(data)
+    // Update the notified value in the object to "yes"
+    data.xml = formDataresp;
+  
+    // Create another request that inserts the item back into the database
+    const updateTitleRequest = objectStore.put(data);
+  
+    // Log the transaction that originated this request
+    console.log(
+      `The transaction that originated this request is ${updateTitleRequest.transaction}`,
+    );
+
+    }
     
   }
 
   
-  const setNewResult = async (newFormData) => {
-
-  }
-  
 
   useEffect(() => {
-    asssssData();
+    updateFormDataInEnketoIndexedDB();
 
     bindEventListener();
 
