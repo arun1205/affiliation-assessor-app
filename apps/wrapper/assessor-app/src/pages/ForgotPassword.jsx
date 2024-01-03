@@ -92,7 +92,8 @@ const ForgotPassword = () => {
     } else {
       setEmail(mobile);
 
-      if(await isUserActive(mobile)){
+      const uesrResp = await isUserActive(mobile)
+      if(uesrResp?.data[0] && uesrResp?.data[0].enabled && uesrResp?.data[0].attributes?.Role[0] === "Assessor"){
         let res = await generateOTP(mobile);
         if (res === "Sending OTP to user mail") setOtpPage(true);
       } else {

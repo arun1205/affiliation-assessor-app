@@ -33,7 +33,7 @@ const LoginMedical = ({ handleStepChangeForLogin }) => {
 
     try {
       const userIsValidRes = await isUserActive(username)
-      if (!userIsValidRes) {
+      if (!userIsValidRes.data?.length || userIsValidRes.data[0].attributes.Role[0] !== "Assessor" ) {
         setError("User not found. Please contact system administrator.");
         setTimeout(() => {
           setError("");
