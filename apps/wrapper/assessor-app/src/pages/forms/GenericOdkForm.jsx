@@ -651,6 +651,7 @@ const GenericOdkForm = (props) => {
       console.log(request);
     };
        console.log(request.result.xml);
+       request.result.xml = formDataresp
   }
 
 
