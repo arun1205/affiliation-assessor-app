@@ -630,6 +630,11 @@ const CreateForm = (props) => {
         // case radio elements
         for (var j = 0; j < formSection?.length; j++) {
           const inputElements1 = formSection[j].querySelectorAll("input");
+          var buttonElements1 = section[i].querySelectorAll("button");
+
+          buttonElements1.forEach((button) => {
+            button.disabled = true;
+          });
           // const buttonElements1 = formSection[j].querySelectorAll("button");
           // const selectElements1 = formSection[j].querySelectorAll("select");
           inputElements1.forEach((input) => {
