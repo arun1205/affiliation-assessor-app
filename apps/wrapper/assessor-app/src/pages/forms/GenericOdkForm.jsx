@@ -613,6 +613,7 @@ const GenericOdkForm = (props) => {
       // const events = await getStatusOfForms(postDataEvents);
       // setFormStatus(events?.events);
       setFormDataFromApi(res.data.form_submissions[0]);
+      return formData?.form_data;
      /*  await setToLocalForage(
         `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
         {
@@ -621,13 +622,13 @@ const GenericOdkForm = (props) => {
         }
       ); */
  
-      let formURI = await getPrefillXML(
+   /*    let formURI = await getPrefillXML(
         `${filePath}`,
         formSpec.onSuccess,
         formData?.form_data,
         formData?.imageUrls
-      );
-      setEncodedFormURI(formURI);
+      ); */
+     // setEncodedFormURI(formURI);
     } catch (error) {
       console.log(error);
     } finally {
@@ -635,11 +636,11 @@ const GenericOdkForm = (props) => {
     }
   };
 
-  useEffect(() => {
-   let formDataresp = fetchFormData();
-   console.log(formDataresp)
-let request;
-    let openRequest = window.indexedDB.open("enketo", 3);
+  const asssssData = async () => {
+    let formDataresp = await fetchFormData();
+    console.log(formDataresp)
+    let request;
+       let openRequest = window.indexedDB.open("enketo", 3);
     openRequest.onsuccess = function(e) {
       //let db = openRequest.result;
       var db =  e.target.result;
@@ -648,11 +649,15 @@ let request;
           console.log(store)
         request = store.get("__autoSave_apjkmlEX");
       console.log(request);
-    // return ;
-      
-      // continue working with database using db object
     };
-    console.log(request.result.xml);
+       console.log(request.result.xml);
+  }
+
+
+
+  useEffect(() => {
+    asssssData();
+
     bindEventListener();
 
     getSurveyUrl();
