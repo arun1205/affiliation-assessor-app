@@ -640,7 +640,7 @@ const GenericOdkForm = (props) => {
     openRequest.onsuccess = function() {
       let db = openRequest.result;
       console.log(db)
-      console.log(store.record.get( "apjkmlEX" ));
+      console.log(store.record.get("__autoSave_apjkmlEX"));
     // return ;
       
       // continue working with database using db object
