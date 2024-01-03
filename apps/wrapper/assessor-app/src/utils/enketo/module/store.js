@@ -473,7 +473,7 @@ const recordStore = {
      */
     get( instanceId ) {
         const tasks = [];
-
+            console.log(instanceId)
         return server.records.get( instanceId )
             .then( _firstItemOnly )
             .then( record => {
