@@ -607,18 +607,19 @@ const GenericOdkForm = (props) => {
     try {
       const res = await getEnketoFormData(postData);
       formData = res.data.form_submissions[0];
+      console.log(formData?.form_data)
       // setPaymentStatus(formData?.payment_status);
       const postDataEvents = { id: storedData?.applicant_form_id };
       // const events = await getStatusOfForms(postDataEvents);
       // setFormStatus(events?.events);
       setFormDataFromApi(res.data.form_submissions[0]);
-      await setToLocalForage(
+     /*  await setToLocalForage(
         `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
         {
           formData: formData?.form_data,
           imageUrls: { ...formData?.imageUrls },
         }
-      );
+      ); */
  
       let formURI = await getPrefillXML(
         `${filePath}`,
@@ -635,19 +636,23 @@ const GenericOdkForm = (props) => {
   };
 
   useEffect(() => {
-
+   let formDataresp = fetchFormData();
+   console.log(formDataresp)
+let request;
     let openRequest = window.indexedDB.open("enketo", 3);
-    openRequest.onsuccess = function() {
-      let db = openRequest.result;
-      console.log(db.record)
-      //console.log(db.record.get("__autoSave_apjkmlEX"))
-      console.log(db.get("__autoSave_apjkmlEX"))
-      console.log(store.record.get("__autoSave_apjkmlEX"));
+    openRequest.onsuccess = function(e) {
+      //let db = openRequest.result;
+      var db =  e.target.result;
+      var trans = db.transaction(["records"], 'readwrite'); //second step is opening the object store
+        var store = trans.objectStore("records");
+          console.log(store)
+        request = store.get("__autoSave_apjkmlEX");
+      console.log(request);
     // return ;
       
       // continue working with database using db object
     };
-
+    console.log(request.result.xml);
     bindEventListener();
 
     getSurveyUrl();
