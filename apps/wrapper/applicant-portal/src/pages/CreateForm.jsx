@@ -630,8 +630,8 @@ const CreateForm = (props) => {
         // case radio elements
         for (var j = 0; j < formSection?.length; j++) {
           const inputElements1 = formSection[j].querySelectorAll("input");
-          const buttonElements1 = formSection[j].querySelectorAll("button");
-          const selectElements1 = formSection[j].querySelectorAll("select");
+          // const buttonElements1 = formSection[j].querySelectorAll("button");
+          // const selectElements1 = formSection[j].querySelectorAll("select");
           inputElements1.forEach((input) => {
             input.disabled = true;
             if (
@@ -640,42 +640,46 @@ const CreateForm = (props) => {
               if(input?.name?.toLowerCase().includes("desktop") &&
               input?.value.toLowerCase() === "reject" &&
               input.checked === true) {
-              const mainParentElement = document.querySelector("fieldset");
-              const previousSibling = mainParentElement.previousSibling;
-              if (previousSibling) {
-                const children = previousSibling.children;
+                const parentElement = input.parentNode.parentNode.parentNode;
+                const previousSiblingElement = parentElement.parentNode.previousSibling;
+              if (previousSiblingElement) {
+                const children = previousSiblingElement.children;
                 for (let k = 0; k < children.length; k++) {
                   if (
                     children[k].name !== undefined &&
                     children[k].name?.includes("applicant")
                   ) {
-                    children[k].disabled = false;
-                    if (children[k + 1]) {
-                      const firstChild = children[k + 1].children[0];
-                      firstChild.disabled = false;
+                    if(children[k].tagName.toLowerCase() === 'select') {
+                      if (children[k + 1]) {
+                        const firstChild = children[k + 1].children[0];
+                        firstChild.disabled = false;
+                      }
                     }
+                    else if(children[k].tagName.toLowerCase() === 'input') {
+                      children[k].disabled = false;
+                  }
                   }
                 }
               }
             }
           }
-          else {
-            if (
-              input?.type !== "radio" &&
-              (input?.name?.toLowerCase().includes("desktop")) &&
-              input?.value !== undefined
-            ) {
-              const parentNode = input?.parentNode;
-              if (parentNode) {
-                const siblings = parentNode?.previousSibling;
-                for (let k = 0; k < siblings.children.length; k++) {
-                  if (siblings.children[k].type === "text") {
-                    siblings.children[k].disabled = false;
-                  }
-                }
-              }
-            }
-          }
+          // else {
+          //   if (
+          //     input?.type !== "radio" &&
+          //     (input?.name?.toLowerCase().includes("desktop")) &&
+          //     input?.value !== undefined
+          //   ) {
+          //     const parentNode = input?.parentNode;
+          //     if (parentNode) {
+          //       const siblings = parentNode?.previousSibling;
+          //       for (let k = 0; k < siblings.children.length; k++) {
+          //         if (siblings.children[k].type === "text") {
+          //           siblings.children[k].disabled = false;
+          //         }
+          //       }
+          //     }
+          //   }
+          // }
           });
         }
 
