@@ -655,6 +655,10 @@ const CreateForm = (props) => {
                         const firstChild = children[k + 1].children[0];
                         firstChild.disabled = false;
                       }
+                      else {
+                        const firstChild = children[k + 1].children[0];
+                        firstChild.disabled = true;
+                      }
                     }
                     else if(children[k].tagName.toLowerCase() === 'input') {
                       if(children[k].name.includes('applicant_url')) {
@@ -674,6 +678,9 @@ const CreateForm = (props) => {
                   }
                 }
               }
+            }
+            else {
+              input.disabled = true;
             }
           }
           // else {
