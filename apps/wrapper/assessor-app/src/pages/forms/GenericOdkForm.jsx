@@ -23,7 +23,7 @@ import {
 
   updateFormStatus,
   getEnketoFormData,
-
+  assessorUpdateForm,
   getPrefillXML,
 
 } from "../../api";
@@ -269,33 +269,49 @@ const GenericOdkForm = (props) => {
 
   };
 
-  const updateApplicantForm = (forms_arr, counter) => {
+  const updateApplicantForm = async (forms_arr, counter) => {
 
     if (forms_arr.length === counter) {
 
       // call the event update function...
 
-      registerEvent({
+      try {
 
-        created_date: getLocalTimeInISOFormat(),
+        await registerEvent({
 
-        entity_id: courseObj?.applicant_form_id.toString(),
+          created_date: getLocalTimeInISOFormat(),
+  
+          entity_id: courseObj?.applicant_form_id.toString(),
+  
+          entity_type: "form",
+  
+          event_name: "OGA Completed",
+  
+          remarks: `${user?.userRepresentation?.firstName} ${user?.userRepresentation?.lasttName} has completed the On Ground Inspection Analysis`,
+  
+        });
 
-        entity_type: "form",
+        await updateFormStatus({
 
-        event_name: "OGA Completed",
+          form_id: courseObj.applicant_form_id,
+  
+          form_status: "OGA Completed",
+  
+        });
 
-        remarks: `${user?.userRepresentation?.firstName} ${user?.userRepresentation?.lasttName} has completed the On Ground Inspection Analysis`,
+        await assessorUpdateForm({
 
-      });
-
-      updateFormStatus({
-
-        form_id: courseObj.applicant_form_id,
-
-        form_status: "OGA Completed",
-
-      });
+          form_id: courseObj.applicant_form_id,
+  
+          form_status: "OGA Completed",
+  
+        });
+        
+      } catch (error) {
+      /*   setError("User Not Found. Please contact system admin.");
+        setTimeout(() => setError(false), 3000); */
+        console.log("Something went wrong ",error)
+      }
 
     }
 

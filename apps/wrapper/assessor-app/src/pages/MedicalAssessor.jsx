@@ -42,8 +42,8 @@ const MedicalAssessor = () => {
       };
       setToLocalForage("required_data", requiredData);
     } catch (error) {
-      console.log("here");
-      alert(error);
+      console.log("here", error);
+     // alert(error);
     }
   };
 
