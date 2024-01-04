@@ -512,7 +512,7 @@ const GenericOdkForm = (props) => {
           iframeContent.getElementById("save-draft").style.display = "none";
         }
         // hide admin remarks
-        if (input?.name?.toLowerCase().includes('admin') ) {
+        if (input?.name?.toLowerCase().includes('admin')) {
           input.previousSibling.style.display = 'none';
           input.style.display = 'none';
         }
@@ -614,21 +614,21 @@ const GenericOdkForm = (props) => {
       // setFormStatus(events?.events);
       setFormDataFromApi(res.data.form_submissions[0]);
       return formData?.form_data;
-     /*  await setToLocalForage(
-        `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
-        {
-          formData: formData?.form_data,
-          imageUrls: { ...formData?.imageUrls },
-        }
-      ); */
- 
-   /*    let formURI = await getPrefillXML(
-        `${filePath}`,
-        formSpec.onSuccess,
-        formData?.form_data,
-        formData?.imageUrls
-      ); */
-     // setEncodedFormURI(formURI);
+      /*  await setToLocalForage(
+         `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
+         {
+           formData: formData?.form_data,
+           imageUrls: { ...formData?.imageUrls },
+         }
+       ); */
+
+      /*    let formURI = await getPrefillXML(
+           `${filePath}`,
+           formSpec.onSuccess,
+           formData?.form_data,
+           formData?.imageUrls
+         ); */
+      // setEncodedFormURI(formURI);
     } catch (error) {
       console.log(error);
     } finally {
@@ -637,42 +637,76 @@ const GenericOdkForm = (props) => {
   };
 
   const updateFormDataInEnketoIndexedDB = async () => {
-    let formDataresp = await fetchFormData();
-    console.log(formDataresp)
+    /*   let formDataresp = await fetchFormData();
+      console.log(formDataresp) */
     let db;
 
     const req = window.indexedDB.open('enketo', 3);
     req.onsuccess = (e) => {
-        // Create the DB connection
-        db = req.result;
+      // Create the DB connection
+      db = req.result;
     };
-   
+    let formDataresp = '<data xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms" id="Nursing Institutions_Technical_GNM_2" version="1"><username>username not found</username><start>2024-01-04T14:50:17.460+05:30</start><end>2024-01-04T14:50:23.929+05:30</end><today>2024-01-04</today><deviceid>affiliation.upsmfac.org:VrKFBg4TRAOGdDPR</deviceid><subscriberid>subscriberid not found</subscriberid><D><applicant_D1.1/><desktop_DA1.1/><assessor_R2.1>HHHHHHHHHH</assessor_R2.1><assessor_D2.2/><assessor_url1/><applicant_D1.4/><desktop_DA1.2/><assessor_D2.4/><assessor_url4/><assessor_R2.5/><applicant_D1.5/><desktop_DA1.3/><assessor_R5.5/><assessor_D5.5/><assessor_url5/><D1.6/><desktop_DA1.4/><assessor_R6.6/><assessor_D6.6/><assessor_url6/><applicant_D1.8/><applicant_url1/><desktop_DA1.5/><assessor_R6.7/><assessor_D7.7/><assessor_url7/><admin_YN1.1/><assessor_R10.10/></D><meta><instanceID>uuid:f275ac45-6d5b-4bcc-a0ea-7d6df2674466</instanceID></meta></data>'
     const objectStore = db
-  .transaction(["records"], "readwrite")
-  .objectStore("records");
+      .transaction(["records"], "readwrite")
+      .objectStore("records");
 
-  const objectStoreTitleRequest = objectStore.get("__autoSave_apjkmlEX");
+    const objectStoreTitleRequest = objectStore.getAll();
 
-  objectStoreTitleRequest.onsuccess = () => {
-    // Grab the data object returned as the result
-    const data = objectStoreTitleRequest.result;
-  console.log(data)
-    // Update the notified value in the object to "yes"
-    data.xml = formDataresp;
-  
-    // Create another request that inserts the item back into the database
-    const updateTitleRequest = objectStore.put(data);
-  
-    // Log the transaction that originated this request
-    console.log(
-      `The transaction that originated this request is ${updateTitleRequest.transaction}`,
-    );
+    objectStoreTitleRequest.onsuccess = (e) => {
+      // Grab the data object returned as the result
+      const data = objectStoreTitleRequest.result;
+      let valueToBeUpdated = data[data.length - 1];
+      if (valueToBeUpdated) {
+        console.log(valueToBeUpdated.xml)
+        valueToBeUpdated.xml = formDataresp;
+        console.log(valueToBeUpdated.xml)
+        // Create another request that inserts the item back into the database
+        const updateTitleRequest = objectStore.put(valueToBeUpdated);
+
+        // Log the transaction that originated this request
+        console.log(
+          `The transaction that originated this request is ${updateTitleRequest.transaction}`,
+        );
+      } else {
+        console.log(
+          `Adding new entry to indexed DB`,
+        );
+
+        var request = indexedDB.open("enketo", 3); // first step is opening the database
+        request.onsuccess = function (e) {
+          var db = e.target.result;
+          var trans = db.transaction(["records"], 'readwrite'); //second step is opening the object store
+          var store = trans.objectStore("records");
+
+          const autoSaveObj = {
+            "instanceId": "__autoSave_doQP7v8S",
+            "enketoId": "doQP7v8S",
+            "name": `__autoSave_${Date.now()}`,
+            "xml": "<data xmlns:jr=\"http://openrosa.org/javarosa\" xmlns:orx=\"http://openrosa.org/xforms\" id=\"Nursing Institutions_Technical_GNM_2\" version=\"1\">\n          <username>username not found</username>\n          <start>2024-01-04T14:47:15.990+05:30</start>\n          <end>2024-01-04T14:47:20.954+05:30</end>\n          <today>2024-01-04</today>\n          <deviceid>affiliation.upsmfac.org:BxJlhowsMGhMmyoH</deviceid>\n          <subscriberid>subscriberid not found</subscriberid>\n          <D>\n            <applicant_D1.1/>\n            <desktop_DA1.1/>\n            <assessor_R2.1>Draft 3 Arun Kumar</assessor_R2.1>\n            <assessor_D2.2/>\n            <assessor_url1/>\n            <applicant_D1.4/>\n            <desktop_DA1.2/>\n            <assessor_D2.4/>\n            <assessor_url4/>\n            <assessor_R2.5/>\n            <applicant_D1.5/>\n            <desktop_DA1.3/>\n            <assessor_R5.5/>\n            <assessor_D5.5/>\n            <assessor_url5/>\n            <D1.6/>\n            <desktop_DA1.4/>\n            <assessor_R6.6/>\n            <assessor_D6.6/>\n            <assessor_url6/>\n            <applicant_D1.8/>\n            <applicant_url1/>\n            <desktop_DA1.5/>\n            <assessor_R6.7/>\n            <assessor_D7.7/>\n            <assessor_url7/>\n            <admin_YN1.1/>\n            <assessor_R10.10/>\n          </D>\n          <meta>\n            <instanceID>uuid:c0c0c4ed-89cc-4b0d-83e4-5c5ec8a6ce5e</instanceID>\n          </meta>\n        </data>",
+            "files": [],
+            "created": Date.now(),
+            "updated": Date.now(),
+            "draft": true
+          }
+
+          var saveReq = store.put(autoSaveObj);
+
+          saveReq.onsuccess = function (e) {
+            console.log("Success", e)
+          };
+          saveReq.onerror = function (e) {
+            console.log('Error adding: ' + e);
+          };
+        };
+      }
+
 
     }
-    
+
   }
 
-  
+
 
   useEffect(() => {
     updateFormDataInEnketoIndexedDB();
@@ -942,3 +976,17 @@ const GenericOdkForm = (props) => {
 };
 
 export default GenericOdkForm;
+
+
+/* let db
+var request = indexedDB.open("enketo", 3); // first step is opening the database
+const objectStore = db
+.transaction(["records"], "readwrite")
+.objectStore("records").getAll(); 
+
+request.onsuccess = (e) => {
+  // Grab the data object returned as the result
+  const data = objectStore.result;
+  console.log(data)
+
+} */
