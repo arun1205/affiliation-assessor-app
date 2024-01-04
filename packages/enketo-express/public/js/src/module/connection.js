@@ -427,6 +427,8 @@ function getFormParts(props) {
         xformUrl: props.xformUrl,
     })
         .then((data) => {
+            console.log("data===========")
+            console.log(data)
             const model = parser.parseFromString(data.model, 'text/xml');
 
             const encryptedSubmission = model.querySelector(
