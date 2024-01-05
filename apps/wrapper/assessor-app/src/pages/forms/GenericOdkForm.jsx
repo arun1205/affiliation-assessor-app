@@ -12,6 +12,7 @@ import {
   updateFormStatus,
   getPrefillXML,
   getEnketoFormData,
+  assessorUpdateForm,
   updateFormSubmissions
 } from "../../api";
 import {
@@ -189,22 +190,34 @@ const GenericOdkForm = (props) => {
     }
   };
 
-  const updateApplicantForm = (forms_arr, counter) => {
-    if (forms_arr.length === counter) {
-      // call the event update function...
-      registerEvent({
-        created_date: getLocalTimeInISOFormat(),
-        entity_id: courseObj?.applicant_form_id.toString(),
-        entity_type: "form",
-        event_name: "OGA Completed",
-        remarks: `${user?.userRepresentation?.firstName} ${user?.userRepresentation?.lasttName} has completed the On Ground Inspection Analysis`,
-      });
+  const updateApplicantForm = async (forms_arr, counter) => {
 
-      updateFormStatus({
-        form_id: courseObj.applicant_form_id,
-        form_status: "OGA Completed",
-      });
+    try {
+      if (forms_arr.length === counter) {
+        // call the event update function...
+        await registerEvent({
+          created_date: getLocalTimeInISOFormat(),
+          entity_id: courseObj?.applicant_form_id.toString(),
+          entity_type: "form",
+          event_name: "OGA Completed",
+          remarks: `${user?.userRepresentation?.firstName} ${user?.userRepresentation?.lasttName} has completed the On Ground Inspection Analysis`,
+        });
+  
+        await updateFormStatus({
+          form_id: courseObj.applicant_form_id,
+          form_status: "OGA Completed",
+        });
+  
+        await assessorUpdateForm({
+          form_id: courseObj.applicant_form_id,
+          form_status: "OGA Completed",
+        });
+  
+      }
+    } catch (error) {
+      console.log("Something went wrong while updating form_status to OGA Completed ",error)
     }
+  
   };
 
   const getSurveyUrl = async () => {
