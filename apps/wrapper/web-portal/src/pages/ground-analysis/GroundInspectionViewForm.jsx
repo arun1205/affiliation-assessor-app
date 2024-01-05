@@ -22,6 +22,7 @@ import {
   getAcceptApplicantCertificate,
   registerEvent,
   updateFormStatus,
+  updateFormStatusForOGA,
   base64ToPdf,
   sendEmailNotification
 } from "../../api";
@@ -121,7 +122,7 @@ export default function ApplicationPage({
     try {
       //console.log(formDataFromApi)
       ogaRevertedCount = formDataFromApi.oga_reverted_count;
-      await updateFormStatus({
+      await updateFormStatusForOGA({
         form_id: formSelected.form_id * 1,
         form_status: "Returned",
         oga_reverted_count: ogaRevertedCount + 1
@@ -436,9 +437,6 @@ export default function ApplicationPage({
             <div className="flex grow gap-4 justify-end items-center">
               {ogaLisCount === enabler && (
                 <Fragment>
-                     {(ogaRevertedCount > 2) && (<Tooltip arrow content="This form has been resubmitted 3 times. No more reverts possible.">
-                    &#9432;
-                    </Tooltip>)}
                   <button
                     onClick={() => setRejectModel(true)}
                     className={
@@ -501,6 +499,9 @@ export default function ApplicationPage({
               <Card moreClass="flex flex-col gap-5 shadow-md">
                 {formSelected && !formSelected?.noc_recommendation && (
                   <div className="flex grow gap-4 justify-end items-center">
+                      {(ogaRevertedCount > 2) && (<Tooltip arrow content="This form has been resubmitted 3 times. No more reverts possible.">
+                    &#9432;
+                    </Tooltip>)}
                     <button
                       onClick={() => handleVerifyOGA(true)}
                       className="border border-gray-500 text-green-600 w-[140px] h-[40px] font-medium rounded-[4px]"
