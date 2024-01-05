@@ -173,6 +173,11 @@ export const updateFormStatus = async (postData) => {
   return res;
 };
 
+export const assessorUpdateForm = async (postData) => {
+  const res = await customPost.put("rest/assessorUpdateForm", postData);
+  return res;
+};
+
 export const UploadImage = async (postData) => {
   const res = await axios.post(
     `${ENKETO_MANAGER_URL}/form/uploadFile`,
