@@ -31,7 +31,7 @@ export default function OGASidebar(props) {
         >
           <span>Applicant Form</span>
         </li>
-        {props.OGAFormsList.map((forms, idx) => {
+      {/*   {props.OGAFormsList.map((forms, idx) => {
           return (
             <li
               key={idx}
@@ -57,7 +57,7 @@ export default function OGASidebar(props) {
               </div>
             </li>
           );
-        })}
+        })} */}
       </ul>
     </div>
   );
