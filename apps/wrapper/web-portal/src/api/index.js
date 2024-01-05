@@ -652,6 +652,11 @@ export const updateFormStatus = async (postData) => {
   return res;
 };
 
+export const updateFormStatusForOGA = async (postData) => {
+  const res = await adminCustomPost.put(API_URL.common.updateFormStatusForOGA, postData);
+  return res;
+};
+
 export const updatePaymentStatus = async (postData) => {
   const res = await adminCustomPost.put(
     API_URL.desktopAnalysis.updatePaymentStatus,

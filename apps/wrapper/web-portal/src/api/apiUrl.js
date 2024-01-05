@@ -8,6 +8,7 @@ const API_URL = {
   common: {
     registerEvent: `${rest}addEvents`,
     updateForm: `${rest}updateForm`,
+    updateFormStatusForOGA: `${rest}updateFormStatusForOGA`,
     updateRegulatorDeviceId: `${rest}updateRegulatorDeviceId`,
   },
   notifications: {

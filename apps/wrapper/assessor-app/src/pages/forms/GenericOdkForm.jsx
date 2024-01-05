@@ -356,7 +356,7 @@ const GenericOdkForm = (props) => {
           iframeContent.getElementById("save-draft").style.display = "none";
           }
           // hide admin remarks
-          if(input.name.toLowerCase().includes('admin') || input.name.toLowerCase().includes('desktop')) {
+          if(input.name.toLowerCase().includes('admin') ) {
             input.previousSibling.style.display = 'none';
             input.style.display = 'none';
           }
