@@ -506,7 +506,7 @@ export default function DesktopAnalysisView() {
       //   alert("Hello world!");
       // });
    
-      if(formDataFromApi?.form_status?.toLowerCase() === "returned" && formDataFromApi?.reverted_count >= 2){
+      if(formDataFromApi?.form_status?.toLowerCase() === "resubmitted" && formDataFromApi?.reverted_count >= 2){
         iframeContent.getElementById("submit-form").style.display = "none";
       }
     }
