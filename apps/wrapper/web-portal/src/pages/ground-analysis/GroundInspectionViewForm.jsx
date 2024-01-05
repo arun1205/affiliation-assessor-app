@@ -142,13 +142,19 @@ export default function ApplicationPage({
         await sendEmailNotification(emailData);
         isFormSubmittedForConfiirmation = false;
         setOnSubmit(false);
+        setToast((prevState) => ({
+          ...prevState,
+          toastOpen: true,
+          toastMsg: "The form has been returned to applicant!",
+          toastType: "success",
+        }));
       }
     } catch (error) {
       setToast((prevState) => ({
         ...prevState,
         toastOpen: true,
-        toastMsg: "The form has been returned to applicant!",
-        toastType: "success",
+        toastMsg: "Failed to return form to applicant!",
+        toastType: "error",
       }));
     } finally {
       setSpinner(false);
