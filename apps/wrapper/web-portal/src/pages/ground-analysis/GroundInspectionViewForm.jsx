@@ -1,11 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { AiOutlineClose, AiOutlineCheck } from "react-icons/ai";
 import { FaAngleRight,FaFileDownload  } from "react-icons/fa";
-import { MdInfo } from "react-icons/md";
 import { Card, Button } from "./../../components";
 
-import NocModal from "./NocModal";
 import StatusLogModal from "./StatusLogModal";
 import IssueNocModal from "./IssueNocModal.jsx";
 import RejectNocModal from "./RejectNocModal";
@@ -62,8 +60,10 @@ export default function ApplicationPage({
   const [formLoaded, setFormLoaded] = useState(false);
   let [isDownloading, setIsDownloading] = useState(false);
   const [onSubmit, setOnSubmit] = useState(false);
-  let ogaRevertedCount = 0;
+  const [ogaRevertedCount, setOgaRevertedCount] = useState(0);
+ // let enketoFormSubmitButton = "";
   let isFormSubmittedForConfiirmation = false;
+  const navigation = useNavigate();
 
   const user_details = userDetails?.userRepresentation;
 
@@ -89,6 +89,7 @@ export default function ApplicationPage({
   };
 
   const setIframeFormURI = async (formDataObj) => {
+    console.log("formDataObj------",formDataObj)
     const form_path = `${GCP_URL}${formDataObj?.form_name}.xml`;
     let formURI = await getPrefillXML(
       `${form_path}`,
@@ -96,6 +97,9 @@ export default function ApplicationPage({
       formDataObj?.form_data,
       formDataObj?.imageUrls
     );
+    
+   // ogaRevertedCount = formDataFromApi?.oga_reverted_count;
+    console.log("oga_reverted_count******************",ogaRevertedCount)
     setEncodedFormURI(formURI);
   };
 
@@ -106,6 +110,9 @@ export default function ApplicationPage({
       const formData = res.data.form_submissions[0];
       setFormDataFromApi(res.data.form_submissions[0]);
       const statusOfForm = formData?.form_status;
+     // ogaRevertedCount = formData?.oga_reverted_count;
+      setOgaRevertedCount(formData?.oga_reverted_count)
+      console.log("oga_reverted_count------",ogaRevertedCount)
       setFormStatus(statusOfForm);
       setInstituteId(formData?.institute?.id);
       setIframeFormURI(formData);
@@ -119,9 +126,11 @@ export default function ApplicationPage({
   
   
   const handleFormReturnSubmit = async () => {
+    isFormSubmittedForConfiirmation = false;
+    setOnSubmit(false);
     try {
       //console.log(formDataFromApi)
-      ogaRevertedCount = formDataFromApi.oga_reverted_count;
+     // ogaRevertedCount = formDataFromApi.oga_reverted_count;
       await updateFormStatusForOGA({
         form_id: formSelected.form_id * 1,
         form_status: "Returned",
@@ -141,16 +150,22 @@ export default function ApplicationPage({
         };
 
         await sendEmailNotification(emailData);
-        isFormSubmittedForConfiirmation = false;
-        setOnSubmit(false);
+    
         setToast((prevState) => ({
           ...prevState,
           toastOpen: true,
           toastMsg: "The form has been returned to applicant!",
           toastType: "success",
         }));
+       
       }
+      //enketoFormSubmitButton.style.display = "none";
+      //iframeContent.getElementById("submit-form").style.display = "none";
+      
+      navigation(ADMIN_ROUTE_MAP.adminModule.onGroundInspection.home);
+   
     } catch (error) {
+      console.log(error)
       setToast((prevState) => ({
         ...prevState,
         toastOpen: true,
@@ -340,6 +355,8 @@ export default function ApplicationPage({
 
       //iframeContent.getElementById("submit-form").style.display = "none";
       const submitFormbuttonElement = iframeContent.getElementById('submit-form');
+      //setSubmitButton(submitFormbuttonElement)
+      //enketoFormSubmitButton = submitFormbuttonElement;
       const spanElement = submitFormbuttonElement?.children[1];
       spanElement.textContent = 'Return to applicant';
       if(ogaRevertedCount > 2){
@@ -496,6 +513,7 @@ export default function ApplicationPage({
               />
             </div>
             <div className="flex w-full flex-col gap-4">
+            {/*   {console.log("ogaRevertedCount_____",ogaRevertedCount)} */}
               <Card moreClass="flex flex-col gap-5 shadow-md">
                 {formSelected && !formSelected?.noc_recommendation && (
                   <div className="flex grow gap-4 justify-end items-center">

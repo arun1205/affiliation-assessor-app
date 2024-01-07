@@ -126,6 +126,15 @@ export const createForm = async (postData) => {
   return res;
 };
 
+export const findFormsWithSameName = async (postData) => {
+  return await adminCustomPost.get(
+    API_URL.manageForms.findForms,
+    postData
+  );
+};
+
+
+
 export const getForms = async (postData) => {
   const res = await adminCustomPost.post(
     API_URL.manageForms.getForms,

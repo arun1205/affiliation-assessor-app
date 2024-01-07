@@ -59,6 +59,9 @@ const CreateForm = (props) => {
   let [formLoaded, setFormLoaded] = useState(false);
   const { setToast } = useContext(ContextAPI);
 
+  let ogaRevertedCount = 0;
+  
+
   // Spinner Element
   const spinner = document.getElementById("backdrop");
 
@@ -116,11 +119,15 @@ const CreateForm = (props) => {
     );
     if (data) {
       formData = data;
+      console.log("from forage...",formData)
     } else {
       if (formId !== undefined) {
         const postData = { form_id: formId };
         const res = await getFormData(postData);
         formData = res?.data?.form_submissions[0];
+        console.log(formData)
+        ogaRevertedCount = formData?.oga_reverted_count
+        // setOgaRevertedCount(formData?.oga_reverted_count);
         await setToLocalForage(
           `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
           {
@@ -397,15 +404,19 @@ const CreateForm = (props) => {
       formId: response?.data?.insert_form_submissions?.returning[0]?.form_id
   }
 
-    await applicantService.updateTransactionStatusByRefNo(reqBody);
+      await applicantService.updateTransactionStatusByRefNo(reqBody);
     } else {
+      let thisFormStatus = "";
+      ogaRevertedCount > 0 ? thisFormStatus = "OGA Completed" : thisFormStatus = "Resubmitted";
+      console.log("ogaRevertedCount===>", ogaRevertedCount)
       await updateFormSubmission({
         form_id: formId,
         applicant_id: instituteDetails?.[0]?.id,
         updated_at: getLocalTimeInISOFormat(),
-        form_status: "Resubmitted",
+        form_status: thisFormStatus, //"Resubmitted",
         ...commonPayload,
       });
+
       removeAllFromLocalForage();
     }
 
@@ -444,7 +455,7 @@ const CreateForm = (props) => {
 
   const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
     const eventFormData = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
-    console.log(eventFormData);
+    //console.log(eventFormData);
     // if(applicantStatus === 'draft' && (eventFormData?.formData !== undefined && eventFormData?.formData?.instance !== "formLoad")) {
     //   let fileGCPPath =
     //   process.env.REACT_APP_GCP_AFFILIATION_LINK + formName + ".xml";
