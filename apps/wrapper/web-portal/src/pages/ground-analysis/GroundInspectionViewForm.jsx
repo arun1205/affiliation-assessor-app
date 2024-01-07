@@ -112,7 +112,7 @@ export default function ApplicationPage({
       const statusOfForm = formData?.form_status;
      // ogaRevertedCount = formData?.oga_reverted_count;
       setOgaRevertedCount(formData?.oga_reverted_count)
-      console.log("oga_reverted_count------",ogaRevertedCount)
+      console.log("FormDataFromApi------",res.data.form_submissions[0])
       setFormStatus(statusOfForm);
       setInstituteId(formData?.institute?.id);
       setIframeFormURI(formData);
@@ -359,7 +359,8 @@ export default function ApplicationPage({
       //enketoFormSubmitButton = submitFormbuttonElement;
       const spanElement = submitFormbuttonElement?.children[1];
       spanElement.textContent = 'Return to applicant';
-      if(ogaRevertedCount > 2){
+
+      if(ogaRevertedCount > 2 || formStatus.toLowerCase() === "returned"){
         submitFormbuttonElement.style.display = "none";
       }
       iframeContent.getElementById("save-draft").style.display = "none";

@@ -40,6 +40,7 @@ export default function OnGroundInspectionAnalysis() {
   const [ogaFormsCompletedCount, setOgaFormsCompletedCount] = useState(0);
   const [ogaFormsApprovedCount, setOgaFormsApprovedCount] = useState(0);
   const [ogaFormsRejectedCount, setOgaFormsRejectedCount] = useState(0);
+  const [ogaFormsReturnedCount, setOgaFormsReturnedCount] = useState(0);
 
   const COLUMN_OGA_COMPLETED = [
     {
@@ -131,6 +132,36 @@ export default function OnGroundInspectionAnalysis() {
       accessor: "status",
     },
   ];
+  const COLUMN_RETURNED = [
+    {
+      Header: "Form name",
+      accessor: "display_form_name",
+    },
+    {
+      Header: "Institute",
+      accessor: "applicant",
+    },
+    {
+      Header: "Application type",
+      accessor: "application_type",
+    },
+    {
+      Header: "Course type",
+      accessor: "course_type",
+    },
+    {
+      Header: "Assessor",
+      accessor: "assessor",
+    },
+    {
+      Header: "Returned on",
+      accessor: "reviewed_on",
+    },
+    {
+      Header: "Status",
+      accessor: "status",
+    },
+  ];
 
   const cardArray = [
     {
@@ -189,6 +220,7 @@ export default function OnGroundInspectionAnalysis() {
       fetchOGAFormsCount("OGA Completed");
       fetchOGAFormsCount("Approved");
       fetchOGAFormsCount("Rejected");
+      fetchOGAFormsCount("Returned");
   }, [round]);
 
   useEffect(() => {
@@ -231,6 +263,12 @@ export default function OnGroundInspectionAnalysis() {
           ? setOgaFormsRejectedCount('0'+res?.data?.form_submissions_aggregate.aggregate.totalCount)
           :  setOgaFormsRejectedCount(res?.data?.form_submissions_aggregate.aggregate.totalCount)
           
+          break;
+          case "Returned":
+            res?.data?.form_submissions_aggregate.aggregate.totalCount < 10
+            ? setOgaFormsReturnedCount('0'+res?.data?.form_submissions_aggregate.aggregate.totalCount)
+            :  setOgaFormsReturnedCount(res?.data?.form_submissions_aggregate.aggregate.totalCount)
+               
           break;
 
         default:
@@ -484,6 +522,22 @@ export default function OnGroundInspectionAnalysis() {
                
                 </a>
               </li>
+              <li
+                className="gap-3"
+                onClick={() => handleSelectMenu("Returned")}
+              >
+                <a
+                  href="#"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
+                    state.menu_selected === "Returned"
+                      ? "text-blue-600 border-b-2 border-blue-600"
+                      : ""
+                  }`}
+                >
+                  Returned  <span class="counter count-indicator-returned">{ogaFormsReturnedCount}</span>
+               
+                </a>
+              </li>
             </ul>
             {/* <div>create a search bar and filter component here</div> */}
             {/* table creation starts here */}
@@ -539,6 +593,28 @@ export default function OnGroundInspectionAnalysis() {
                   )}
                   navigateFunc={navigateToView}
                   columns={COLUMN_REJECTED}
+                  pagination={true}
+                  onRowSelect={() => {}}
+                  filterApiCall={filterApiCall}
+                  showFilter={true}
+                  showSearch={true}
+                  paginationInfo={paginationInfo}
+                  setPaginationInfo={setPaginationInfo}
+                  searchApiCall={searchApiCall}
+                  setIsSearchOpen={setIsSearchOpen}
+                  setIsFilterOpen={setIsFilterOpen}
+                  selectedRound={round}
+                />
+              </div>
+            )}
+             {state.menu_selected === "Returned" && (
+              <div className="flex flex-col gap-4">
+                <FilteringTable
+                  dataList={resData.filter(
+                    (item) => item.form_status === "Returned"
+                  )}
+                  navigateFunc={navigateToView}
+                  columns={COLUMN_RETURNED}
                   pagination={true}
                   onRowSelect={() => {}}
                   filterApiCall={filterApiCall}
