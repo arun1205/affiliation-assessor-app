@@ -31,6 +31,7 @@ const CreateForm = () => {
   const [formData, setFormData] = useState({
     title: "",
   });
+  const [sameFileNameerror, setSameFileNameerror] = useState(false);
   const { setSpinner, setToast } = useContext(ContextAPI);
   let assigneePrefix = "";
   assigneePrefix = formData?.assignee;
@@ -73,26 +74,43 @@ const CreateForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setFormStage(2);
-    //findForms();
+    findForms();
   };
 
-  const findForms = async (file) => {
-    console.log("findFormsfindFormsfindFormsfindForms",)
-
-    const reqBody = {
-      "param": {
-        "title": {
-          "_eq": formData.title.trim()
-        },
-        "assignee": {
-          "_eq": "applicant"
+  const findForms = async () => {
+    try {
+      setSpinner(true);
+      const reqBody = {
+        "param": {
+          "title": {
+            "_eq": formData.title.trim()
+          },
+          "assignee": {
+            "_eq": "applicant"
+          }
         }
       }
+      const res = await findFormsWithSameName(reqBody);
+      if(res.data.forms_aggregate.aggregate.totalCount != 0){
+        setFormData((prevState) => ({
+          ...prevState,
+          title: ""
+      }));
+        setSameFileNameerror(true)
+      } else {
+        setSameFileNameerror(false)
+        setFormStage(2);
+      }
+    } catch (error) {
+      setToast((prevState) => ({
+        ...prevState,
+        toastOpen: true,
+        toastMsg: "Something went wrong. Please try again later",
+        toastType: "error",
+      }));
+    } finally {
+      setSpinner(false);
     }
-    const res = await findFormsWithSameName(reqBody);
-    console.log(res)
-
   }
 
   const handleFile = (file) => {
@@ -335,6 +353,11 @@ const CreateForm = () => {
                             }
                             className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                           />
+                          {sameFileNameerror && (
+                    <div className="text-red-500 mt-2 text-sm">
+                     ODK with this name already exists
+                    </div>
+                  )}
                         </div>
                       </div>
                       <div className="sm:col-span-6">
@@ -562,7 +585,7 @@ const CreateForm = () => {
                       style={{ backgroundColor: "" }}
                       type="submit"
                       disabled={
-                        Object.values(formData).length < 8 ? true : false
+                        Object.values(formData).length < 9 ? true : false
                       }
                     >
                       Next
