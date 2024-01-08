@@ -22,6 +22,7 @@ const AdminLogin = () => {
   const {
     register,
     handleSubmit,
+    resetField,
     formState: { errors },
   } = useForm();
 
@@ -170,6 +171,11 @@ const AdminLogin = () => {
     }
   };
 
+  const handleBackClick = () => {
+    setEnableOtp(false);
+    resetField("otp");
+  }
+
   if (!isLoggedIn) {
     return (
       <>
@@ -310,9 +316,7 @@ const AdminLogin = () => {
                   <div className="flex justify-center my-6">
                     <span
                       className="text-primary-700 cursor-pointer"
-                      onClick={() => {
-                        setEnableOtp(false);
-                      }}
+                      onClick={handleBackClick}
                     >
                       Go back, re-enter the email id
                     </span>
