@@ -239,7 +239,7 @@ export default function AdminCreateUser() {
             ],
             attributes: {
              // Role: user.role,
-              Role:  selectedRoleName.value
+              Role:  selectedRoleName.value === "Admin" ? "Desktop-Admin" : selectedRoleName.value
             },
           },
         };
@@ -310,7 +310,7 @@ export default function AdminCreateUser() {
             phonenumber: user.phonenumber,
             fname: user.firstname,
             lname: user.lastname,
-            role: user.role,
+            role: user.role === "Admin" ? "Desktop-Admin" : user.role,
           });
         }
      /*    if (user.role === "Desktop-Admin" || user.role === "Desktop-Assessor") {
