@@ -516,7 +516,7 @@ const GenericOdkForm = (props) => {
 
   useEffect(() => {
     if(surveyUrl !== "") {
-      updateFormDataInEnketoIndexedDB();
+      //updateFormDataInEnketoIndexedDB();
     }
   }, [surveyUrl])
 
