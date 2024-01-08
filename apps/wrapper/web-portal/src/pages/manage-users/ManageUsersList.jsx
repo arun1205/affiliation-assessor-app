@@ -619,7 +619,7 @@ export default function ManageUsersList({
         totalCount: res.data.regulator_aggregate.aggregate.totalCount,
       }));
       //setUsersList(res?.data?.regulator);
-      const data = res?.data?.regulator;
+      const data = res?.data?.regulator.reverse();
       data.forEach(setAdminTableData);
       const newData = resUserData.filter(user => user.role === "Admin");
       setUserTableList(newData);
