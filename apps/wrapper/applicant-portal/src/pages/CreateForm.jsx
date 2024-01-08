@@ -52,6 +52,7 @@ import StatusLogModal from "./StatusLogModal";
 const ENKETO_URL = process.env.REACT_APP_ENKETO_URL;
 let previewFlag = false;
 let isFormInPreview = false;
+let ogaRevertedCount = 0;
 
 const CreateForm = (props) => {
   const navigate = useNavigate();
@@ -127,6 +128,7 @@ const CreateForm = (props) => {
         const postData = { form_id: formId };
         const res = await getFormData(postData);
         formData = res?.data?.form_submissions[0];
+        ogaRevertedCount = formData?.oga_reverted_count;
         await setToLocalForage(
           `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
           {
@@ -398,21 +400,29 @@ const CreateForm = (props) => {
 
         await applicantService.updateTransactionStatusByRefNo(reqBody);
       } else {
-        await updateFormSubmission({
+      /*   await updateFormSubmission({
           form_id: formId,
           applicant_id: instituteDetails?.[0]?.id,
           updated_at: getLocalTimeInISOFormat(),
           form_status: "Resubmitted",
           ...commonPayload,
         });
-        removeAllFromLocalForage();
+        removeAllFromLocalForage(); */
+      let thisFormStatus = "";
+      ogaRevertedCount > 0 ? thisFormStatus = "OGA Completed" : thisFormStatus = "Resubmitted";
+      console.log("ogaRevertedCount===>", ogaRevertedCount)
+      await updateFormSubmission({
+        form_id: formId,
+        applicant_id: instituteDetails?.[0]?.id,
+        updated_at: getLocalTimeInISOFormat(),
+        form_status: thisFormStatus, //"Resubmitted",
+        ...commonPayload,
+      });
+  // Delete the form and course details data from the Local Forage
+      removeAllFromLocalForage();
       }
-
-      // Delete the form and course details data from the Local Forage
-
-      // Delete the form and course details data from the Local Forage
+    
       isFormInPreview = false;
-
       setOnSubmit(false);
       setToast((prevState) => ({
         ...prevState,

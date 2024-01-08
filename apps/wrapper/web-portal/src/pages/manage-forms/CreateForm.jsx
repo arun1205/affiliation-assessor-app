@@ -11,6 +11,7 @@ import {
   createForm,
   updateForms,
   viewForm,
+  findFormsWithSameName,
   getCoursesByTypeAndLevel,
 } from "../../api";
 import { Label } from "../../components";
@@ -73,7 +74,26 @@ const CreateForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setFormStage(2);
+    //findForms();
   };
+
+  const findForms = async (file) => {
+    console.log("findFormsfindFormsfindFormsfindForms",)
+
+    const reqBody = {
+      "param": {
+        "title": {
+          "_eq": formData.title.trim()
+        },
+        "assignee": {
+          "_eq": "applicant"
+        }
+      }
+    }
+    const res = await findFormsWithSameName(reqBody);
+    console.log(res)
+
+  }
 
   const handleFile = (file) => {
     const formData = {

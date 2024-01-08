@@ -68,6 +68,11 @@ body, .react-calendar {
   border-color: red;
   color:red;
 }
+
+.count-indicator-returned{
+  border-color: orange;
+  color:orange;
+}
  
 .flex-parent-element {
   display: flex;
