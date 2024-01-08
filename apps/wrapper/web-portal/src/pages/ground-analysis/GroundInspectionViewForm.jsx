@@ -134,6 +134,7 @@ export default function ApplicationPage({
       await updateFormStatusForOGA({
         form_id: formSelected.form_id * 1,
         form_status: "Returned",
+        date: new Date().toISOString().substring(0, 10),
         oga_reverted_count: ogaRevertedCount + 1
       });
       
