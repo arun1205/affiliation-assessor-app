@@ -86,7 +86,7 @@ const CreateForm = () => {
             "_eq": formData.title.trim()
           },
           "assignee": {
-            "_eq": "applicant"
+            "_eq": formData.assignee.toLowerCase().trim()
           }
         }
       }
