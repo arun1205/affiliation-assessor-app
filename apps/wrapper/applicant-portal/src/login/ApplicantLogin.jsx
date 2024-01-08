@@ -22,6 +22,7 @@ const ApplicantLogin = () => {
   const {
     register,
     handleSubmit,
+    resetField,
     formState: { errors },
   } = useForm();
   useEffect(() => {
@@ -38,6 +39,10 @@ const ApplicantLogin = () => {
     checkLoggedInStatus();
   }, [navigate]);
 
+  const handleBackClick = () => {
+    setEnableOtp(false);
+    resetField("otp");
+  }
 
   const isUserActive = async (data) => {
     //setSpinner(true);
@@ -105,7 +110,6 @@ const ApplicantLogin = () => {
         email: data.email,
         otp: Number(data.otp),
       };
-
       const loginRes = await userService.login(loginDetails);
 
       const applicantDetailsRes = await applicantService.getApplicantDetails({
@@ -225,9 +229,10 @@ const ApplicantLogin = () => {
                       name="otp"
                       id="otp"
                       placeholder="0-0-0-0-0-0"
+
                       {...register("otp", {
                         required: true,
-                        pattern: /^\d{1,6}$/i,
+                        pattern:/^\d{1,6}$/i
                       })}
                       className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       noValidate
@@ -261,9 +266,7 @@ const ApplicantLogin = () => {
                   <p className="flex justify-center my-6">
                     <span
                       className="text-primary-700 cursor-pointer"
-                      onClick={() => {
-                        setEnableOtp(false);
-                      }}
+                      onClick={handleBackClick}
                     >
                       Go back, re-enter the email id
                     </span>
