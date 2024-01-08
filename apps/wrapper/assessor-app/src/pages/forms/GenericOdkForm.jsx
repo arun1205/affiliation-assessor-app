@@ -143,7 +143,7 @@ const GenericOdkForm = (props) => {
       formData = res.data.form_submissions[0];
       // setPaymentStatus(formData?.payment_status);
       const postDataEvents = { id: storedData?.applicant_form_id };
-      // const events = await (postDataEvents);
+      // const events = await getStatusOfForms(postDataEvents);
       // setFormStatus(events?.events);
       setFormDataFromApi(res.data.form_submissions[0]);
       await setToLocalForage(
@@ -161,7 +161,6 @@ const GenericOdkForm = (props) => {
         formData?.imageUrls
       );
       setEncodedFormURI(formURI);
-      return formData.form_data;
     } catch (error) {
       console.log(error);
     } finally {
@@ -414,16 +413,16 @@ const GenericOdkForm = (props) => {
   };
 
   const updateFormDataInEnketoIndexedDB = async () => {
-    let formDataresp = await fetchFormData();
+    /*   let formDataresp = await fetchFormData();
+      console.log(formDataresp) */
     let db;
-    const splitURL = surveyUrl.split("/");
-    const surveyInstance = splitURL[splitURL.length - 1];
+
     const req = window.indexedDB.open('enketo', 3);
     req.onsuccess = (e) => {
       // Create the DB connection
       db = req.result;
     };
-    // let formDataresp = '<data xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms" id="Nursing Institutions_Technical_GNM_2" version="1"><username>username not found</username><start>2024-01-04T14:50:17.460+05:30</start><end>2024-01-04T14:50:23.929+05:30</end><today>2024-01-04</today><deviceid>affiliation.upsmfac.org:VrKFBg4TRAOGdDPR</deviceid><subscriberid>subscriberid not found</subscriberid><D><applicant_D1.1/><desktop_DA1.1/><assessor_R2.1>HHHHHHHHHH</assessor_R2.1><assessor_D2.2/><assessor_url1/><applicant_D1.4/><desktop_DA1.2/><assessor_D2.4/><assessor_url4/><assessor_R2.5/><applicant_D1.5/><desktop_DA1.3/><assessor_R5.5/><assessor_D5.5/><assessor_url5/><D1.6/><desktop_DA1.4/><assessor_R6.6/><assessor_D6.6/><assessor_url6/><applicant_D1.8/><applicant_url1/><desktop_DA1.5/><assessor_R6.7/><assessor_D7.7/><assessor_url7/><admin_YN1.1/><assessor_R10.10/></D><meta><instanceID>uuid:f275ac45-6d5b-4bcc-a0ea-7d6df2674466</instanceID></meta></data>'
+    let formDataresp = '<data xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms" id="Nursing Institutions_Technical_GNM_2" version="1"><username>username not found</username><start>2024-01-04T14:50:17.460+05:30</start><end>2024-01-04T14:50:23.929+05:30</end><today>2024-01-04</today><deviceid>affiliation.upsmfac.org:VrKFBg4TRAOGdDPR</deviceid><subscriberid>subscriberid not found</subscriberid><D><applicant_D1.1/><desktop_DA1.1/><assessor_R2.1>HHHHHHHHHH</assessor_R2.1><assessor_D2.2/><assessor_url1/><applicant_D1.4/><desktop_DA1.2/><assessor_D2.4/><assessor_url4/><assessor_R2.5/><applicant_D1.5/><desktop_DA1.3/><assessor_R5.5/><assessor_D5.5/><assessor_url5/><D1.6/><desktop_DA1.4/><assessor_R6.6/><assessor_D6.6/><assessor_url6/><applicant_D1.8/><applicant_url1/><desktop_DA1.5/><assessor_R6.7/><assessor_D7.7/><assessor_url7/><admin_YN1.1/><assessor_R10.10/></D><meta><instanceID>uuid:f275ac45-6d5b-4bcc-a0ea-7d6df2674466</instanceID></meta></data>'
     const objectStore = db
       .transaction(["records"], "readwrite")
       .objectStore("records");
@@ -449,16 +448,16 @@ const GenericOdkForm = (props) => {
         console.log(
           `Adding new entry to indexed DB`,
         );
-        
+
         var request = indexedDB.open("enketo", 3); // first step is opening the database
         request.onsuccess = function (e) {
           var db = e.target.result;
           var trans = db.transaction(["records"], 'readwrite'); //second step is opening the object store
           var store = trans.objectStore("records");
-          
+
           const autoSaveObj = {
-            "instanceId": `__autoSave_${surveyInstance}`,
-            "enketoId": `${surveyInstance}`,
+            "instanceId": "__autoSave_doQP7v8S",
+            "enketoId": "doQP7v8S",
             "name": `__autoSave_${Date.now()}`,
             "xml": "<data xmlns:jr=\"http://openrosa.org/javarosa\" xmlns:orx=\"http://openrosa.org/xforms\" id=\"Nursing Institutions_Technical_GNM_2\" version=\"1\">\n          <username>username not found</username>\n          <start>2024-01-04T14:47:15.990+05:30</start>\n          <end>2024-01-04T14:47:20.954+05:30</end>\n          <today>2024-01-04</today>\n          <deviceid>affiliation.upsmfac.org:BxJlhowsMGhMmyoH</deviceid>\n          <subscriberid>subscriberid not found</subscriberid>\n          <D>\n            <applicant_D1.1/>\n            <desktop_DA1.1/>\n            <assessor_R2.1>Draft 3 Arun Kumar</assessor_R2.1>\n            <assessor_D2.2/>\n            <assessor_url1/>\n            <applicant_D1.4/>\n            <desktop_DA1.2/>\n            <assessor_D2.4/>\n            <assessor_url4/>\n            <assessor_R2.5/>\n            <applicant_D1.5/>\n            <desktop_DA1.3/>\n            <assessor_R5.5/>\n            <assessor_D5.5/>\n            <assessor_url5/>\n            <D1.6/>\n            <desktop_DA1.4/>\n            <assessor_R6.6/>\n            <assessor_D6.6/>\n            <assessor_url6/>\n            <applicant_D1.8/>\n            <applicant_url1/>\n            <desktop_DA1.5/>\n            <assessor_R6.7/>\n            <assessor_D7.7/>\n            <assessor_url7/>\n            <admin_YN1.1/>\n            <assessor_R10.10/>\n          </D>\n          <meta>\n            <instanceID>uuid:c0c0c4ed-89cc-4b0d-83e4-5c5ec8a6ce5e</instanceID>\n          </meta>\n        </data>",
             "files": [],
@@ -486,6 +485,7 @@ const GenericOdkForm = (props) => {
 
 
   useEffect(() => {
+    updateFormDataInEnketoIndexedDB();
     bindEventListener();
     getSurveyUrl();
     getCourseFormDetails();
@@ -514,12 +514,6 @@ const GenericOdkForm = (props) => {
     }
   }, [formLoaded])
 
-  useEffect(() => {
-    if(surveyUrl !== "") {
-      updateFormDataInEnketoIndexedDB();
-    }
-  }, [surveyUrl])
-
   /* 
   async function fetchIframeResources(iframeUrl) {
     try {
@@ -540,98 +534,101 @@ const GenericOdkForm = (props) => {
 
   return (
     <>
-    <CommonLayout
-      {...props.commonLayoutProps}
-      formUrl={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
-      formPreview={true}
-      setIsPreview={setIsPreview}
-    >
-      {!isPreview && (
-        <div className="flex flex-col items-center">
-          {encodedFormURI && date!== undefined && (
-            <>
-              <iframe
-                title="form"
-                id="enketo-form"
-                src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
-                style={{ height: "80vh", width: "100%" }}
-              />
-            </>
-          )}
-        </div>
-      )}
-
-      {surveyUrl !=="" && date === undefined && (
-        <>
-        <p>Hiee</p>
-          <iframe
-            id="offline-enketo-form"
-            title="form"
-            src={surveyUrl}
-            style={{ height: "80vh", width: "100%", marginTop: "20px" }}
-          />
-        </>
-      )}
-    </CommonLayout>
-
-    {errorModal && (
-      <CommonModal>
-        <div>
-          <p className="text-secondary text-2xl lg:text-3xl text-semibold font-medium text-center">
-            Error!
-          </p>
-          <div className="flex flex-row justify-center w-full py-4 text-center">
-            You can't submit a Preview form.
-          </div>
-          <div className="flex flex-row justify-center w-full py-4">
-            <div
-              className="border border-primary bg-primary text-white py-1 px-7 cursor-pointer lg:px-16 lg:py-3 lg:text-xl"
-              onClick={() => setErrorModal(false)}
-            >
-              Close
-            </div>
-          </div>
-        </div>
-      </CommonModal>
-    )}
-
-    {previewModal && (
-      <CommonModal
-        moreStyles={{
-          padding: "1rem",
-          maxWidth: "95%",
-          minWidth: "90%",
-          maxHeight: "90%",
-        }}
+      <CommonLayout
+        {...props.commonLayoutProps}
+        formUrl={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
+        formPreview={true}
+        setIsPreview={setIsPreview}
       >
-        <div className="flex flex-row w-full items-center cursor-pointer gap-4">
-          <div className="flex flex-grow font-bold text-xl">
-            Preview and Submit form
+        {!isPreview && (
+          <div className="flex flex-col items-center">
+            {encodedFormURI && assData && (
+              <>
+                {encodedFormURI!== "" && (<iframe
+                  title="form"
+                  id="enketo-form"
+                  onLoad={checkIframeLoaded}
+                  src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
+                  style={{ height: "80vh", width: "100%" }}
+                />)}
+              </>
+            )}
           </div>
-          <div className="flex flex-grow justify-end">
-            <FontAwesomeIcon
-              icon={faXmark}
-              className="text-2xl lg:text-4xl"
-              onClick={() => {
-                setPreviewModal(false);
-                previewFlag = false;
-              }}
-            />
-          </div>
-        </div>
-        <div className="flex flex-col justify-center w-full py-4">
-          {surveyUrl && (
+        )}
+        
+        {surveyUrl && date === undefined && !assData && (
+          <>
             <iframe
+              id="offline-enketo-form"
               title="form"
-              id="preview-enketo-form"
-              src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
+              src={surveyUrl}
               style={{ height: "80vh", width: "100%", marginTop: "20px" }}
             />
-          )}
-        </div>
-      </CommonModal>
-    )}
-  </>
+          </>
+        )}
+      </CommonLayout>
+
+      {errorModal && (
+        <CommonModal>
+          <div>
+            <p className="text-secondary text-2xl lg:text-3xl text-semibold font-medium text-center">
+              Error!
+            </p>
+            <div className="flex flex-row justify-center w-full py-4 text-center">
+              You can't submit a Preview form.
+            </div>
+            <div className="flex flex-row justify-center w-full py-4">
+              <div
+                className="border border-primary bg-primary text-white py-1 px-7 cursor-pointer lg:px-16 lg:py-3 lg:text-xl"
+                onClick={() => setErrorModal(false)}
+              >
+                Close
+              </div>
+            </div>
+          </div>
+        </CommonModal>
+      )}
+
+      {previewModal && (
+        <CommonModal
+          moreStyles={{
+            padding: "1rem",
+            maxWidth: "95%",
+            minWidth: "90%",
+            maxHeight: "90%",
+          }}
+        >
+          <div className="flex flex-row w-full items-center cursor-pointer gap-4">
+            <div className="flex flex-grow font-bold text-xl">
+              Preview and Submit form
+            </div>
+            <div className="flex flex-grow justify-end">
+              <FontAwesomeIcon
+                icon={faXmark}
+                className="text-2xl lg:text-4xl"
+                onClick={() => {
+                  setPreviewModal(false);
+                  previewFlag = false;
+                }}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col justify-center w-full py-4">
+            {surveyUrl && (
+              <>
+              {encodedFormURI!== "" && (<iframe
+                title="form"
+                onLoad={checkIframeLoaded}
+                id="preview-enketo-form"
+                src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
+                style={{ height: "80vh", width: "100%", marginTop: "20px" }}
+              />)}
+              </>
+            )}
+          </div>
+        </CommonModal>
+      )}
+    </>
   );
 };
 
