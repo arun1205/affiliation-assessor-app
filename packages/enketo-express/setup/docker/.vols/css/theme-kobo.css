@@ -3541,6 +3541,7 @@ legend {
     .option-wrapper > label:after {
       clear: both; }
   .option-wrapper .option-label {
+    color: #333333;
     margin-left: 30px;
     display: block;
     word-break: break-word; }
