@@ -129,8 +129,8 @@ const GenericOdkForm = (props) => {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      updateFormDataInEnketoIndexedDB();
+    setTimeout(async () => {
+      await updateFormDataInEnketoIndexedDB();
     }, 6000);
   },[])
 
