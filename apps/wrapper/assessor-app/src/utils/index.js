@@ -164,16 +164,15 @@ export const removeItemFromLocalForage = (key) => {
 
 export const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
   const user = getCookie("userData");
-
   if (
-    ((ENKETO_URL === `${e.origin}/enketo`) || (ENKETO_URL === `${e.origin}/enketo/`)) &&
+    ((ENKETO_URL === `${e?.origin}/enketo`) || (ENKETO_URL === `${e?.origin}/enketo/`)) &&
     // e.origin === ENKETO_URL &&
     typeof e?.data === "string" &&
     JSON.parse(e?.data)?.state !== "ON_FORM_SUCCESS_COMPLETED"
   ) {
-    var formData = new XMLParser().parseFromString(JSON.parse(e.data).formData);
+    var formData = new XMLParser().parseFromString(JSON.parse(e?.data)?.formData);
     if (formData) {
-      let images = JSON.parse(e.data).fileURLs;
+      let images = JSON.parse(e?.data)?.fileURLs;
       let prevData = await getFromLocalForage(
         `${startingForm}_${new Date().toISOString().split("T")[0]}`
       );
@@ -182,7 +181,7 @@ export const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
           new Date().toISOString().split("T")[0]
         }`,
         {
-          formData: JSON.parse(e.data).formData,
+          formData: JSON.parse(e?.data)?.formData,
           imageUrls: { ...prevData?.imageUrls, ...images },
         }
       );
