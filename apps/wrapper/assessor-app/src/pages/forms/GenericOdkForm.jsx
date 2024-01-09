@@ -361,6 +361,7 @@ const GenericOdkForm = (props) => {
             input.previousSibling.style.display = 'none';
             input.style.display = 'none';
           }
+          updateFormDataInEnketoIndexedDB();
         });
 
       // iframeContent.getElementById("submit-form").style.display = "none";
@@ -514,11 +515,11 @@ const GenericOdkForm = (props) => {
     }
   }, [formLoaded])
 
-  useEffect(() => {
-    if(surveyUrl !== "") {
-      //updateFormDataInEnketoIndexedDB();
-    }
-  }, [surveyUrl])
+  // useEffect(() => {
+  //   if(surveyUrl !== "") {
+      
+  //   }
+  // }, [surveyUrl])
 
   /* 
   async function fetchIframeResources(iframeUrl) {
