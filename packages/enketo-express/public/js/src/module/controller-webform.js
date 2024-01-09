@@ -306,7 +306,7 @@ function _submitRecord(survey) {
     let authLink;
     let level;
     let msg = '';
-    const include = { irrelevant: false };
+    const include = { irrelevant: true };
 
     form.view.html.dispatchEvent(events.BeforeSave());
 
