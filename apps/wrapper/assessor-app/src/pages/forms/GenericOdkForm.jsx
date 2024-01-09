@@ -132,7 +132,7 @@ const GenericOdkForm = (props) => {
     setTimeout(async () => {
       await updateFormDataInEnketoIndexedDB();
     }, 6000);
-  },[])
+  },[surveyUrl])
 
   /* fetch form data from API */
   const fetchFormData = async () => {
@@ -423,6 +423,7 @@ const GenericOdkForm = (props) => {
     let db;
     const splitURL = surveyUrl.split("/");
     const surveyInstance = splitURL[splitURL.length - 1];
+    console.log("surveyInstance", surveyInstance);
     const req = window.indexedDB.open('enketo', 3);
 
     req.onsuccess = (e) => {
@@ -462,8 +463,8 @@ const GenericOdkForm = (props) => {
           var store = trans.objectStore("records");
           
           const autoSaveObj = {
-            "instanceId": `__autoSave_doQP7v8S`,
-            "enketoId": `doQP7v8S`,
+            "instanceId": `__autoSave_${surveyInstance}`,
+            "enketoId": `${surveyInstance}`,
             "name": `__autoSave_${Date.now()}`,
             "xml": formDataresp,
             "files": [],
