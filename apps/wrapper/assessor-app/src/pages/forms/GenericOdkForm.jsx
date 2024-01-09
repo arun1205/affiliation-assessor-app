@@ -330,7 +330,7 @@ const GenericOdkForm = (props) => {
     window.removeEventListener("message", handleEventTrigger);
   };
 
-  const checkIframeLoaded = () => {
+  const checkIframeLoaded = async () => {
     if (window.location.host.includes("localhost")) {
       return;
     }
@@ -361,12 +361,12 @@ const GenericOdkForm = (props) => {
             input.previousSibling.style.display = 'none';
             input.style.display = 'none';
           }
-          updateFormDataInEnketoIndexedDB();
         });
 
       // iframeContent.getElementById("submit-form").style.display = "none";
       // iframeContent.getElementById("save-draft").style.display = "none";
     }
+    await updateFormDataInEnketoIndexedDB();
 
     var draftButton = iframeContent.getElementById("save-draft");
     draftButton?.addEventListener("click", function () {
