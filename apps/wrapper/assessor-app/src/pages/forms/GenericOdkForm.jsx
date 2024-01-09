@@ -128,6 +128,12 @@ const GenericOdkForm = (props) => {
     setEncodedFormURI(formURI);
   };
 
+  useEffect(() => {
+    setTimeout(() => {
+      updateFormDataInEnketoIndexedDB();
+    }, 6000);
+  },[])
+
   /* fetch form data from API */
   const fetchFormData = async () => {
     let formData = {};
@@ -330,7 +336,7 @@ const GenericOdkForm = (props) => {
     window.removeEventListener("message", handleEventTrigger);
   };
 
-  const checkIframeLoaded = async () => {
+  const checkIframeLoaded = () => {
     if (window.location.host.includes("localhost")) {
       return;
     }
@@ -366,8 +372,6 @@ const GenericOdkForm = (props) => {
       // iframeContent.getElementById("submit-form").style.display = "none";
       // iframeContent.getElementById("save-draft").style.display = "none";
     }
-    await updateFormDataInEnketoIndexedDB();
-
     var draftButton = iframeContent.getElementById("save-draft");
     draftButton?.addEventListener("click", function () {
       //alert("Hello world!");
