@@ -424,13 +424,13 @@ const GenericOdkForm = (props) => {
     const splitURL = surveyUrl.split("/");
     const surveyInstance = splitURL[splitURL.length - 1];
     const req = window.indexedDB.open('enketo', 3);
+
     req.onsuccess = (e) => {
+      console.log("e ==>", e);
       // Create the DB connection
       db = req.result;
-    };
-    // let formDataresp = '<data xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms" id="Nursing Institutions_Technical_GNM_2" version="1"><username>username not found</username><start>2024-01-04T14:50:17.460+05:30</start><end>2024-01-04T14:50:23.929+05:30</end><today>2024-01-04</today><deviceid>affiliation.upsmfac.org:VrKFBg4TRAOGdDPR</deviceid><subscriberid>subscriberid not found</subscriberid><D><applicant_D1.1/><desktop_DA1.1/><assessor_R2.1>HHHHHHHHHH</assessor_R2.1><assessor_D2.2/><assessor_url1/><applicant_D1.4/><desktop_DA1.2/><assessor_D2.4/><assessor_url4/><assessor_R2.5/><applicant_D1.5/><desktop_DA1.3/><assessor_R5.5/><assessor_D5.5/><assessor_url5/><D1.6/><desktop_DA1.4/><assessor_R6.6/><assessor_D6.6/><assessor_url6/><applicant_D1.8/><applicant_url1/><desktop_DA1.5/><assessor_R6.7/><assessor_D7.7/><assessor_url7/><admin_YN1.1/><assessor_R10.10/></D><meta><instanceID>uuid:f275ac45-6d5b-4bcc-a0ea-7d6df2674466</instanceID></meta></data>'
-    const objectStore = db
-      .transaction(["records"], "readwrite")
+// trial error method
+      const objectStore = db?.transaction(["records"], "readwrite")
       .objectStore("records");
 
     const objectStoreTitleRequest = objectStore.getAll();
@@ -465,7 +465,7 @@ const GenericOdkForm = (props) => {
             "instanceId": `__autoSave_${surveyInstance}`,
             "enketoId": `${surveyInstance}`,
             "name": `__autoSave_${Date.now()}`,
-            "xml": "<data xmlns:jr=\"http://openrosa.org/javarosa\" xmlns:orx=\"http://openrosa.org/xforms\" id=\"Nursing Institutions_Technical_GNM_2\" version=\"1\">\n          <username>username not found</username>\n          <start>2024-01-04T14:47:15.990+05:30</start>\n          <end>2024-01-04T14:47:20.954+05:30</end>\n          <today>2024-01-04</today>\n          <deviceid>affiliation.upsmfac.org:BxJlhowsMGhMmyoH</deviceid>\n          <subscriberid>subscriberid not found</subscriberid>\n          <D>\n            <applicant_D1.1/>\n            <desktop_DA1.1/>\n            <assessor_R2.1>Draft 3 Arun Kumar</assessor_R2.1>\n            <assessor_D2.2/>\n            <assessor_url1/>\n            <applicant_D1.4/>\n            <desktop_DA1.2/>\n            <assessor_D2.4/>\n            <assessor_url4/>\n            <assessor_R2.5/>\n            <applicant_D1.5/>\n            <desktop_DA1.3/>\n            <assessor_R5.5/>\n            <assessor_D5.5/>\n            <assessor_url5/>\n            <D1.6/>\n            <desktop_DA1.4/>\n            <assessor_R6.6/>\n            <assessor_D6.6/>\n            <assessor_url6/>\n            <applicant_D1.8/>\n            <applicant_url1/>\n            <desktop_DA1.5/>\n            <assessor_R6.7/>\n            <assessor_D7.7/>\n            <assessor_url7/>\n            <admin_YN1.1/>\n            <assessor_R10.10/>\n          </D>\n          <meta>\n            <instanceID>uuid:c0c0c4ed-89cc-4b0d-83e4-5c5ec8a6ce5e</instanceID>\n          </meta>\n        </data>",
+            "xml": formDataresp,
             "files": [],
             "created": Date.now(),
             "updated": Date.now(),
@@ -483,8 +483,10 @@ const GenericOdkForm = (props) => {
         };
       }
 
-
     }
+    };
+    // let formDataresp = '<data xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms" id="Nursing Institutions_Technical_GNM_2" version="1"><username>username not found</username><start>2024-01-04T14:50:17.460+05:30</start><end>2024-01-04T14:50:23.929+05:30</end><today>2024-01-04</today><deviceid>affiliation.upsmfac.org:VrKFBg4TRAOGdDPR</deviceid><subscriberid>subscriberid not found</subscriberid><D><applicant_D1.1/><desktop_DA1.1/><assessor_R2.1>HHHHHHHHHH</assessor_R2.1><assessor_D2.2/><assessor_url1/><applicant_D1.4/><desktop_DA1.2/><assessor_D2.4/><assessor_url4/><assessor_R2.5/><applicant_D1.5/><desktop_DA1.3/><assessor_R5.5/><assessor_D5.5/><assessor_url5/><D1.6/><desktop_DA1.4/><assessor_R6.6/><assessor_D6.6/><assessor_url6/><applicant_D1.8/><applicant_url1/><desktop_DA1.5/><assessor_R6.7/><assessor_D7.7/><assessor_url7/><admin_YN1.1/><assessor_R10.10/></D><meta><instanceID>uuid:f275ac45-6d5b-4bcc-a0ea-7d6df2674466</instanceID></meta></data>'
+    
 
   }
 
