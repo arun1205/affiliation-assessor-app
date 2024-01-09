@@ -462,8 +462,8 @@ const GenericOdkForm = (props) => {
           var store = trans.objectStore("records");
           
           const autoSaveObj = {
-            "instanceId": `__autoSave_${surveyInstance}`,
-            "enketoId": `${surveyInstance}`,
+            "instanceId": `__autoSave_doQP7v8S`,
+            "enketoId": `doQP7v8S`,
             "name": `__autoSave_${Date.now()}`,
             "xml": formDataresp,
             "files": [],
@@ -570,7 +570,6 @@ const GenericOdkForm = (props) => {
 
       {surveyUrl !=="" && date === undefined && (
         <>
-        <p>Hiee</p>
           <iframe
             id="offline-enketo-form"
             title="form"
