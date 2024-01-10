@@ -651,7 +651,7 @@ export const ScheduleManagementFilters = ({
           {/* <Option value="">--Select Status--</Option> */}
           <Option value="OGA Completed">Completed</Option>
           <Option value="Upcoming">Upcoming</Option>
-          <Option value="Closed">Delayed</Option>
+          <Option value="Inspection Delayed">Delayed</Option>
         </Select>
       </div>
       <div>
