@@ -344,6 +344,7 @@ function IssueNocModal({
                   {"Only pdf files accepted!(max size 5MB)"}
                 </div>
               )}
+               <div className="mt-4 flex justify-end ml-4">{fileName}</div>
               <textarea
                 onChange={handleChangeComments}
                 placeholder="Remarks"
