@@ -130,7 +130,8 @@ const GenericOdkForm = (props) => {
 
   useEffect(() => {
     setTimeout(async () => {
-      await updateFormDataInEnketoIndexedDB();
+      if(surveyUrl !== "") {
+      await updateFormDataInEnketoIndexedDB();}
     }, 6000);
   },[surveyUrl])
 
