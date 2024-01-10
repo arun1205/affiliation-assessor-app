@@ -148,7 +148,7 @@ const UploadForm = ({
 
             <div className="w-full bg-white p-8">
               <div className="flex flex-col h-[48vh] gap-8 justify-between">
-                <div className="font-semibold text-xl">Upload ODK.........</div>
+                <div className="font-semibold text-xl">Upload ODK</div>
                 <div className="flex flex-row m-auto">
                   <input
                     type="file"
