@@ -244,6 +244,10 @@ function uploadQueue() {
                     } )
                     .then( () => {
                         successes.push( record.name );
+                        window.parent.postMessage(JSON.stringify({
+                            formData: record,
+                            message: 'assessor-form-submitted'
+                        }), '*');
                         uploadProgress.update( record.instanceId, 'success', '', successes.length + fails.length, records.length );
 
                         return store.record.remove( record.instanceId )
@@ -265,10 +269,6 @@ function uploadQueue() {
                             if ( authRequired ) {
                                 gui.confirmLogin();
                             } else if ( successes.length > 0 ) {
-                                window.parent.postMessage(JSON.stringify({
-                                    formData: record,
-                                    message: 'assessor-form-submitted'
-                                }), '*');
                             // let gui send a feedback message
                                 document.dispatchEvent( events.QueueSubmissionSuccess( successes ) );
                             }
