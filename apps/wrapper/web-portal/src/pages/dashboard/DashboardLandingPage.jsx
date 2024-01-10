@@ -15,6 +15,10 @@ import {
   exportToExcel
 } from "../../api";
 
+import {
+  readableDate,
+} from "../../utils/common";
+
 const DashboardLandingPage = (props) => {
 
   const { setSpinner } = useContext(ContextAPI);
@@ -255,7 +259,7 @@ const DashboardLandingPage = (props) => {
         res?.data?.form_submissions.forEach((element) => {
           const report = {
             application_id: element.form_id,
-            date: element?.submitted_on || "-",
+            date: readableDate(element?.submitted_on) || "-",
             institute_name: element?.institute.name || "-",
             application_type: element?.course_type || "-",
             course_type: element?.course_level || "-",
@@ -283,7 +287,7 @@ const DashboardLandingPage = (props) => {
   formsList?.forEach((e) => {
     const formsData = {
       application_id: e.form_id,
-      date: e?.submitted_on || "-",
+      date: readableDate(e?.submitted_on) || "-",
       application_type: e?.course_type || "-",
       course_type: e?.course_level || "-",
       // course_name: `${e?.course?.course_type} - ${e?.course?.course_level}` || "NA",
