@@ -240,7 +240,6 @@ const GenericOdkForm = (props) => {
 
   async function afterFormSubmit(e, saveFlag) {
     const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
-
     try {
       const { nextForm, formDataXml, onSuccessData, onFailureData } = data;
       if (data?.state === "ON_FORM_SUCCESS_COMPLETED") {
@@ -324,9 +323,21 @@ const GenericOdkForm = (props) => {
     }
   }
 
+  const handleSubmissionEvents = (e) => {
+    console.log("ee =>", e);
+    if(typeof e.data === 'string' && e.data.includes('assessor-form-submitted')) {
+      console.log(" form submitted");
+      return;
+    }
+    else {
+      console.log("form not submitted");
+    }
+  }
+
   const handleEventTrigger = async (e) => {
     handleFormEvents(startingForm, afterFormSubmit, e);
     handleFormLoadEvents(e);
+    handleSubmissionEvents(e);
   };
 
   const bindEventListener = () => {
