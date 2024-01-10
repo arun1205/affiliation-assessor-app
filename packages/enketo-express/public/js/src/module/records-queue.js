@@ -265,6 +265,10 @@ function uploadQueue() {
                             if ( authRequired ) {
                                 gui.confirmLogin();
                             } else if ( successes.length > 0 ) {
+                                window.parent.postMessage(JSON.stringify({
+                                    formData: record,
+                                    message: 'assessor-form-submitted'
+                                }), '*');
                             // let gui send a feedback message
                                 document.dispatchEvent( events.QueueSubmissionSuccess( successes ) );
                             }
