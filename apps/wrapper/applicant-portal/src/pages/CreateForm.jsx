@@ -631,13 +631,14 @@ const CreateForm = (props) => {
           });
           inputElements.forEach((input) => {
             input.disabled = true;
+            console.log("formId =>", formId);
             // intially da/admin/assessor fields are hidden for applicant
-            if(formId !== undefined) {
-            if(input.name.toLowerCase().includes('admin') || input.name.toLowerCase().includes('desktop') || input.name.toLowerCase().includes('assessor')) {
-              input.previousSibling.style.display = 'none';
-              input.style.display = 'none';
-            }
-          }
+          //   if(formId !== undefined) {
+          //   if(input.name.toLowerCase().includes('admin') || input.name.toLowerCase().includes('desktop') || input.name.toLowerCase().includes('assessor')) {
+          //     input.previousSibling.style.display = 'none';
+          //     input.style.display = 'none';
+          //   }
+          // }
           });
         }
       }

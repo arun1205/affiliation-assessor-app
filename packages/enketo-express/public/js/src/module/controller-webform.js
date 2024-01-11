@@ -478,11 +478,11 @@ function _saveRecord(survey, draft = true, recordName, confirmed, errorMsg) {
 
     return fileManager.getCurrentFiles()
         .then(files => {
-            const formModel = form.model.data.modelStr;
+            // const formModel = form.model.data.modelStr;
             // build the record object
             const record = {
                 'draft': draft,
-                'xml': formModel.slice(formModel.search("<data"), formModel.search("</instance>")).trim(),
+                'xml': form.getDataStr(include),
                 'name': recordName,
                 'instanceId': form.instanceID,
                 'deprecateId': form.deprecatedID,
