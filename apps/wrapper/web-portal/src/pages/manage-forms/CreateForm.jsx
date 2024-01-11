@@ -3,6 +3,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import Button from "../../components/Button";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import "./calendar.css";
 
 import { FaAngleRight } from "react-icons/fa";
 import UploadForm from "./UploadForm";
@@ -18,6 +21,7 @@ import { Label } from "../../components";
 import ADMIN_ROUTE_MAP from "../../routes/adminRouteMap";
 import { ContextAPI } from "../../utils/ContextAPI";
 import { setCookie, getCookie, removeCookie } from "../../utils/common";
+import { formatDate, readableDate } from "../../utils/common";
 
 const CreateForm = () => {
   const [formStatus, setFormStatus] = useState("");
@@ -27,7 +31,7 @@ const CreateForm = () => {
   const [loading, setLoading] = useState(false);
   const [xmlData, setXmlData] = useState(null);
   const [courseMapping, setCourseMapping] = useState(null);
-  let requestData = {courseType: '', courseLevel: ''};
+  let requestData = { courseType: '', courseLevel: '' };
   const [formData, setFormData] = useState({
     title: "",
   });
@@ -36,10 +40,26 @@ const CreateForm = () => {
   let assigneePrefix = "";
   assigneePrefix = formData?.assignee;
 
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [buttonText, setButtonText] = useState("Last Date For Submission");
+  
+  const [lastDateToApply, setLastDateToApply] = useState(null);
+
   const handleChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
+    }));
+  };
+
+
+  const handleCalendarOnChangeDate = (date) => {
+    setButtonText(formatDate(date));
+    setShowCalendar(false);
+    setLastDateToApply(date);
+    setFormData((prevState) => ({
+      ...prevState,
+      last_submission_date: formatDate(date),
     }));
   };
 
@@ -50,9 +70,9 @@ const CreateForm = () => {
     }));
     requestData.courseType = e.target.value;
     requestData.courseLevel = formData.course_level;
-    if((requestData.courseType !== undefined && requestData.courseLevel !== undefined) && (requestData.courseLevel !== "" && requestData.courseType !== "")) {
+    if ((requestData.courseType !== undefined && requestData.courseLevel !== undefined) && (requestData.courseLevel !== "" && requestData.courseType !== "")) {
       getCourses(requestData);
-    } 
+    }
   }
 
   const handleCourseLevelChange = (e) => {
@@ -61,10 +81,10 @@ const CreateForm = () => {
       [e.target.name]: e.target.value,
     }));
     requestData.courseType = formData.course_type;
-    requestData.courseLevel =  e.target.value;
-    if((requestData.courseType !== undefined && requestData.courseLevel !== undefined) && (requestData.courseLevel !== "" && requestData.courseType !== "")) {
+    requestData.courseLevel = e.target.value;
+    if ((requestData.courseType !== undefined && requestData.courseLevel !== undefined) && (requestData.courseLevel !== "" && requestData.courseType !== "")) {
       getCourses(requestData);
-    } 
+    }
   }
 
   const getCourses = async (postData) => {
@@ -91,11 +111,11 @@ const CreateForm = () => {
         }
       }
       const res = await findFormsWithSameName(reqBody);
-      if(res.data.forms_aggregate.aggregate.totalCount != 0){
+      if (res.data.forms_aggregate.aggregate.totalCount != 0) {
         setFormData((prevState) => ({
           ...prevState,
           title: ""
-      }));
+        }));
         setSameFileNameerror(true)
       } else {
         setSameFileNameerror(false)
@@ -127,6 +147,7 @@ const CreateForm = () => {
     const user = getCookie("regulator");
     postData.append("user_id", user?.[0]?.user_id);
     postData.append("form_status", "Draft");
+   // postData.append("last_submission_date", formatDate(lastDateToApply));
     try {
       setSpinner(true);
       setLoading(true);
@@ -193,25 +214,27 @@ const CreateForm = () => {
       const response = await viewForm(formData);
       const formDetail = response.data.forms[0];
       setFormStatus(formDetail?.form_status);
-      if(formDetail) {
+      if (formDetail) {
         const req = {
           courseType: formDetail?.course_type,
           courseLevel: formDetail?.course_level,
         }
         getCourses(req);
-            setFormData({
-              application_type: formDetail?.application_type,
-              form_desc: formDetail.form_desc,
-              assignee: formDetail?.assignee,
-              course_type: formDetail?.course_type,
-              course_level: formDetail?.course_level,
-              course_mapping: formDetail?.course_mapping,
-              labels: formDetail?.labels,
-              round_no: formDetail?.round,
-              title: formDetail?.title,
-              path: formDetail?.path,
-              file_name: formDetail?.file_name,
-            });
+        setFormData({
+          application_type: formDetail?.application_type,
+          form_desc: formDetail.form_desc,
+          assignee: formDetail?.assignee,
+          course_type: formDetail?.course_type,
+          course_level: formDetail?.course_level,
+          course_mapping: formDetail?.course_mapping,
+          labels: formDetail?.labels,
+          round_no: formDetail?.round,
+          title: formDetail?.title,
+          path: formDetail?.path,
+          file_name: formDetail?.file_name,
+          last_submission_date: formDetail?.last_submission_date
+        });
+        setLastDateToApply(new Date(formDetail?.last_submission_date))
       }
     } catch (error) {
       console.log("error - ", error);
@@ -225,6 +248,11 @@ const CreateForm = () => {
       setSpinner(false);
     }
   };
+
+  useEffect(() => {
+   console.log(lastDateToApply)
+  }, [lastDateToApply]);
+
 
   useEffect(() => {
     if (window.location.pathname.includes("view")) {
@@ -249,7 +277,7 @@ const CreateForm = () => {
             <Link to={ADMIN_ROUTE_MAP.adminModule.scheduleManagement.home}>
               <span className="text-gray-500">Create form</span>
             </Link>
-          
+
           </div>
         </div>
       </div>
@@ -268,33 +296,33 @@ const CreateForm = () => {
                   }
                 />
                 <Button
-                  moreClass={`${
-                    Object.values(formData).length !== 11
+                  moreClass={`${Object.values(formData).length !== 12
                       ? "text-gray-500 bg-white border border-gray-300 cursor-not-allowed"
                       : "text-white border"
-                  } px-6`}
+                    } px-6`}
                   text="Update"
                   onClick={() => handleSaveUpdateDraft("update")}
                   otherProps={{
-                    disabled: Object.values(formData).length !== 11,
+                    disabled: Object.values(formData).length !== 12,
                     style: { display: formStatus !== "Draft" ? "none" : "" },
                   }}
                 />
+                  {console.log(formData)}
                 <Button
-                  moreClass={`${
-                    Object.values(formData).length !== 11
+                  moreClass={`${Object.values(formData).length !== 12
                       ? "text-gray-500 bg-white border border-gray-300 cursor-not-allowed"
                       : "text-white border"
-                  } px-6`}
+                    } px-6`}
                   text="Save as draft"
                   onClick={() => handleSaveUpdateDraft("save")}
+                
                   otherProps={{
-                    disabled: Object.values(formData).length !== 11,
+                    disabled: Object.values(formData).length !== 12,
                     style: {
                       display:
                         formStatus === "Published" ||
-                        formStatus === "Unpublished" ||
-                        formStatus === "Draft"
+                          formStatus === "Unpublished" ||
+                          formStatus === "Draft"
                           ? "none"
                           : "",
                     },
@@ -305,20 +333,18 @@ const CreateForm = () => {
 
             <div className="flex flex-row gap-4 justify-center">
               <div
-                className={`${
-                  formStage === 1
+                className={`${formStage === 1
                     ? "bg-black text-white"
                     : "bg-white text-black"
-                } py-3 px-10 rounded-[4px] text-[16px]`}
+                  } py-3 px-10 rounded-[4px] text-[16px]`}
               >
                 1. Add attributes
               </div>
               <div
-                className={`${
-                  formStage === 2
+                className={`${formStage === 2
                     ? "bg-black text-white"
                     : "bg-white text-black"
-                } py-3 px-10 rounded-[4px] text-[16px]`}
+                  } py-3 px-10 rounded-[4px] text-[16px]`}
               >
                 2. Upload ODK
               </div>
@@ -332,7 +358,7 @@ const CreateForm = () => {
                   </div>
                   <div className="flex flex-grow">
                     <div className="grid grid-rows-3 grid-cols-6 gap-8">
-                      <div className="sm:col-span-3">
+                    <div className="sm:col-span-3">
                         <Label
                           required
                           text="Form title"
@@ -354,12 +380,34 @@ const CreateForm = () => {
                             className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                           />
                           {sameFileNameerror && (
-                    <div className="text-red-500 mt-2 text-sm">
-                     ODK with this name already exists
-                    </div>
-                  )}
+                            <div className="text-red-500 mt-2 text-sm">
+                              ODK with this name already exists
+                            </div>
+                          )}
                         </div>
                       </div>
+                      <div className="sm:col-span-3">
+                        <Label
+                          required
+                          text="Last Date for Submission"
+                          htmlFor="last_date"
+                          moreClass="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
+                        />
+
+                            <button type="button"
+                              className="h-[45px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 px-8"
+                              onClick={() => setShowCalendar(true)}
+                            >
+                              {buttonText.includes("Last Date For Submission") ? buttonText : readableDate(buttonText)}
+                            </button>
+                            {showCalendar && (
+                              <Calendar minDate={new Date()}
+                               value={lastDateToApply} 
+                               onChange={handleCalendarOnChangeDate} />
+                            )}
+                          
+                      </div>
+                   
                       <div className="sm:col-span-6">
                         <Label
                           required
@@ -509,9 +557,9 @@ const CreateForm = () => {
                             <option value="">Select Here</option>
                             {courseMapping.map((obj, index) => (
                               <>
-                            <option key={index} value={obj.course}>{obj.course}</option>
+                                <option key={index} value={obj.course}>{obj.course}</option>
                               </>
-                              ))}
+                            ))}
                           </select>
                         </div>
                       )}
@@ -577,15 +625,14 @@ const CreateForm = () => {
                   </div>
                   <div className="flex justify-end">
                     <button
-                      className={`${
-                        Object.values(formData).length < 7
+                      className={`${Object.values(formData).length < 8
                           ? "bg-gray-400 text-gray-700 cursor-not-allowed"
                           : "px-6 text-white bg-primary-900 border"
-                      } border w-[140px] h-[40px] font-medium rounded-[4px] `}
+                        } border w-[140px] h-[40px] font-medium rounded-[4px] `}
                       style={{ backgroundColor: "" }}
                       type="submit"
                       disabled={
-                        Object.values(formData).length < 9 ? true : false
+                        Object.values(formData).length < 10 ? true : false
                       }
                     >
                       Next

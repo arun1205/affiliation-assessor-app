@@ -32,7 +32,7 @@ const UploadForm = ({
     console.log("e.target.files",e.target.files[0])
     const fileUploaded = e?.target?.files[0];    
       setFileName(
-      fileUploaded.name.substring(0, fileUploaded.name.lastIndexOf("."))
+      fileUploaded?.name?.substring(0, fileUploaded.name.lastIndexOf("."))
     );
     handleFile(fileUploaded);
   };

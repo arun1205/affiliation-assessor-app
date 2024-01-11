@@ -100,7 +100,7 @@ export default function AdminCreateUser() {
   const isFieldsValid = () => {
     if (
       user.firstname === "" ||
-      user.lastname === "" ||
+     // user.lastname === "" ||
       !isEmail ||
       user.email === "" ||
       user.role === "" || user.role === undefined ||
@@ -459,7 +459,7 @@ export default function AdminCreateUser() {
                     </div>
                   </div>
                   <div className="sm:col-span-3">
-                    <Label htmlFor="lastname" text="Last name" required></Label>
+                    <Label htmlFor="lastname" text="Last name" ></Label>
                     <div className="mt-2">
                       <input
                         type="text"
