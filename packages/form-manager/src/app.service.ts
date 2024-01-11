@@ -152,7 +152,7 @@ export class AppService {
     formString = response.data;
 
     const doc = this.parser.parseFromString(formString, 'text/xml');
-    const instanceFromForm = doc.getElementsByTagName('data')[0];
+    const instanceFromForm = doc.getElementsByTagName('instance')[0].childNodes[0];
 
     if (prefillSpec !== undefined) {
       prefillSpec = prefillSpec.replace(/\n\s*/g, '');
@@ -168,7 +168,7 @@ export class AppService {
       }
       instanceData = this.removeSiblingUrlTextContent(instanceData).cloneNode(true);
       doc
-        .getElementsByTagName('data')[0]
+        .getElementsByTagName('instance')[0]
         .replaceChild(instanceData, instanceFromForm);
     }
 
