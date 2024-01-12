@@ -244,15 +244,13 @@ function uploadQueue() {
                     } )
                     .then( () => {
                         successes.push( record.name );
+                        uploadProgress.update( record.instanceId, 'success', '', successes.length + fails.length, records.length );
                         window.parent.postMessage(JSON.stringify({
                             formData: record,
-                            message: 'assessor-form-submitted'
                         }), '*');
-                        uploadProgress.update( record.instanceId, 'success', '', successes.length + fails.length, records.length );
-
                         return store.record.remove( record.instanceId )
                             .then( () => store.property.addSubmittedInstanceId( record ) );
-                    } )
+                    })
                     .catch( result => {
                     // catch 401 responses (1 of them)
                         if ( result.status === 401 ) {
