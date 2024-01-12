@@ -324,8 +324,8 @@ const GenericOdkForm = (props) => {
   }
 
   const handleSubmissionEvents = (e) => {
-    console.log("ee =>", e);
-    if(typeof e.data === 'string' && e.data.includes('assessor-form-submitted')) {
+    console.log("e", e);
+    if(typeof e.data === 'string' && e.data.includes('ON_FORM_FAILURE_COMPLETED')) {
       console.log(" form submitted");
       return;
     }
