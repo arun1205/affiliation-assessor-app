@@ -48,6 +48,10 @@ export default function OnGroundInspectionAnalysis() {
       accessor: "display_form_name",
     },
     {
+      Header: "Course name",
+      accessor: "course_name",
+    },
+    {
       Header: "Institute",
       accessor: "applicant",
     },
@@ -76,6 +80,10 @@ export default function OnGroundInspectionAnalysis() {
     {
       Header: "Form name",
       accessor: "display_form_name",
+    },
+    {
+      Header: "Course name",
+      accessor: "course_name",
     },
     {
       Header: "Institute",
@@ -108,6 +116,10 @@ export default function OnGroundInspectionAnalysis() {
       accessor: "display_form_name",
     },
     {
+      Header: "Course name",
+      accessor: "course_name",
+    },
+    {
       Header: "Institute",
       accessor: "applicant",
     },
@@ -136,6 +148,10 @@ export default function OnGroundInspectionAnalysis() {
     {
       Header: "Form name",
       accessor: "display_form_name",
+    },
+    {
+      Header: "Course name",
+      accessor: "course_name",
     },
     {
       Header: "Institute",
@@ -367,7 +383,8 @@ export default function OnGroundInspectionAnalysis() {
 
   formsList?.forEach((e) => {
     var formsData = {
-      display_form_name: e?.course?.course_name,
+      display_form_name:  e?.form_name,
+      course_name: e?.course?.course_name,
       applicant:
         e?.institute?.name?.charAt(0).toUpperCase() +
         e?.institute?.name?.substring(1).toLowerCase() +
