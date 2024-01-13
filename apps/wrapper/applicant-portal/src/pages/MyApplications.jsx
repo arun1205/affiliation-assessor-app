@@ -32,10 +32,10 @@ const MyApplications = () => {
 
 
   useEffect(() => {
-    setSelectedRound(1);
     getApplications();
     getDraftApplications();
     getAllAvailableForms(1);
+    setSelectedRound(1);
   }, [courseType]);
 
   useEffect(() => {
@@ -380,7 +380,7 @@ const MyApplications = () => {
             </div>
               {!loadingForms && availableForms?.length > 0 && (
                 <div className="flex flex-wrap">
-                  
+                   { console.log(availableForms)}
                   {availableForms.slice(0,4).map((form, index) => (
                     <FormCard
                       form={form}
