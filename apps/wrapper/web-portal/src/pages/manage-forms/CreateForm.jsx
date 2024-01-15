@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState ,useRef} from "react";
 
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -34,6 +34,15 @@ const CreateForm = () => {
   let requestData = { courseType: '', courseLevel: '' };
   const [formData, setFormData] = useState({
     title: "",
+    assignee :"",
+    course_type :"" ,
+    course_mapping :"",
+    labels :"",
+    course_level :"",
+    round_no:"",
+    application_type :"",
+    form_desc :"" ,
+    last_submission_date :""
   });
   const [sameFileNameerror, setSameFileNameerror] = useState(false);
   const { setSpinner, setToast } = useContext(ContextAPI);
@@ -44,6 +53,7 @@ const CreateForm = () => {
   const [buttonText, setButtonText] = useState("Last Date For Submission");
   
   const [lastDateToApply, setLastDateToApply] = useState(null);
+  const calendarRef = useRef(null);
 
   const handleChange = (e) => {
     setFormData((prevState) => ({
@@ -64,6 +74,7 @@ const CreateForm = () => {
   };
 
   const handleCourseTypeChange = (e) => {
+    formData.course_mapping="";
     setFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
@@ -76,6 +87,7 @@ const CreateForm = () => {
   }
 
   const handleCourseLevelChange = (e) => {
+    formData.course_mapping="";
     setFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
@@ -89,12 +101,37 @@ const CreateForm = () => {
 
   const getCourses = async (postData) => {
     const response = await getCoursesByTypeAndLevel(postData);
+    formData.course_mapping="";
     setCourseMapping(response?.data?.course_mapping);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    findForms();
+    if(!formId){
+      findForms();
+    } else {
+      setFormStage(2);
+    //  isFieldsValid();
+    }
+   
+  };
+
+  const isFieldsValid = () => {
+    //console.log("----------")
+    if (
+      formData.title ===  "" ||
+      formData.assignee === "" || 
+      formData.course_type ===  ""  || 
+      formData.course_mapping ===  ""  || 
+      formData.labels ===  ""  || 
+      formData.course_level ===  ""  || 
+      formData.round_no ===  "" || 
+      formData.application_type ===  ""  || 
+      formData.form_desc ===  "" || 
+      formData.last_submission_date ===  "" 
+    ) {
+      return true;
+    } else return false;
   };
 
   const findForms = async () => {
@@ -249,8 +286,23 @@ const CreateForm = () => {
     }
   };
 
+  const handleOutsideDateClick = (e) => {
+    if (calendarRef.current && !calendarRef.current.contains(e.target)) {
+      setShowCalendar(false)
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideDateClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideDateClick);
+    };
+  });
+
   useEffect(() => {
    console.log(lastDateToApply)
+   lastDateToApply ?  setButtonText(formatDate(lastDateToApply))
+   : setButtonText("Last Date For Submission")
   }, [lastDateToApply]);
 
 
@@ -351,7 +403,7 @@ const CreateForm = () => {
             </div>
 
             {formStage === 1 && (
-              <form onSubmit={handleSubmit}>
+              <form>
                 <div className="flex flex-col bg-white rounded-[4px] p-8 gap-8">
                   <div className="flex">
                     <h1 className="text-xl font-semibold">Add attributes</h1>
@@ -386,7 +438,7 @@ const CreateForm = () => {
                           )}
                         </div>
                       </div>
-                      <div className="sm:col-span-3">
+                      <div className="sm:col-span-3"   ref={calendarRef}>
                         <Label
                           required
                           text="Last Date for Submission"
@@ -624,19 +676,18 @@ const CreateForm = () => {
                     </div>
                   </div>
                   <div className="flex justify-end">
-                    <button
-                      className={`${Object.values(formData).length < 8
-                          ? "bg-gray-400 text-gray-700 cursor-not-allowed"
-                          : "px-6 text-white bg-primary-900 border"
-                        } border w-[140px] h-[40px] font-medium rounded-[4px] `}
-                      style={{ backgroundColor: "" }}
-                      type="submit"
-                      disabled={
+                    <Button
+                       moreClass="border text-white w-[120px]"
+                       text="Next"
+                    /*   disabled={
                         Object.values(formData).length < 10 ? true : false
-                      }
+                      } */
+                      otherProps={{
+                        disabled : isFieldsValid(),
+                      }}
+                      onClick={handleSubmit}
                     >
-                      Next
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </form>
