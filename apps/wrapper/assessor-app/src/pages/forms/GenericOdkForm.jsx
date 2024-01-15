@@ -243,10 +243,10 @@ const GenericOdkForm = (props) => {
     try {
       const { nextForm, formDataXml, onSuccessData, onFailureData } = data;
       // if (data?.state === "ON_FORM_SUCCESS_COMPLETED") {
-        if (!previewFlag) {
+        // if (!previewFlag) {
           // await getDataFromLocal();
           // handleRenderPreview();
-        } else {
+        // } else {
           // For read-only forms, it will disable the Submit...
           if (date) {
             setErrorModal(true);
@@ -287,7 +287,7 @@ const GenericOdkForm = (props) => {
               () => navigate(`${ROUTE_MAP.thank_you}${formName}`),
               1000
             );
-          }
+          // }
         }
       // }
 
