@@ -245,10 +245,6 @@ function uploadQueue() {
                     .then( () => {
                         successes.push( record.name );
                         uploadProgress.update( record.instanceId, 'success', '', successes.length + fails.length, records.length );
-                        window.parent.postMessage(JSON.stringify({
-                            formData: record,
-                            message: 'assessor-form-submitted'
-                        }), '*');
                         return store.record.remove( record.instanceId )
                             .then( () => store.property.addSubmittedInstanceId( record ) );
                     })
@@ -269,6 +265,10 @@ function uploadQueue() {
                                 gui.confirmLogin();
                             } else if ( successes.length > 0 ) {
                             // let gui send a feedback message
+                            window.parent.postMessage(JSON.stringify({
+                                formData: record,
+                                message: 'assessor-form-submitted'
+                            }), '*');
                                 document.dispatchEvent( events.QueueSubmissionSuccess( successes ) );
                             }
                             // update the list by properly removing obsolete records, reactivating button(s)
