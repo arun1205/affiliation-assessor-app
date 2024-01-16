@@ -478,11 +478,37 @@ function _saveRecord(survey, draft = true, recordName, confirmed, errorMsg) {
 
     return fileManager.getCurrentFiles()
         .then(files => {
-            // const formModel = form.model.data.modelStr;
-            // build the record object
+            let formStr = form.getDataStr(include);
+            let modelStr = form.model.data.modelStr;
+            // No input in institue code or 0 input
+            if (formStr.includes('<R1_count/>')) {
+                const strToAdd = modelStr.slice(modelStr.lastIndexOf("<R1_count/>") + 11, modelStr.lastIndexOf("</R1>") + 5)
+                formStr = formStr.replace("<R1_count/>", `<R1_count/>${strToAdd}`);
+            } else {
+                let xmlDoc;
+                let parser;
+            
+                if (window.DOMParser) {
+                    parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(form.getDataStr(include), "text/xml");
+                }
+                else // Internet Explorer
+                {
+                    xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+                    xmlDoc.async = false;
+                    xmlDoc.loadXML(form.getDataStr(include));
+                }
+            
+                let repeatCount = xmlDoc.getElementsByTagName("R1_count")[0].childNodes[0].nodeValue;
+            
+                if (repeatCount == 0 || repeatCount == "") {
+                    const strToAdd = modelStr.slice(modelStr.lastIndexOf("<R1_count/>") + 11, modelStr.lastIndexOf("</R1>") + 5)
+                    formStr = formStr.replace("</R1_count>", `</R1_count>${strToAdd}`);
+                } 
+            }
             const record = {
                 'draft': draft,
-                'xml': form.getDataStr(include),
+                'xml': formStr,
                 'name': recordName,
                 'instanceId': form.instanceID,
                 'deprecateId': form.deprecatedID,
