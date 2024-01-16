@@ -248,7 +248,7 @@ const GenericOdkForm = (props) => {
             setErrorModal(true);
             return;
           }
-          console.log("formDataXML =>", formDataXml);
+          console.log("formDataXML =>", data);
           // const updatedFormData = await updateFormData(formSpec.start, data?.formDataXml, data?.fileURLs);
           // const storedData = await getSpecificDataFromForage("required_data");
 
@@ -346,8 +346,8 @@ const GenericOdkForm = (props) => {
       typeof event.data === "string" &&
       JSON.parse(event.data).state !== "ON_FORM_SUCCESS_COMPLETED"
     ) {
-      var formData = JSON.parse(event.data).formData;
-      if (formData) {
+      var formDataObject = JSON.parse(event.data);
+      if (formDataObject.formData) {
         let images = JSON.parse(event.data).fileURLs;
         let prevData = await getFromLocalForage(
           `${startingForm}_${new Date().toISOString().split("T")[0]}`
@@ -357,7 +357,7 @@ const GenericOdkForm = (props) => {
             new Date().toISOString().split("T")[0]
           }`,
           {
-            formData: JSON.parse(event.data).formData.xml,
+            formData: formDataObject.formData.xml,
             imageUrls: { ...prevData?.imageUrls, ...images },
           }
         );
