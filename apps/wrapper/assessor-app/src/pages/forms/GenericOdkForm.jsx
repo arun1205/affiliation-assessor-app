@@ -5,6 +5,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 import ROUTE_MAP from "../../routing/routeMap";
 import { StateContext } from "../../App";
+import XMLParser from "react-xml-parser";
 
 import {
   getStatusOfForms,
@@ -18,7 +19,6 @@ import {
 import {
   getCookie,
   getFormData,
-  handleFormEvents,
   updateFormData,
   removeItemFromLocalForage,
   getSpecificDataFromForage,
@@ -126,6 +126,34 @@ const GenericOdkForm = (props) => {
     );
 
     setEncodedFormURI(formURI);
+  };
+
+  const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
+    const user = getCookie("userData");
+    if (
+      ((ENKETO_URL === `${e?.origin}/enketo`) || (ENKETO_URL === `${e?.origin}/enketo/`)) &&
+      // e.origin === ENKETO_URL &&
+      typeof e?.data === "string" &&
+      JSON.parse(e?.data)?.state !== "ON_FORM_SUCCESS_COMPLETED"
+    ) {
+      var formData = new XMLParser().parseFromString(JSON.parse(e?.data)?.formData);
+      if (formData) {
+        let images = JSON.parse(e?.data)?.fileURLs;
+        let prevData = await getFromLocalForage(
+          `${startingForm}_${new Date().toISOString().split("T")[0]}`
+        );
+        await setToLocalForage(
+          `${user?.userRepresentation?.id}_${startingForm}_${
+            new Date().toISOString().split("T")[0]
+          }`,
+          {
+            formData: JSON.parse(e?.data)?.formData,
+            imageUrls: { ...prevData?.imageUrls, ...images },
+          }
+        );
+      }
+    }
+    afterFormSubmit(e);
   };
 
   useEffect(() => {
