@@ -242,11 +242,7 @@ const GenericOdkForm = (props) => {
     const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
     try {
       const { nextForm, formDataXml, onSuccessData, onFailureData } = data;
-      // if (data?.state === "ON_FORM_SUCCESS_COMPLETED") {
-        // if (!previewFlag) {
-          // await getDataFromLocal();
-          // handleRenderPreview();
-        // } else {
+      if (data?.state === "ON_FORM_SUCCESS_COMPLETED") {
           // For read-only forms, it will disable the Submit...
           if (date) {
             setErrorModal(true);
@@ -267,10 +263,7 @@ const GenericOdkForm = (props) => {
             course_id: courseObj["course_id"],
             submitted_on: new Date().toJSON().slice(0, 10),
             schedule_id: storedData?.schedule_id,
-          }
-
-          
-          
+          } 
           const res = await updateFormSubmissions(requestData);
           if (res?.data?.update_form_submissions) {
             updateSubmissionForms(courseObj["course_id"]);
@@ -287,10 +280,8 @@ const GenericOdkForm = (props) => {
               () => navigate(`${ROUTE_MAP.thank_you}${formName}`),
               1000
             );
-          // }
         }
-      // }
-
+      }
       if (nextForm?.type === "form") {
         setFormId(nextForm.id);
         setOnFormSuccessData(onSuccessData);
@@ -327,8 +318,7 @@ const GenericOdkForm = (props) => {
     const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
     console.log("data ==>",data.message);
     if(data !== undefined && data.message === 'assessor-form-submitted') {
-      console.log("Hieeeee");
-      // afterFormSubmit(e);
+      handleFormEvents(startingForm, afterFormSubmit, e);
       return;
     }
     else {
@@ -337,7 +327,6 @@ const GenericOdkForm = (props) => {
   }
 
   const handleEventTrigger = async (e) => {
-    handleFormEvents(startingForm, afterFormSubmit, e);
     handleFormLoadEvents(e);
     handleSubmissionEvents(e);
   };
