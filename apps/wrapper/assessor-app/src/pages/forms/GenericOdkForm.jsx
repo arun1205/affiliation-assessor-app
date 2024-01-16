@@ -248,39 +248,40 @@ const GenericOdkForm = (props) => {
             setErrorModal(true);
             return;
           }
-          const updatedFormData = await updateFormData(formSpec.start, data?.formDataXml, data?.fileURLs);
-          const storedData = await getSpecificDataFromForage("required_data");
+          console.log("formDataXML =>", formDataXml);
+          // const updatedFormData = await updateFormData(formSpec.start, data?.formDataXml, data?.fileURLs);
+          // const storedData = await getSpecificDataFromForage("required_data");
 
-          const requestData = {
-            form_id: storedData?.applicant_form_id,
-            form_data: updatedFormData,
-            form_name: formSpec.start,
-            submission_status: saveFlag === "draft" ? false : true,
-            form_status: saveFlag === "draft" ? "" : "In Progress",
-            assessor_id: storedData?.assessor_user_id,
-            applicant_id: storedData?.institute_id,
-            applicant_form_id: courseObj["applicant_form_id"],
-            course_id: courseObj["course_id"],
-            submitted_on: new Date().toJSON().slice(0, 10),
-            schedule_id: storedData?.schedule_id,
-          } 
-          const res = await updateFormSubmissions(requestData);
-          if (res?.data?.update_form_submissions) {
-            updateSubmissionForms(courseObj["course_id"]);
+          // const requestData = {
+          //   form_id: storedData?.applicant_form_id,
+          //   form_data: updatedFormData,
+          //   form_name: formSpec.start,
+          //   submission_status: saveFlag === "draft" ? false : true,
+          //   form_status: saveFlag === "draft" ? "" : "In Progress",
+          //   assessor_id: storedData?.assessor_user_id,
+          //   applicant_id: storedData?.institute_id,
+          //   applicant_form_id: courseObj["applicant_form_id"],
+          //   course_id: courseObj["course_id"],
+          //   submitted_on: new Date().toJSON().slice(0, 10),
+          //   schedule_id: storedData?.schedule_id,
+          // } 
+          // const res = await updateFormSubmissions(requestData);
+          // if (res?.data?.update_form_submissions) {
+          //   updateSubmissionForms(courseObj["course_id"]);
 
-            // Delete the data from the Local Forage
-            const key = `${storedData?.assessor_user_id}_${formSpec.start}_${
-              new Date().toISOString().split("T")[0]
-            }`;
-            removeItemFromLocalForage(key);
+          //   // Delete the data from the Local Forage
+          //   const key = `${storedData?.assessor_user_id}_${formSpec.start}_${
+          //     new Date().toISOString().split("T")[0]
+          //   }`;
+          //   removeItemFromLocalForage(key);
 
-            setPreviewModal(false);
-            previewFlag = false;
-            setTimeout(
-              () => navigate(`${ROUTE_MAP.thank_you}${formName}`),
-              1000
-            );
-        }
+          //   setPreviewModal(false);
+          //   previewFlag = false;
+          //   setTimeout(
+          //     () => navigate(`${ROUTE_MAP.thank_you}${formName}`),
+          //     1000
+          //   );
+        // }
       }
       if (nextForm?.type === "form") {
         setFormId(nextForm.id);
