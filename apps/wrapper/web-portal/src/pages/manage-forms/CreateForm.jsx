@@ -438,7 +438,9 @@ const CreateForm = () => {
                           )}
                         </div>
                       </div>
-                      <div className="sm:col-span-3"   ref={calendarRef}>
+                      <div 
+
+                      className="sm:col-span-3"   ref={calendarRef}>
                         <Label
                           required
                           text="Last Date for Submission"
@@ -449,6 +451,10 @@ const CreateForm = () => {
                             <button type="button"
                               className="h-[45px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 px-8"
                               onClick={() => setShowCalendar(true)}
+                              disabled={
+                                formStatus == "Published" ||
+                                formStatus == "Unpublished"
+                              }
                             >
                               {buttonText.includes("Last Date For Submission") ? buttonText : readableDate(buttonText)}
                             </button>
