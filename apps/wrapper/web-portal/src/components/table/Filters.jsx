@@ -832,14 +832,21 @@ export const DashboardFilters = ({
           name="status"
           id="status"
           label="Status"
-          value={state.status}
+          value={state.value}
           onChange={(value) => handleChange("status", value)}
           className="bg-gray-50"
         >
           {/* <Option value="">--Select Status--</Option> */}
           <Option value="Approved">Approved</Option>
           <Option value="Rejected">Rejected</Option>
-          <Option value="InProgress">In-progress</Option>
+          <Option value="In Progress">In Progress</Option>
+          <Option value="OGA Completed">OGA Completed</Option>
+          <Option value="DA Completed">DA Completed</Option>
+          <Option value="Inspection Scheduled">Inspection Scheduled</Option>
+          <Option value="Inspection Delayed">Inspection Delayed</Option>
+          <Option value="Application Submitted">Application Submitted</Option>
+          <Option value="Resubmitted">Resubmitted</Option>
+          <Option value="Returned">Returned</Option>
         </Select>
       </div>
       <div>
