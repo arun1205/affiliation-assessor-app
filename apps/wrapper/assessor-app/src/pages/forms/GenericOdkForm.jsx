@@ -327,7 +327,8 @@ const GenericOdkForm = (props) => {
     const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
     console.log("data ==>",data.message);
     if(data !== undefined && data.message === 'assessor-form-submitted') {
-      afterFormSubmit(e);
+      console.log("Hieeeee");
+      // afterFormSubmit(e);
       return;
     }
     else {
