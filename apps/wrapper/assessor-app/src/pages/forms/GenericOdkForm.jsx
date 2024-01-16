@@ -130,15 +130,16 @@ const GenericOdkForm = (props) => {
 
   const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
     const user = getCookie("userData");
+    const event = e;
     if (
-      ((ENKETO_URL === `${e?.origin}/enketo`) || (ENKETO_URL === `${e?.origin}/enketo/`)) &&
+      ((ENKETO_URL === `${event.origin}/enketo`) || (ENKETO_URL === `${event.origin}/enketo/`)) &&
       // e.origin === ENKETO_URL &&
-      typeof e?.data === "string" &&
-      JSON.parse(e?.data)?.state !== "ON_FORM_SUCCESS_COMPLETED"
+      typeof event.data === "string" &&
+      JSON.parse(event.data).state !== "ON_FORM_SUCCESS_COMPLETED"
     ) {
-      var formData = new XMLParser().parseFromString(JSON.parse(e?.data)?.formData);
+      var formData = new XMLParser().parseFromString(JSON.parse(event.data).formData);
       if (formData) {
-        let images = JSON.parse(e?.data)?.fileURLs;
+        let images = JSON.parse(event.data).fileURLs;
         let prevData = await getFromLocalForage(
           `${startingForm}_${new Date().toISOString().split("T")[0]}`
         );
@@ -147,13 +148,13 @@ const GenericOdkForm = (props) => {
             new Date().toISOString().split("T")[0]
           }`,
           {
-            formData: JSON.parse(e?.data)?.formData,
+            formData: JSON.parse(event.data).formData.xml,
             imageUrls: { ...prevData?.imageUrls, ...images },
           }
         );
       }
     }
-    afterFormSubmit(e);
+    afterFormSubmit(event);
   };
 
   useEffect(() => {
