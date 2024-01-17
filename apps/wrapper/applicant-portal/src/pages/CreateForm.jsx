@@ -489,7 +489,8 @@ const CreateForm = (props) => {
   const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
     const eventFormData =
       typeof e.data === "string" ? JSON.parse(e.data) : e.data;
-   // console.log(eventFormData);
+
+    //console.log("event =>", e);
     // if(applicantStatus === 'draft' && (eventFormData?.formData !== undefined && eventFormData?.formData?.instance !== "formLoad")) {
     //   let fileGCPPath =
     //   process.env.REACT_APP_GCP_AFFILIATION_LINK + formName + ".xml";
@@ -662,12 +663,20 @@ const CreateForm = (props) => {
         for (var i = 0; i < section?.length; i++) {
           var inputElements = section[i].querySelectorAll("input");
           var buttonElements = section[i].querySelectorAll("button");
-
+  
           buttonElements.forEach((button) => {
             button.disabled = true;
           });
           inputElements.forEach((input) => {
             input.disabled = true;
+            console.log("formId =>", formId);
+            // intially da/admin/assessor fields are hidden for applicant
+          //   if(formId !== undefined) {
+          //   if(input.name.toLowerCase().includes('admin') || input.name.toLowerCase().includes('desktop') || input.name.toLowerCase().includes('assessor')) {
+          //     input.previousSibling.style.display = 'none';
+          //     input.style.display = 'none';
+          //   }
+          // }
           });
         }
       }
