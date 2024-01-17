@@ -14,6 +14,9 @@ import { logout } from "../../utils/index.js";
 import { useEffect } from "react";
 import { Tooltip } from "@material-tailwind/react";
 import ButtonLoader from "../ButtonLoader";
+import {
+  base64ToPdf,
+} from "../../api";
 
 const CommonLayout = (props) => {
   const navigate = useNavigate();
@@ -22,13 +25,21 @@ const CommonLayout = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [online, setOnline] = useState(true);
   const onlineInterval = useRef();
+  const [error, setError] = useState("");
 
   const handleFormDownload = async () => {
     try {
-      // setIsLoading(true);
+       setIsLoading(true);
       console.log("props.formUrl - ", props.formUrl);
-
-      // var strWindowFeatures = "fullscreen=1,channelmode=1,status=1,resizable=1";
+        const res = await base64ToPdf(props.formUrl);
+        const linkSource = `data:application/pdf;base64,${res.data}`;
+        const downloadLink = document.createElement("a");
+        downloadLink.href = linkSource;
+        downloadLink.download =  `inspection_form_assessor_version_${new Date().toISOString().split('T')[0].split("-").reverse().join("-")}.pdf`;
+        downloadLink.target = window.safari ? "" : "_blank";
+        downloadLink.click();
+      
+   /*    // var strWindowFeatures = "fullscreen=1,channelmode=1,status=1,resizable=1";
       var win = window.open(props.formUrl, "_blank");
 
       // const MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
@@ -36,9 +47,13 @@ const CommonLayout = (props) => {
       setTimeout(() => {
         win.print();
         win.close();
-      }, 2000);
+      }, 2000); */
+
     } catch (error) {
       console.log(error);
+      setError("Failed to download pdf version of the form.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
