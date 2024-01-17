@@ -890,7 +890,7 @@ const CreateForm = (props) => {
                       : "border border-blue-900 bg-blue-900 text-white rounded-[4px] px-2 h-[44px]"
                   }`}
                 >
-                  Download NOC/Certificate......
+                  Download NOC / Certificate
                 </button>
               </>
             )}
