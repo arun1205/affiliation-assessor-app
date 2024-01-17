@@ -348,7 +348,7 @@ const GenericOdkForm = (props) => {
     ) {
       var formDataObject = JSON.parse(event.data);
       if (formDataObject.formData) {
-        let images = JSON.parse(event.data).fileURLs;
+        let images = formDataObject.formData.files;
         let prevData = await getFromLocalForage(
           `${startingForm}_${new Date().toISOString().split("T")[0]}`
         );
