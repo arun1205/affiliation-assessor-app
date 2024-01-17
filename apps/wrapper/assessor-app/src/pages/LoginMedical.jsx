@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ROUTE_MAP from "../routing/routeMap";
 
@@ -25,6 +25,14 @@ const LoginMedical = ({ handleStepChangeForLogin }) => {
   const handleLogin = async () => {
     if (!username || !password) {
       setError("Either username or password is missing");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+      return;
+    }
+
+    if(!isEmail(username)){
+      setError("Please enter valid email address");
       setTimeout(() => {
         setError("");
       }, 3000);
@@ -82,6 +90,11 @@ const LoginMedical = ({ handleStepChangeForLogin }) => {
 
 
   };
+
+
+  const isEmail = (value) => {
+  return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)
+  }
 
   return (
     <CommonLayout
