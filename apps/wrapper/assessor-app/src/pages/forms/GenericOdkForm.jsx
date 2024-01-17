@@ -5,6 +5,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 import ROUTE_MAP from "../../routing/routeMap";
 import { StateContext } from "../../App";
+import XMLParser from "react-xml-parser";
 
 import {
   getStatusOfForms,
@@ -18,7 +19,6 @@ import {
 import {
   getCookie,
   getFormData,
-  handleFormEvents,
   updateFormData,
   removeItemFromLocalForage,
   getSpecificDataFromForage,
@@ -130,7 +130,8 @@ const GenericOdkForm = (props) => {
 
   useEffect(() => {
     setTimeout(async () => {
-      await updateFormDataInEnketoIndexedDB();
+      if(surveyUrl !== "") {
+      await updateFormDataInEnketoIndexedDB();}
     }, 6000);
   },[surveyUrl])
 
@@ -239,20 +240,16 @@ const GenericOdkForm = (props) => {
 
   async function afterFormSubmit(e, saveFlag) {
     const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
-
     try {
       const { nextForm, formDataXml, onSuccessData, onFailureData } = data;
-      if (data?.state === "ON_FORM_SUCCESS_COMPLETED") {
-        if (!previewFlag) {
-          await getDataFromLocal();
-          handleRenderPreview();
-        } else {
+      // if (data?.state === "ON_FORM_SUCCESS_COMPLETED") {
           // For read-only forms, it will disable the Submit...
           if (date) {
             setErrorModal(true);
             return;
           }
-          const updatedFormData = await updateFormData(formSpec.start, data?.formDataXml, data?.fileURLs);
+          console.log("formDataXML =>", data);
+          const updatedFormData = await updateFormData(formSpec.start, data?.formData.xml, data?.formData.files.fileURLs);
           const storedData = await getSpecificDataFromForage("required_data");
 
           const requestData = {
@@ -267,10 +264,7 @@ const GenericOdkForm = (props) => {
             course_id: courseObj["course_id"],
             submitted_on: new Date().toJSON().slice(0, 10),
             schedule_id: storedData?.schedule_id,
-          }
-
-          
-          
+          } 
           const res = await updateFormSubmissions(requestData);
           if (res?.data?.update_form_submissions) {
             updateSubmissionForms(courseObj["course_id"]);
@@ -287,10 +281,8 @@ const GenericOdkForm = (props) => {
               () => navigate(`${ROUTE_MAP.thank_you}${formName}`),
               1000
             );
-          }
         }
-      }
-
+      // }
       if (nextForm?.type === "form") {
         setFormId(nextForm.id);
         setOnFormSuccessData(onSuccessData);
@@ -323,13 +315,55 @@ const GenericOdkForm = (props) => {
     }
   }
 
+  const handleSubmissionEvents = (e) => {
+    const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+    console.log("data ==>",data.message);
+    if(data !== undefined && data.message === 'assessor-form-submitted') {
+      handleFormEvents(startingForm, afterFormSubmit, e);
+      return;
+    }
+    else {
+      console.log("form not submitted");
+    }
+  }
+
   const handleEventTrigger = async (e) => {
-    handleFormEvents(startingForm, afterFormSubmit, e);
     handleFormLoadEvents(e);
+    handleSubmissionEvents(e);
   };
 
   const bindEventListener = () => {
     window.addEventListener("message", handleEventTrigger);
+  };
+
+  
+  const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
+    const user = getCookie("userData");
+    const event = e;
+    if (
+      ((ENKETO_URL === `${event.origin}/enketo`) || (ENKETO_URL === `${event.origin}/enketo/`)) &&
+      // e.origin === ENKETO_URL &&
+      typeof event.data === "string" &&
+      JSON.parse(event.data).state !== "ON_FORM_SUCCESS_COMPLETED"
+    ) {
+      var formDataObject = JSON.parse(event.data);
+      if (formDataObject.formData) {
+        let images = formDataObject.formData.files;
+        let prevData = await getFromLocalForage(
+          `${startingForm}_${new Date().toISOString().split("T")[0]}`
+        );
+        await setToLocalForage(
+          `${user?.userRepresentation?.id}_${startingForm}_${
+            new Date().toISOString().split("T")[0]
+          }`,
+          {
+            formData: formDataObject.formData.xml,
+            imageUrls: { ...prevData?.imageUrls, ...images },
+          }
+        );
+      }
+    }
+    afterFormSubmit(event);
   };
 
   const detachEventBinding = () => {
