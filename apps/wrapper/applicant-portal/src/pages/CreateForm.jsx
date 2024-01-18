@@ -632,15 +632,8 @@ const CreateForm = (props) => {
           inputElements.forEach((input) => {
             input.disabled = true;
             console.log("formId =>", formId);
-            // intially da/admin/assessor fields are hidden for applicant
-          //   if(formId !== undefined) {
-          //   if(input.name.toLowerCase().includes('admin') || input.name.toLowerCase().includes('desktop') || input.name.toLowerCase().includes('assessor')) {
-          //     input.previousSibling.style.display = 'none';
-          //     input.style.display = 'none';
-          //   }
-          // }
           });
-        }
+        }        
       }
       if (applicantStatus && applicantStatus?.toLowerCase() === "returned") {
         var formSection = iframeContent?.getElementsByClassName("or-group");
@@ -706,64 +699,15 @@ const CreateForm = (props) => {
               input.disabled = true;
             }
           }
-          // else {
-          //   if (
-          //     input?.type !== "radio" &&
-          //     (input?.name?.toLowerCase().includes("desktop")) &&
-          //     input?.value !== undefined
-          //   ) {
-          //     const parentNode = input?.parentNode;
-          //     if (parentNode) {
-          //       const siblings = parentNode?.previousSibling;
-          //       for (let k = 0; k < siblings.children.length; k++) {
-          //         if (siblings.children[k].type === "text") {
-          //           siblings.children[k].disabled = false;
-          //         }
-          //       }
-          //     }
-          //   }
-          // }
           });
         }
-
-        // for (var j = 0; j < formSection?.length; j++) {
-         
-
-          // selectElements1.forEach((select) => {
-          //   select.disabled = true;
-          //   if (
-          //     select?.type !== "radio" &&
-          //     (select?.name?.toLowerCase().includes("admin") ||
-          //       select?.name?.toLowerCase().includes("desktop")) &&
-          //     select?.value !== undefined
-          //   ) {
-          //     console.log("Input has value", select?.value);
-          //     const parentNode = select?.parentNode;
-          //     if (parentNode) {
-          //       const siblings = parentNode?.previousSibling;
-          //       console.log("siblings", siblings);
-          //     }
-          //   }
-          // });
-
-          // buttonElements1.forEach((button) => {
-          //   button.disabled = true;
-          //   if (
-          //     button?.type !== "radio" &&
-          //     (button?.name?.toLowerCase().includes("admin") ||
-          //       button?.name?.toLowerCase().includes("desktop")) &&
-          //     button?.value !== undefined
-          //   ) {
-          //     console.log("Input has value", button?.value);
-          //     const parentNode = button?.parentNode;
-          //     if (parentNode) {
-          //       const siblings = parentNode?.previousSibling;
-          //       console.log("siblings", siblings);
-          //     }
-          //   }
-          // });
-          /* partial logic to test disabling fields */
-        // }
+        // optionElement styling 
+        var optionElements = iframeContent.getElementsByClassName('option-label');
+        if (!optionElements) return;
+        for(var k = 0; k < optionElements.length; k++ ) {
+          optionElements[k].style.color = '#333333';
+        } 
+      
       }
 
       // Need to work on Save draft...

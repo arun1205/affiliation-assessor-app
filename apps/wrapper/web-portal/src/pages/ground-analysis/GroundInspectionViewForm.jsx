@@ -443,6 +443,12 @@ export default function ApplicationPage({
       if(ogaRevertedCount > 2 || formStatus.toLowerCase() === "resubmitted"){
         iframeContent.getElementById("submit-form").style.display = "none";
       }
+
+      var optionElements = iframeContent.getElementsByClassName('option-label');
+      if (!optionElements) return;
+      for(var k = 0; k < optionElements.length; k++ ) {
+        optionElements[k].style.color = '#333333';
+      } 
     }
     setSpinner(false);
   };

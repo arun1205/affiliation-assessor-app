@@ -410,6 +410,12 @@ const GenericOdkForm = (props) => {
     draftButton?.addEventListener("click", function () {
       //alert("Hello world!");
     });
+
+    var optionElements = iframeContent.getElementsByClassName('option-label');
+    if (!optionElements) return;
+    for(var k = 0; k < optionElements.length; k++ ) {
+      optionElements[k].style.color = '#333333';
+    }
   };
 
   const handleRenderPreview = () => {
