@@ -127,7 +127,7 @@ export default function ApplicationPage({
     } catch (error) {
       console.log(error);
     } finally {
-      // setSpinner(false);
+      setSpinner(false);
     }
   };
 
@@ -403,7 +403,6 @@ export default function ApplicationPage({
   // };
 
   const checkIframeLoaded = () => {
-    console.log(formDataFromApi.reverted_count)
     if (window.location.host.includes("regulator.upsmfac")) {
       const iframeElem = document?.getElementById("enketo_DA_preview");
       var iframeContent =
