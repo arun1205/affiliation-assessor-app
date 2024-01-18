@@ -8,6 +8,8 @@ import Button from "../components/Button";
 import { login, isUserActive } from "../api";
 import { setCookie } from "../utils";
 
+
+
 const LoginMedical = ({ handleStepChangeForLogin }) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
@@ -27,6 +29,13 @@ const LoginMedical = ({ handleStepChangeForLogin }) => {
       setError("Either username or password is missing");
       setTimeout(() => {
         setError("");
+      }, 3000);
+      return;
+    }
+    if(username && password && !username.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i)) {
+      setError("Enter a valid email ID");
+      setTimeout(() => {
+        setError("")
       }, 3000);
       return;
     }
