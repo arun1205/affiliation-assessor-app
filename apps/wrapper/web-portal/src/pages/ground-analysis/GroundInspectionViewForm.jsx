@@ -45,7 +45,7 @@ export default function ApplicationPage({
   closeCertificateModal,
 }) {
   const reportTemplateRef = useRef(null);
-  const startingForm = formSpec.start;
+  
   const [formStatus, setFormStatus] = useState("");
   const [formDataFromApi, setFormDataFromApi] = useState();
   const [rejectModel, setRejectModel] = useState(false);
@@ -93,6 +93,7 @@ export default function ApplicationPage({
     },
   };
   const [encodedFormURI, setEncodedFormURI] = useState(JSON.stringify(formSpec.formId));
+  const startingForm = formSpec.start;
 
   const setIframeFormURI = async (formDataObj) => {
     console.log("formDataObj------",formDataObj)
