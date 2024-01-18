@@ -44,25 +44,6 @@ export default function ApplicationPage({
   closeStatusModal,
   closeCertificateModal,
 }) {
-  const formSpec = {
-    skipOnSuccessMessage: true,
-    prefill: {},
-    submissionURL: "",
-    name: formName,
-    successCheck: "async (formData) => { return true; }",
-    onSuccess: {
-      notificationMessage: "Form submitted successfully",
-      sideEffect: "async (formData) => { console.log(formData); }",
-    },
-    onFailure: {
-      message: "Form submission failed",
-      sideEffect: "async (formData) => { console.log(formData); }",
-      next: {
-        type: "url",
-        id: "google",
-      },
-    },
-  };
   const reportTemplateRef = useRef(null);
   const startingForm = formSpec.start;
   const [formStatus, setFormStatus] = useState("");
@@ -72,7 +53,6 @@ export default function ApplicationPage({
   const [openModel, setOpenModel] = useState(false);
   const [openStatusModel, setOpenStatusModel] = useState(false);
   const [openIssueNocModel, setOpenIssueNocModel] = useState(false);
-  const [encodedFormURI, setEncodedFormURI] = useState(JSON.stringify(formSpec.formId));
   let { formName, formId, instituteName, round, date } = useParams();
   let [instituteId, setInstituteId] = useState();
   let [selectRound, setSelectRound] = useState(round);
@@ -93,7 +73,26 @@ export default function ApplicationPage({
   const user_details = userDetails?.userRepresentation;
 
   const userId = "427d473d-d8ea-4bb3-b317-f230f1c9b2f7";
- 
+  const formSpec = {
+    skipOnSuccessMessage: true,
+    prefill: {},
+    submissionURL: "",
+    name: formName,
+    successCheck: "async (formData) => { return true; }",
+    onSuccess: {
+      notificationMessage: "Form submitted successfully",
+      sideEffect: "async (formData) => { console.log(formData); }",
+    },
+    onFailure: {
+      message: "Form submission failed",
+      sideEffect: "async (formData) => { console.log(formData); }",
+      next: {
+        type: "url",
+        id: "google",
+      },
+    },
+  };
+  const [encodedFormURI, setEncodedFormURI] = useState(JSON.stringify(formSpec.formId));
 
   const setIframeFormURI = async (formDataObj) => {
     console.log("formDataObj------",formDataObj)
@@ -104,6 +103,7 @@ export default function ApplicationPage({
       formDataObj?.form_data,
       formDataObj?.imageUrls
     );
+
     
    // ogaRevertedCount = formDataFromApi?.oga_reverted_count;
     console.log("oga_reverted_count******************",ogaRevertedCount)
