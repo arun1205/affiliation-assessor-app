@@ -326,7 +326,7 @@ export default function ApplicationPage({
     }
   };
 
-  const handleFormEvents = async (afterFormSubmit, e) => {
+  const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
     if(typeof e.data === 'string' && e.data.includes('formLoad')) {
       setFormLoaded(true);
       return;
