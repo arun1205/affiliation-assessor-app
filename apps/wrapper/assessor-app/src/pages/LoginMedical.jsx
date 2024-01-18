@@ -32,13 +32,6 @@ const LoginMedical = ({ handleStepChangeForLogin }) => {
       }, 3000);
       return;
     }
-    if(username && password && !username.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i)) {
-      setError("Enter a valid email ID");
-      setTimeout(() => {
-        setError("")
-      }, 3000);
-      return;
-    }
 
     if(!isEmail(username)){
       setError("Please enter valid email address");
