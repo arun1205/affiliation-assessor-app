@@ -509,6 +509,11 @@ export default function DesktopAnalysisView() {
       if(formDataFromApi?.form_status?.toLowerCase() === "resubmitted" && formDataFromApi?.reverted_count >= 2){
         iframeContent.getElementById("submit-form").style.display = "none";
       }
+      var optionElements = iframeContent.getElementsByClassName('option-label');
+      if (!optionElements) return;
+      for(var k = 0; k < optionElements.length; k++ ) {
+        optionElements[k].style.color = '#333333';
+      } 
     }
     setSpinner(false);
   };

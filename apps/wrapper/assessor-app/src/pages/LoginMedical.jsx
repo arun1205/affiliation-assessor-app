@@ -8,6 +8,8 @@ import Button from "../components/Button";
 import { login, isUserActive } from "../api";
 import { setCookie } from "../utils";
 
+
+
 const LoginMedical = ({ handleStepChangeForLogin }) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");

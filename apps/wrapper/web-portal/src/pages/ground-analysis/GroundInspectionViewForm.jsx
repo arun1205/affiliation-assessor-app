@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { AiOutlineClose, AiOutlineCheck } from "react-icons/ai";
 import { FaAngleRight,FaFileDownload  } from "react-icons/fa";
 import { Card, Button } from "./../../components";
+import XMLParser from "react-xml-parser";
 
 import StatusLogModal from "./StatusLogModal";
 import IssueNocModal from "./IssueNocModal.jsx";
@@ -24,6 +25,10 @@ import {
   base64ToPdf,
   sendEmailNotification
 } from "../../api";
+import {
+  getFromLocalForage,
+  setToLocalForage,
+} from "../../forms";
 import { getPrefillXML } from "./../../api/formApi";
 import { ContextAPI } from "../../utils/ContextAPI";
 import { getCookie, getLocalTimeInISOFormat } from "../../utils";
@@ -39,7 +44,27 @@ export default function ApplicationPage({
   closeStatusModal,
   closeCertificateModal,
 }) {
+  const formSpec = {
+    skipOnSuccessMessage: true,
+    prefill: {},
+    submissionURL: "",
+    name: formName,
+    successCheck: "async (formData) => { return true; }",
+    onSuccess: {
+      notificationMessage: "Form submitted successfully",
+      sideEffect: "async (formData) => { console.log(formData); }",
+    },
+    onFailure: {
+      message: "Form submission failed",
+      sideEffect: "async (formData) => { console.log(formData); }",
+      next: {
+        type: "url",
+        id: "google",
+      },
+    },
+  };
   const reportTemplateRef = useRef(null);
+  const startingForm = formSpec.start;
   const [formStatus, setFormStatus] = useState("");
   const [formDataFromApi, setFormDataFromApi] = useState();
   const [rejectModel, setRejectModel] = useState(false);
@@ -47,7 +72,7 @@ export default function ApplicationPage({
   const [openModel, setOpenModel] = useState(false);
   const [openStatusModel, setOpenStatusModel] = useState(false);
   const [openIssueNocModel, setOpenIssueNocModel] = useState(false);
-  const [encodedFormURI, setEncodedFormURI] = useState("");
+  const [encodedFormURI, setEncodedFormURI] = useState(JSON.stringify(formSpec.formId));
   let { formName, formId, instituteName, round, date } = useParams();
   let [instituteId, setInstituteId] = useState();
   let [selectRound, setSelectRound] = useState(round);
@@ -68,25 +93,7 @@ export default function ApplicationPage({
   const user_details = userDetails?.userRepresentation;
 
   const userId = "427d473d-d8ea-4bb3-b317-f230f1c9b2f7";
-  const formSpec = {
-    skipOnSuccessMessage: true,
-    prefill: {},
-    submissionURL: "",
-    name: formName,
-    successCheck: "async (formData) => { return true; }",
-    onSuccess: {
-      notificationMessage: "Form submitted successfully",
-      sideEffect: "async (formData) => { console.log(formData); }",
-    },
-    onFailure: {
-      message: "Form submission failed",
-      sideEffect: "async (formData) => { console.log(formData); }",
-      next: {
-        type: "url",
-        id: "google",
-      },
-    },
-  };
+ 
 
   const setIframeFormURI = async (formDataObj) => {
     console.log("formDataObj------",formDataObj)
@@ -323,50 +330,126 @@ export default function ApplicationPage({
       setFormLoaded(true);
       return;
     }
+    if (
+      ENKETO_URL === e.origin + "/enketo" &&
+      typeof e?.data === "string" &&
+      JSON.parse(e?.data)?.state !== "ON_FORM_SUCCESS_COMPLETED" &&
+      !isFormSubmittedForConfiirmation
+    ) {
+      var formData = new XMLParser().parseFromString(
+        JSON.parse(e.data).formData
+      );
+      if (formData) {
+        let images = JSON.parse(e.data).fileURLs;
+        let prevData = await getFromLocalForage(
+          `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`
+        );
+
+        await setToLocalForage(
+          `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
+          {
+            formData: JSON.parse(e.data).formData,
+            // imageUrls: { ...prevData?.imageUrls, ...images },
+          }
+        );
+      }
+    }
     afterFormSubmit(e);
   }
 
   const handleEventTrigger = async (e) => {
-    handleFormEvents(afterFormSubmit, e);
+    handleFormEvents(startingForm, afterFormSubmit, e);
   };
 
   const bindEventListener = () => {
     window.addEventListener("message", handleEventTrigger);
   };
 
+  // const checkIframeLoaded = () => {
+  //   if (!window.location.host.includes("localhost")) {
+  //     const iframeElem = document.getElementById("enketo_OGA_preview");
+  //     var iframeContent =
+  //       iframeElem?.contentDocument || iframeElem?.contentWindow.document;
+  //     if (!iframeContent) return;
+
+  //     var section = iframeContent?.getElementsByClassName("or-group");
+  //     if (!section) return;
+  //     for (var i = 0; i < section?.length; i++) {
+  //       var inputElements = section[i].querySelectorAll("input");
+  //       var buttonElements = section[i].querySelectorAll("button");
+  //       buttonElements.forEach((button) => {
+  //         button.disabled = true;
+  //       })
+  //       inputElements.forEach((input) => {
+  //         input.disabled = true;
+  //       });
+  //     }
+
+  //     //iframeContent.getElementById("submit-form").style.display = "none";
+  //     const submitFormbuttonElement = iframeContent.getElementById('submit-form');
+  //     //setSubmitButton(submitFormbuttonElement)
+  //     //enketoFormSubmitButton = submitFormbuttonElement;
+  //     const spanElement = submitFormbuttonElement?.children[1];
+  //     spanElement.textContent = 'Return to applicant';
+
+  //     if(ogaRevertedCount > 2 || formStatus.toLowerCase() === "returned"){
+  //       submitFormbuttonElement.style.display = "none";
+  //     }
+  //     iframeContent.getElementById("save-draft").style.display = "none";
+  //   }
+
+  //   setSpinner(false);
+  // };
+
   const checkIframeLoaded = () => {
-    if (!window.location.host.includes("localhost")) {
-      const iframeElem = document.getElementById("enketo_OGA_preview");
+    console.log(formDataFromApi.reverted_count)
+    if (window.location.host.includes("regulator.upsmfac")) {
+      const iframeElem = document?.getElementById("enketo_DA_preview");
       var iframeContent =
         iframeElem?.contentDocument || iframeElem?.contentWindow.document;
-      if (!iframeContent) return;
-
-      var section = iframeContent?.getElementsByClassName("or-group");
-      if (!section) return;
-      for (var i = 0; i < section?.length; i++) {
-        var inputElements = section[i].querySelectorAll("input");
-        var buttonElements = section[i].querySelectorAll("button");
-        buttonElements.forEach((button) => {
-          button.disabled = true;
-        })
-        inputElements.forEach((input) => {
-          input.disabled = true;
-        });
+      if (
+        formDataFromApi &&
+        formDataFromApi?.form_status?.toLowerCase() !==
+          "application submitted" &&
+        formDataFromApi?.form_status?.toLowerCase() !== "resubmitted"
+      ) {
+        var section = iframeContent?.getElementsByClassName("or-group");
+        if (!section) return;
+        for (var i = 0; i < section?.length; i++) {
+          var inputElements = section[i].querySelectorAll("input");
+          var buttonElements = section[i].querySelectorAll("button");
+          
+          buttonElements.forEach((button) => {
+            button.disabled = true;
+          });
+          inputElements.forEach((input) => {
+            input.disabled = true;
+          });
+          /* partial logic to test disabling fields */
+        }
+        iframeContent.getElementById("submit-form").style.display = "none";
       }
+      // manipulate span element text content
+      const buttonElement = iframeContent.getElementById('submit-form');
+       const spanElement = buttonElement?.children[1];
+       spanElement.textContent = 'Return to applicant';
 
-      //iframeContent.getElementById("submit-form").style.display = "none";
-      const submitFormbuttonElement = iframeContent.getElementById('submit-form');
-      //setSubmitButton(submitFormbuttonElement)
-      //enketoFormSubmitButton = submitFormbuttonElement;
-      const spanElement = submitFormbuttonElement?.children[1];
-      spanElement.textContent = 'Return to applicant';
-
-      if(ogaRevertedCount > 2 || formStatus.toLowerCase() === "returned"){
-        submitFormbuttonElement.style.display = "none";
-      }
+      // Need to work on Save draft...
       iframeContent.getElementById("save-draft").style.display = "none";
-    }
+      // var draftButton = iframeContent.getElementById("save-draft");
+      // draftButton?.addEventListener("click", function () {
+      //   alert("Hello world!");
+      // });
+      if(ogaRevertedCount > 2 || formStatus.toLowerCase() === "resubmitted"){
+        iframeContent.getElementById("submit-form").style.display = "none";
+      }
 
+      var optionElements = iframeContent.getElementsByClassName('option-label');
+      if (!optionElements) return;
+      for(var k = 0; k < optionElements.length; k++ ) {
+        optionElements[k].style.color = '#333333';
+      } 
+    }
     setSpinner(false);
   };
 
