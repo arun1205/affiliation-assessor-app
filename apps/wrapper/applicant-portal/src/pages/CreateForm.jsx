@@ -442,17 +442,55 @@ const CreateForm = (props) => {
   };
 
   const handleDownloadNocOrCertificate = () => {
+    //console.log(formDataNoc)
+    let url = "";
     if (formDataNoc.round == 1) {
-      window.open(formDataNoc?.noc_Path, "_blank");
+     // window.open(formDataNoc?.noc_Path, "_blank");
+      url = formDataNoc?.noc_Path
     } else {
-      window.open(formDataNoc?.certificate_Path, "_blank");
+    //  window.open(formDataNoc?.certificate_Path, "_blank");
+    url = formDataNoc?.certificate_Path
     }
+    const filename = formDataNoc?.certificate_fileName || formDataNoc?.noc_fileName;
+ 
+    fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const blobURL = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobURL;
+        a.style.display = "none";
+ 
+        if (filename && filename.length !== 0) {
+          a.download = filename;
+        }
+        document.body.appendChild(a);
+        a.click();
+        setToast((prevState) => ({
+          ...prevState,
+          toastOpen: true,
+          toastMsg:
+            "NOC / Certificate downloaded successfully.",
+          toastType: "success",
+        }));
+      })
+      .catch((error) => {
+        console.error(error);
+        setToast((prevState) => ({
+          ...prevState,
+          toastOpen: true,
+          toastMsg:
+            "Failed to download NOC / Certificate. Please try again later.",
+          toastType: "error",
+        }));
+      });
   };
 
   const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
     const eventFormData =
       typeof e.data === "string" ? JSON.parse(e.data) : e.data;
-    console.log("event =>", e);
+
+    //console.log("event =>", e);
     // if(applicantStatus === 'draft' && (eventFormData?.formData !== undefined && eventFormData?.formData?.instance !== "formLoad")) {
     //   let fileGCPPath =
     //   process.env.REACT_APP_GCP_AFFILIATION_LINK + formName + ".xml";
@@ -805,7 +843,7 @@ const CreateForm = (props) => {
                       : "border border-blue-900 bg-blue-900 text-white rounded-[4px] px-2 h-[44px]"
                   }`}
                 >
-                  Download NOC/Certificate
+                  Download NOC / Certificate
                 </button>
               </>
             )}

@@ -590,8 +590,9 @@ const GenericOdkForm = (props) => {
     <>
     <CommonLayout
       {...props.commonLayoutProps}
-      formUrl={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
-      formPreview={true}
+     // formUrl={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
+     formUrl = {surveyUrl} 
+     formPreview={true}
       setIsPreview={setIsPreview}
     >
       {!isPreview && (
