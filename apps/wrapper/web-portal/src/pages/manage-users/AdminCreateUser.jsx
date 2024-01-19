@@ -362,7 +362,7 @@ export default function AdminCreateUser() {
           emailBody: `${emailBody.BODY.part1}${userDetails.firstname} ${userDetails.lastname}${emailBody.BODY.part2}${userDetails.email}${emailBody.BODY.part3}${userDetails.phonenumber}${emailBody.BODY.part4}`
         };
       }
-      sendEmailNotification(emailData)
+      // sendEmailNotification(emailData)
     }
   }
   const fetchUserRoleNames = async (userDetails) => {
