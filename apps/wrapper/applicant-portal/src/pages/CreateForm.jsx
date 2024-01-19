@@ -669,7 +669,7 @@ const CreateForm = (props) => {
           });
           inputElements.forEach((input) => {
             input.disabled = true;
-            if(formId === undefined) {
+            if(formId == "undefined") {
             if(input?.name?.toLowerCase().includes('admin') || input?.name?.toLowerCase().includes('desktop') || input?.name?.toLowerCase().includes('assessor')) {
               input.previousSibling.style.display = 'none';
               input.style.display = 'none';

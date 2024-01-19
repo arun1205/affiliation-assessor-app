@@ -370,6 +370,7 @@ const CreateForm = () => {
                 
                   otherProps={{
                     disabled: Object.values(formData).length !== 12,
+                    hidden: formStage <= 1,
                     style: {
                       display:
                         formStatus === "Published" ||
