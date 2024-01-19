@@ -747,25 +747,25 @@ const CreateForm = (props) => {
       
       }
       // disabling input fields in fresh form
-      if(formId === undefined) {
-        var section1 = iframeContent?.getElementsByClassName("or-group");
-        for (let j = 0; j < section1?.length; j++) {
-          const inputElements1 = section1[j].querySelectorAll("input");
+      // if(formId === undefined) {
+      //   var section1 = iframeContent?.getElementsByClassName("or-group");
+      //   for (let j = 0; j < section1?.length; j++) {
+      //     const inputElements1 = section1[j].querySelectorAll("input");
         
-        inputElements1.forEach((input) => {
-          if(input?.name?.toLowerCase().includes('desktop')) {
-            input.previousSibling.style.display = 'none';
-            input.style.display = 'none';
+      //   inputElements1.forEach((input) => {
+      //     if(input?.name?.toLowerCase().includes('desktop')) {
+      //       input.previousSibling.style.display = 'none';
+      //       input.style.display = 'none';
   
-          }
-          if(input?.type === 'radio' && (input?.name?.toLowerCase().includes('desktop'))) {
-            const parentNode = input?.parentNode?.parentNode;
-            parentNode.style.display = 'none';
-            parentNode.previousSibling.style.display = 'none';
-          }
-        })
-      }
-      }
+      //     }
+      //     if(input?.type === 'radio' && (input?.name?.toLowerCase().includes('desktop'))) {
+      //       const parentNode = input?.parentNode?.parentNode;
+      //       parentNode.style.display = 'none';
+      //       parentNode.previousSibling.style.display = 'none';
+      //     }
+      //   })
+      // }
+      // }
 
       // Need to work on Save draft...
       // iframeContent.getElementById("save-draft").style.display = "none";
