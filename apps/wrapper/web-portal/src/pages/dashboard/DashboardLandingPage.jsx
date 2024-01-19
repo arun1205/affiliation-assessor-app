@@ -237,14 +237,18 @@ const DashboardLandingPage = (props) => {
 
   const downloadReport = async () => {
     if (paginationInfo.totalCount > 0) {
+
+      const payload = {
+        ...pageFilters,
+        "round": {
+          "_eq": round
+        }
+      };
+     
       const postData = {
         offsetNo: 0,
         limit: paginationInfo.totalCount,
-        param: {
-          "round": {
-            "_eq": round
-          }
-        },
+        param: payload
       };
       try {
         setSpinner(true);
