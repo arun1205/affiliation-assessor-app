@@ -147,7 +147,7 @@ export default function ManageRolesList({
           emailSubject: `${emailBody.SUBJECT}`,
           emailBody: `${emailBody.BODY.part1}${userDetails.name}${emailBody.BODY.part2}`
         };
-        sendEmailNotification(emailData)
+        // sendEmailNotification(emailData)
      
     }
   }

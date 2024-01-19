@@ -281,7 +281,7 @@ function ScheduleInspectionModal({ closeSchedule, otherInfo }) {
       <br/>3. Once on-ground assessment team prove their identity, they should be allowed to enter the institute and given full cooperation to carry out the on-ground assessment.</p><p style='color: #555555; font-size: 18px; line-height: 1.6; font-family: 'Mulish', Arial, sans-serif;'>If you have any questions or need further clarification regarding the resubmission process, please do not hesitate to reach out to our support executives at <Contact Details>. We are here to assist you and provide any necessary guidance.</p><p style='color: #555555; font-size: 18px; line-height: 1.6; font-family: 'Mulish', Arial, sans-serif;'>Thank you for your time and continued interest in getting affiliated from our organization.</p></td></tr></table></body></html>`,
         };
 
-        sendEmailNotification(emailData);
+        // sendEmailNotification(emailData);
       }
 
       setTimeout(
