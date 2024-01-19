@@ -668,19 +668,7 @@ const CreateForm = (props) => {
             button.disabled = true;
           });
           inputElements.forEach((input) => {
-            input.disabled = true;
-            if(formId == "undefined") {
-            if(input?.name?.toLowerCase().includes('admin') || input?.name?.toLowerCase().includes('desktop') || input?.name?.toLowerCase().includes('assessor')) {
-              input.previousSibling.style.display = 'none';
-              input.style.display = 'none';
-
-            }
-            if(input?.type === 'radio' && (input?.name?.toLowerCase().includes('admin') || input?.name?.toLowerCase().includes('desktop') || input?.name?.toLowerCase().includes('assessor'))) {
-              const parentNode = input?.parentNode?.parentNode;
-              parentNode.style.display = 'none';
-              parentNode.previousSibling.style.display = 'none';
-            }  
-            }
+            input.disabled = true;  
           });
         }        
       }
@@ -757,6 +745,26 @@ const CreateForm = (props) => {
           optionElements[k].style.color = '#333333';
         } 
       
+      }
+      // disabling input fields in fresh form
+      if(formId === undefined) {
+        var section1 = iframeContent?.getElementsByClassName("or-group");
+        for (const j = 0; j < section1?.length; i++) {
+          const inputElements1 = section[j].querySelectorAll("input");
+        
+        inputElements1.forEach((input) => {
+          if(input?.name?.toLowerCase().includes('admin') || input?.name?.toLowerCase().includes('desktop') || input?.name?.toLowerCase().includes('assessor')) {
+            input.previousSibling.style.display = 'none';
+            input.style.display = 'none';
+  
+          }
+          if(input?.type === 'radio' && (input?.name?.toLowerCase().includes('admin') || input?.name?.toLowerCase().includes('desktop') || input?.name?.toLowerCase().includes('assessor'))) {
+            const parentNode = input?.parentNode?.parentNode;
+            parentNode.style.display = 'none';
+            parentNode.previousSibling.style.display = 'none';
+          }
+        })
+      }
       }
 
       // Need to work on Save draft...
