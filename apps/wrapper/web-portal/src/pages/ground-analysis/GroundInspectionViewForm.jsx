@@ -404,7 +404,7 @@ export default function ApplicationPage({
 
   const checkIframeLoaded = () => {
     if (window.location.host.includes("regulator.upsmfac")) {
-      const iframeElem = document?.getElementById("enketo_DA_preview");
+      const iframeElem = document?.getElementById("enketo_OGA_preview");
       var iframeContent =
         iframeElem?.contentDocument || iframeElem?.contentWindow.document;
       if (
