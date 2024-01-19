@@ -458,7 +458,7 @@ function _confirmRecordName(recordName, errorMsg) {
  * @param {string} [errorMsg]
  */
 function _saveRecord(survey, draft = true, recordName, confirmed, errorMsg) {
-    const include = { irrelevant: draft };
+    const include = { irrelevant: true };
 
     // triggering "before-save" event to update possible "timeEnd" meta data in form
     form.view.html.dispatchEvent(events.BeforeSave());
