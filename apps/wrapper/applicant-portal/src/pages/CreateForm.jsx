@@ -749,8 +749,8 @@ const CreateForm = (props) => {
       // disabling input fields in fresh form
       if(formId === undefined) {
         var section1 = iframeContent?.getElementsByClassName("or-group");
-        for (const j = 0; j < section1?.length; i++) {
-          const inputElements1 = section[j].querySelectorAll("input");
+        for (let j = 0; j < section1?.length; j++) {
+          const inputElements1 = section1[j].querySelectorAll("input");
         
         inputElements1.forEach((input) => {
           if(input?.name?.toLowerCase().includes('admin') || input?.name?.toLowerCase().includes('desktop') || input?.name?.toLowerCase().includes('assessor')) {
