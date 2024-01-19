@@ -673,7 +673,13 @@ const CreateForm = (props) => {
             if(input?.name?.toLowerCase().includes('admin') || input?.name?.toLowerCase().includes('desktop') || input?.name?.toLowerCase().includes('assessor')) {
               input.previousSibling.style.display = 'none';
               input.style.display = 'none';
+
             }
+            if(input?.type === 'radio' && (input?.name?.toLowerCase().includes('admin') || input?.name?.toLowerCase().includes('desktop') || input?.name?.toLowerCase().includes('assessor'))) {
+              const parentNode = input?.parentNode?.parentNode;
+              parentNode.style.display = 'none';
+              parentNode.previousSibling.style.display = 'none';
+            }  
             }
           });
         }        
