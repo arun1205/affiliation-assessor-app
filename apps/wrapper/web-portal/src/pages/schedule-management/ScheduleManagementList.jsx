@@ -221,7 +221,7 @@ const ScheduleManagementList = () => {
             )} is cancelled. We will keep you posted for the upcoming inspections.
           </p></td></tr></table></body></html>`,
         };
-        sendEmailNotification(emailData);
+        // sendEmailNotification(emailData);
 
         fetchAllAssessmentSchedule();
       }

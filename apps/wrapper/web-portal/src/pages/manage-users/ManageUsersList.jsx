@@ -402,14 +402,14 @@ export default function ManageUsersList({
           emailSubject: `${emailBody.SUBJECT}`,
           emailBody:  `${emailBody.BODY.part1}${userDetails.name}${emailBody.BODY.part2}`
         };
-        sendEmailNotification(emailData)
+        // sendEmailNotification(emailData)
       } else {
         const emailData = {
           recipientEmail: [`${userDetails.email}`],
           emailSubject: `${emailBody.SUBJECT}`,
           emailBody:  `${emailBody.BODY.part1}${userDetails.full_name}${emailBody.BODY.part2}`
         };
-        sendEmailNotification(emailData)
+        // sendEmailNotification(emailData)
       }
     }
   }

@@ -47,7 +47,7 @@ export default function PaymentResult() {
     }
 
     //email notify
-    await sendEmailNotification();
+    // await sendEmailNotification();
   };
 
   const sendEmailNotification= async () =>{
@@ -89,7 +89,7 @@ export default function PaymentResult() {
       if (params.get("resp") && formDATA.paymentStage === "firstStage") {
   
         try {
-        await sendEmailNotification();
+        // await sendEmailNotification();
         navigate(
           `${APPLICANT_ROUTE_MAP.dashboardModule.createForm}/${formDATA?.common_payload.form_name
           }/${undefined}/${undefined}/${formDATA?.paymentStage}`

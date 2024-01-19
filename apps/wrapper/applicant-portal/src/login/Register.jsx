@@ -121,14 +121,14 @@ export default function SelfRegistration() {
           });
   
           //email notify
-          const emailBody = messages.ACCOUNT_CREATED_OTP_BASED_LOGIN_MAIL;
-          const emailData = {
-            recipientEmail: [`${userDetails.request.email}`],
-            emailSubject: `${emailBody.SUBJECT}`,
-            emailBody: `${emailBody.BODY.part1}${userDetails.request.firstName} ${userDetails.request.lastName}${emailBody.BODY.part2}${userDetails.request.email}${emailBody.BODY.part3}${userDetails.request.credentials[0].value}${emailBody.BODY.part4}`
-          };
+          // const emailBody = messages.ACCOUNT_CREATED_OTP_BASED_LOGIN_MAIL;
+          // const emailData = {
+          //   recipientEmail: [`${userDetails.request.email}`],
+          //   emailSubject: `${emailBody.SUBJECT}`,
+          //   emailBody: `${emailBody.BODY.part1}${userDetails.request.firstName} ${userDetails.request.lastName}${emailBody.BODY.part2}${userDetails.request.email}${emailBody.BODY.part3}${userDetails.request.credentials[0].value}${emailBody.BODY.part4}`
+          // };
   
-          applicantService.sendEmailNotification(emailData);
+          // applicantService.sendEmailNotification(emailData);
   
           navigate(APPLICANT_ROUTE_MAP.dashboardModule.congratulations);
         } catch (error) {
