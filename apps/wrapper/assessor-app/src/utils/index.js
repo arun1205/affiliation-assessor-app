@@ -98,7 +98,39 @@ export const logout = () => {
   window.location = "/web/login";
   removeCookie("userData");
   serviceWorkerRegistration.unregister();
+  let db;
+      const DBOpenRequest = window.indexedDB.open("enketo", 3);
+      DBOpenRequest.onsuccess = (event) => {
+        db = DBOpenRequest.result;
+      
+        // Clear all the data from the object store
+        clearData(db);
 };
+}
+
+const clearData = (db) => {
+  // open a read/write db transaction, ready for clearing the data
+  const transaction = db?.transaction(["records"], "readwrite");
+  const enketodata = db?.transaction(["data"], "readwrite");
+
+  // report on the success of the transaction completing, when everything is done
+  // create an object store on the transaction
+  const objectStore = transaction.objectStore("records");
+  const objectStore2 = enketodata.objectStore("data");
+
+  // Make a request to clear all the data out of the object store
+  const objectStoreRequest = objectStore.clear();
+  const objectStoreRequest2 = objectStore2.clear();
+
+  objectStoreRequest.onsuccess = (event) => {
+    // report the success of our request
+    console.log("cleared entry - store (records)");
+  };
+  objectStoreRequest2.onsuccess = (event) => {
+    // report the success of our request
+    console.log("cleared entry - store 2 (data)");
+  };
+}
 
 export const removeCookie = (cname) => {
   try {
