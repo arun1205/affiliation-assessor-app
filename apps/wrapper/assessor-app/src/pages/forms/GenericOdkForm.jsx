@@ -408,8 +408,35 @@ const GenericOdkForm = (props) => {
     }
     var draftButton = iframeContent.getElementById("save-draft");
     draftButton?.addEventListener("click", function () {
+      let db;
+      const DBOpenRequest = window.indexedDB.open("enketo", 3);
+      DBOpenRequest.onsuccess = (event) => {
+        db = DBOpenRequest.result;
+      
+        // Clear all the data from the object store
+        clearData(db);
+      };
+
       //alert("Hello world!");
+
     });
+
+    const clearData = (db) => {
+      // open a read/write db transaction, ready for clearing the data
+      const transaction = db?.transaction(["records"], "readwrite");
+    
+      // report on the success of the transaction completing, when everything is done
+      // create an object store on the transaction
+      const objectStore = transaction.objectStore("records");
+    
+      // Make a request to clear all the data out of the object store
+      const objectStoreRequest = objectStore.clear();
+    
+      objectStoreRequest.onsuccess = (event) => {
+        // report the success of our request
+        console.log("cleared entry");
+      };
+    }
 
     var optionElements = iframeContent.getElementsByClassName('option-label');
     if (!optionElements) return;
