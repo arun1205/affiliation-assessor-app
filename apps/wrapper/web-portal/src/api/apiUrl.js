@@ -110,7 +110,8 @@ const API_URL = {
   USER: {
     ACTIVATE: "activate",
     DEACTIVATE: "deactivate",
-    CHECKVALID: "emaildetails"
+    CHECKVALID: "emaildetails",
+    CREATE_BULK: "keycloak/pushBulkUserBG",
   },
   LOGIN: {
     GENERATE_OTP: "keycloak/otp",

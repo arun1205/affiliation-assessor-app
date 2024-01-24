@@ -408,8 +408,8 @@ export const uploadAssessmentSchedule = async (postData) => {
 
 // Bulk create users keycloak
 export const createBulkUsersKeyCloak = async (postData) => {
-  const res = await axios.post(
-    `${BASE_URL_KEYCLOAK}${API_URL.SIGNUP.CREATE_USER}`,
+  return await axios.post(
+    `${BASE_URL_KEYCLOAK}${API_URL.USER.CREATE_BULK}`,
     postData,
     {
       headers: {
@@ -419,7 +419,6 @@ export const createBulkUsersKeyCloak = async (postData) => {
       },
     }
   );
-  return res;
 };
 
 export const checkIsEmailExist = async (postData) => {
