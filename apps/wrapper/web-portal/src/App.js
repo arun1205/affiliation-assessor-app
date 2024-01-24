@@ -90,6 +90,8 @@ function App() {
 
 setTimeout(() => {
   console.log("checking conn")
+  console.log("REACT_APP_WEB_PORTAL_USER_SERVICE_URL-->", process.env.REACT_APP_WEB_PORTAL_USER_SERVICE_URL )
+
   if(!isOnline){
     setToast((prevState) => ({
       ...prevState,

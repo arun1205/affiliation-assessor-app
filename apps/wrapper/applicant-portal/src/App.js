@@ -52,6 +52,7 @@ function App() {
 
   useEffect(() => {
     getPermissionForToken();
+    console.log("REACT_APP_WEB_PORTAL_USER_SERVICE_URL-->", process.env.REACT_APP_WEB_PORTAL_USER_SERVICE_URL )
   }, []);
 
   useEffect(() => {
