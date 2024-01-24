@@ -46,6 +46,8 @@ const ApplicantLogin = () => {
 
   const isUserActive = async (data) => {
     //setSpinner(true);
+    console.log("REACT_APP_WEB_PORTAL_USER_SERVICE_URL-->", process.env.REACT_APP_WEB_PORTAL_USER_SERVICE_URL )
+
     try {
       const res = await userService.isUserActive(data);
       if (res?.data[0]?.enabled && res?.data[0]?.attributes.Role[0] === "Institute") {
