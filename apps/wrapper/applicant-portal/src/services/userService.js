@@ -3,8 +3,7 @@ import { APIS } from "../constants";
 import { getCookie } from "../utils";
 
 const BASE_URL =
-  process.env.REACT_APP_WEB_PORTAL_USER_SERVICE_URL ||
-  "https://uphrh.in/api/api/v1/user/";
+  process.env.REACT_APP_WEB_PORTAL_USER_SERVICE_URL
 
 const TOKEN_BASE_URL =
   process.env.REACT_APP_TOKEN_URL || "https://odk.upsmfac.org/auth/";
