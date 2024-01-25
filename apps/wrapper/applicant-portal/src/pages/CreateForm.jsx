@@ -753,18 +753,18 @@ const CreateForm = (props) => {
           const inputElements1 = section1[j].querySelectorAll("input");
         
         inputElements1.forEach((input) => {
-          if(!(input?.name?.toLowerCase().includes('applicant'))) {
-            // const previousSibling = input.previousSibling;
-            // if(previousSibling) {
-            // input.previousSibling.style.display = 'none';
-            // }
+          if(!(input?.name?.toLowerCase().includes('applicant')) && input.type !== 'radio') {
             input.style.display = 'none';
+            const previousSibling = input.previousSibling;
+            if(previousSibling) {
+            input.previousSibling.style.display = 'none';
+            }
           }
-          if(input?.type === 'radio' && (!(input?.name?.toLowerCase().includes('applicant')))) {
-            const parentNode = input?.parentNode?.parentNode;
-            parentNode.style.display = 'none';
-            parentNode.previousSibling.style.display = 'none';
-          }
+          // else if(input?.type === 'radio' && (!(input?.name?.toLowerCase().includes('applicant')))) {
+          //   const parentNode = input?.parentNode?.parentNode;
+          //   parentNode.style.display = 'none';
+          //   parentNode.previousSibling.style.display = 'none';
+          // }
         })
       }
       }
