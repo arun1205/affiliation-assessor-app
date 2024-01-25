@@ -384,7 +384,7 @@ export default function ApplicationPage({
         inputElements.forEach((input) => {
           input.disabled = true;
           // enable admin remark fields
-          if(input?.name.toLowerCase.includes('admin')) {
+          if(input?.name.toLowerCase().includes('admin')) {
             input.disabled = false;
           }
         });
