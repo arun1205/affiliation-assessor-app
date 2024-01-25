@@ -3,9 +3,15 @@ import { APIS } from "../constants";
 import { getCookie } from "../utils";
 
 const BASE_URL =
-  process.env.REACT_APP_WEB_PORTAL_USER_SERVICE_URL ||
-  "https://uat.upsmfac.org/api/api/v1/user/";
+  process.env.REACT_APP_WEB_PORTAL_USER_SERVICE_URL
 
+  console.log("BASE_URL---->",BASE_URL)
+  try {
+    console.log(BASE_URL)
+    console.log("BASE_URL---->",BASE_URL)
+  } catch (error) {
+    console.log(error)
+  }
 const TOKEN_BASE_URL =
   process.env.REACT_APP_TOKEN_URL || "https://odk.upsmfac.org/auth/";
 
