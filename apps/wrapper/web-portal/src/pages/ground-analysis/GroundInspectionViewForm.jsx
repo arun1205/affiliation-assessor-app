@@ -366,6 +366,46 @@ export default function ApplicationPage({
     window.addEventListener("message", handleEventTrigger);
   };
 
+  const checkIframeLoaded = () => {
+    if (!window.location.host.includes("localhost")) {
+      const iframeElem = document.getElementById("enketo_OGA_preview");
+      var iframeContent =
+        iframeElem?.contentDocument || iframeElem?.contentWindow.document;
+      if (!iframeContent) return;
+
+      var section = iframeContent?.getElementsByClassName("or-group");
+      if (!section) return;
+      for (var i = 0; i < section?.length; i++) {
+        var inputElements = section[i].querySelectorAll("input");
+        var buttonElements = section[i].querySelectorAll("button");
+        buttonElements.forEach((button) => {
+          button.disabled = true;
+        })
+        inputElements.forEach((input) => {
+          input.disabled = true;
+          // enable admin remark fields
+          if(input?.name.toLowerCase().includes('admin')) {
+            input.disabled = false;
+          }
+        });
+      }
+
+      //iframeContent.getElementById("submit-form").style.display = "none";
+      const submitFormbuttonElement = iframeContent.getElementById('submit-form');
+      //setSubmitButton(submitFormbuttonElement)
+      //enketoFormSubmitButton = submitFormbuttonElement;
+      const spanElement = submitFormbuttonElement?.children[1];
+      spanElement.textContent = 'Return to applicant';
+
+      if(ogaRevertedCount > 2 || formStatus.toLowerCase() === "resubmitted"){
+        submitFormbuttonElement.style.display = "none";
+      }
+      iframeContent.getElementById("save-draft").style.display = "none";
+    }
+
+    setSpinner(false);
+  };
+
   // const checkIframeLoaded = () => {
   //   if (!window.location.host.includes("localhost")) {
   //     const iframeElem = document.getElementById("enketo_OGA_preview");
@@ -401,57 +441,6 @@ export default function ApplicationPage({
 
   //   setSpinner(false);
   // };
-
-  const checkIframeLoaded = () => {
-    if (window.location.host.includes("regulator.upsmfac")) {
-      const iframeElem = document?.getElementById("enketo_OGA_preview");
-      var iframeContent =
-        iframeElem?.contentDocument || iframeElem?.contentWindow.document;
-      if (
-        formDataFromApi &&
-        formDataFromApi?.form_status?.toLowerCase() !==
-          "application submitted" &&
-        formDataFromApi?.form_status?.toLowerCase() !== "resubmitted"
-      ) {
-        var section = iframeContent?.getElementsByClassName("or-group");
-        if (!section) return;
-        for (var i = 0; i < section?.length; i++) {
-          var inputElements = section[i].querySelectorAll("input");
-          var buttonElements = section[i].querySelectorAll("button");
-          
-          buttonElements.forEach((button) => {
-            button.disabled = true;
-          });
-          inputElements.forEach((input) => {
-            input.disabled = true;
-          });
-          /* partial logic to test disabling fields */
-        }
-        iframeContent.getElementById("submit-form").style.display = "none";
-      }
-      // manipulate span element text content
-      const buttonElement = iframeContent.getElementById('submit-form');
-       const spanElement = buttonElement?.children[1];
-       spanElement.textContent = 'Return to applicant';
-
-      // Need to work on Save draft...
-      iframeContent.getElementById("save-draft").style.display = "none";
-      // var draftButton = iframeContent.getElementById("save-draft");
-      // draftButton?.addEventListener("click", function () {
-      //   alert("Hello world!");
-      // });
-      if(ogaRevertedCount > 2 || formStatus.toLowerCase() === "resubmitted"){
-        iframeContent.getElementById("submit-form").style.display = "none";
-      }
-
-      var optionElements = iframeContent.getElementsByClassName('option-label');
-      if (!optionElements) return;
-      for(var k = 0; k < optionElements.length; k++ ) {
-        optionElements[k].style.color = '#333333';
-      } 
-    }
-    setSpinner(false);
-  };
 
   const getOGAFormsList = async () => {
     const postData = { applicant_form_id: formId, submitted_on: date };
