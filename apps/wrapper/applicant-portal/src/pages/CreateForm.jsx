@@ -747,25 +747,31 @@ const CreateForm = (props) => {
       
       }
       // disabling input fields in fresh form
-      // if(formId === undefined) {
-      //   var section1 = iframeContent?.getElementsByClassName("or-group");
-      //   for (let j = 0; j < section1?.length; j++) {
-      //     const inputElements1 = section1[j].querySelectorAll("input");
+      if(formId === undefined) {
+        var section1 = iframeContent?.getElementsByClassName("or-group");
+        for (let j = 0; j < section1?.length; j++) {
+          const inputElements1 = section1[j].querySelectorAll("input");
         
-      //   inputElements1.forEach((input) => {
-      //     if(input?.name?.toLowerCase().includes('desktop')) {
-      //       input.previousSibling.style.display = 'none';
-      //       input.style.display = 'none';
-  
-      //     }
-      //     if(input?.type === 'radio' && (input?.name?.toLowerCase().includes('desktop'))) {
-      //       const parentNode = input?.parentNode?.parentNode;
-      //       parentNode.style.display = 'none';
-      //       parentNode.previousSibling.style.display = 'none';
-      //     }
-      //   })
-      // }
-      // }
+        inputElements1.forEach((input) => {
+          if(!(input?.name?.toLowerCase().includes('applicant')) && input.type !== 'radio') {
+            input.style.display = 'none';
+            const previousSibling = input.previousSibling;
+            if(previousSibling.tagName !== undefined) {
+            input.previousSibling.style.display = 'none';
+            }
+          }
+          else if(input?.type === 'radio' && (!(input?.name?.toLowerCase().includes('applicant')))) {
+            const parentNode = input?.parentNode?.parentNode;
+            if(parentNode !== undefined) {
+              parentNode.style.display = 'none';
+          }
+          if(parentNode.previousSibling.tagName !== undefined) {
+            parentNode.previousSibling.style.display = 'none';
+        }
+          }
+        })
+      }
+      }
 
       // Need to work on Save draft...
       // iframeContent.getElementById("save-draft").style.display = "none";
