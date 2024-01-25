@@ -111,7 +111,7 @@ const AdminLogin = () => {
       };
 
       const loginRes = await userService.login(loginDetails);
-     // console.log(loginRes);
+      console.log(loginRes);
 
       if (loginRes?.data?.error) {
         setToast((prevState) => ({
@@ -123,14 +123,16 @@ const AdminLogin = () => {
         return;
       }
 
-
+  
 
       const user_details = loginRes?.data?.userRepresentation;
+      setCookie("userData", loginRes?.data);
+      
       const adminDetailsRes = await getRegulator({
         user_id: user_details?.id,
       });
       const role = loginRes?.data?.userRepresentation?.attributes?.Role?.[0];
-      setCookie("userData", loginRes.data);
+     
       setCookie("regulator", adminDetailsRes.data.regulator);
       if (role === "Super-Admin" || role === "Desktop-Admin") {
         navigate(ADMIN_ROUTE_MAP.adminModule.manageUsers.home);
