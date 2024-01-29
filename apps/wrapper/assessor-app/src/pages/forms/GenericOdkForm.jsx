@@ -96,6 +96,7 @@ const GenericOdkForm = (props) => {
   const [previewModal, setPreviewModal] = useState(false);
   const { state } = useContext(StateContext);
   const [formLoaded, setFormLoaded] = useState(false);
+  const [dbInstantitated, setDBInstantiated] = useState(false);
   let courseObj = undefined;
 
   const loading = useRef(false);
@@ -427,10 +428,10 @@ const GenericOdkForm = (props) => {
     
       // report on the success of the transaction completing, when everything is done
       // create an object store on the transaction
-      const objectStore = transaction.objectStore("records");
+      const objectStore = transaction?.objectStore("records");
     
       // Make a request to clear all the data out of the object store
-      const objectStoreRequest = objectStore.clear();
+      const objectStoreRequest = objectStore?.clear();
     
       objectStoreRequest.onsuccess = (event) => {
         // report the success of our request
@@ -494,7 +495,6 @@ const GenericOdkForm = (props) => {
     const req = window.indexedDB.open('enketo', 3);
 
     req.onsuccess = (e) => {
-      console.log("e ==>", e);
       // Create the DB connection
       db = req.result;
 // trial error method
@@ -513,7 +513,7 @@ const GenericOdkForm = (props) => {
         console.log(valueToBeUpdated.xml)
         // Create another request that inserts the item back into the database
         const updateTitleRequest = objectStore.put(valueToBeUpdated);
-
+        
         // Log the transaction that originated this request
         console.log(
           `The transaction that originated this request is ${updateTitleRequest.transaction}`,
@@ -543,6 +543,7 @@ const GenericOdkForm = (props) => {
           var saveReq = store.put(autoSaveObj);
 
           saveReq.onsuccess = function (e) {
+            setDBInstantiated(true);
             console.log("Success", e)
           };
           saveReq.onerror = function (e) {
@@ -584,10 +585,10 @@ const GenericOdkForm = (props) => {
   }, []);
 
   useEffect(() => {
-    if(formLoaded === true) {
+    if(formLoaded === true || dbInstantitated === true) {
       checkIframeLoaded();
     }
-  }, [formLoaded])
+  }, [formLoaded, setDBInstantiated])
 
   // useEffect(() => {
   //   if(surveyUrl !== "") {
