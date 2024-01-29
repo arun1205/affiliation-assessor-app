@@ -487,7 +487,9 @@ const GenericOdkForm = (props) => {
   };
 
   const updateFormDataInEnketoIndexedDB = async () => {
+    // fetch form data only if there is no drafted entry in DB 
     let formDataresp = await fetchFormData();
+    
     let db;
     const splitURL = surveyUrl.split("/");
     const surveyInstance = splitURL[splitURL.length - 1];
@@ -500,8 +502,21 @@ const GenericOdkForm = (props) => {
 // trial error method
       const objectStore = db?.transaction(["records"], "readwrite")
       .objectStore("records");
+      const enketodataStore = db?.transaction(["data"], "readwrite").objectStore("data");
 
+      const enketoDataStoreDataRequest = enketodataStore.getAll();
     const objectStoreTitleRequest = objectStore.getAll();
+
+    enketoDataStoreDataRequest.onSuccess = (e) => {
+      const data = enketoDataStoreDataRequest.result;
+      
+      if(data.length > 0) {
+        console.log("Hieeeee");
+      }
+      else {
+        console.log("no enketo result found");
+      }
+    }
 
     objectStoreTitleRequest.onsuccess = (e) => {
       // Grab the data object returned as the result
@@ -588,7 +603,7 @@ const GenericOdkForm = (props) => {
     if(formLoaded === true || dbInstantitated === true) {
       checkIframeLoaded();
     }
-  }, [formLoaded, setDBInstantiated])
+  }, [formLoaded, dbInstantitated])
 
   // useEffect(() => {
   //   if(surveyUrl !== "") {
