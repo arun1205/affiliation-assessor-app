@@ -52,11 +52,22 @@ function App() {
 
   useEffect(() => {
     getPermissionForToken();
-    console.log("REACT_APP_WEB_PORTAL_USER_SERVICE_URL-->", process.env.REACT_APP_WEB_PORTAL_USER_SERVICE_URL )
+   // console.log("REACT_APP_WEB_PORTAL_USER_SERVICE_URL-->", process.env.REACT_APP_WEB_PORTAL_USER_SERVICE_URL )
+    setInterval(() => {
+      console.log("checking conn",navigator.onLine)
+      if(!navigator.onLine){
+        setToast((prevState) => ({
+          ...prevState,
+          toastOpen: true,
+          toastMsg: "You seem to be offline. Please check your internet connection.",
+          toastType: "error",
+        }));
+      }
+    }, 5000);
   }, []);
 
   useEffect(() => {
-    if (toast) {
+    if (toast?.toastOpen) {
       setTimeout(() => {
         setToast({
           toastOpen: false,
