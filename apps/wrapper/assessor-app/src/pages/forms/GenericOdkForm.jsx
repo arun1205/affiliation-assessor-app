@@ -131,17 +131,21 @@ const GenericOdkForm = (props) => {
   };
 
   useEffect(() => {
-    setTimeout(async () => {
+    // setTimeout(async () => {
+      // if(surveyUrl !== "") {
+      // await updateFormDataInEnketoIndexedDB();}
+    // }, 6000);
+    onlineInterval.current = setInterval(async () => {
       if(surveyUrl !== "") {
-      await updateFormDataInEnketoIndexedDB();}
-    }, 6000);
-    // onlineInterval.current = setInterval(async () => {
-    //   if(surveyUrl !== "" && dbInstantitated === true) {
-    //     await updateFormDataInEnketoIndexedDB();
-    //   }
-    // }, 1000);
-    // return () => clearInterval(onlineInterval.current);
+      await updateFormDataInEnketoIndexedDB();
+      }
+    }, 1000);
+    return () => clearInterval(onlineInterval.current);
   },[surveyUrl])
+
+  useEffect(() => {
+
+  })
 
   /* fetch form data from API */
   const fetchFormData = async () => {
@@ -663,7 +667,7 @@ const GenericOdkForm = (props) => {
         </div>
       )}
 
-      {surveyUrl !=="" && date === undefined && dbInstantitated === true (
+      {(surveyUrl !=="" && date === undefined && dbInstantitated === true) && (
         <>
           <iframe
             id="offline-enketo-form"
