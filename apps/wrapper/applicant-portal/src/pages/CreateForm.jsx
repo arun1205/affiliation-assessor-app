@@ -290,9 +290,28 @@ const CreateForm = (props) => {
   const handleRenderPreview = () => {
     setPreviewModal(true);
     previewFlag = true;
-    // setTimeout(() => {
-      
-    // }, 3000);
+    setTimeout(() => {
+      const iframeElem = document.getElementById("preview-enketo-form");
+      if (window.location.host.includes("localhost")) {
+        return;
+      }
+      let iframeContent =
+        iframeElem?.contentDocument || iframeElem?.contentWindow.document;
+      if (!iframeContent) return;
+      let section = iframeContent?.getElementsByClassName("or-group");
+      if (!section) return;
+      for (var i = 0; i < section?.length; i++) {
+        var inputElements = section[i].querySelectorAll("input");
+        var buttonElements = section[i].querySelectorAll("button");
+        buttonElements.forEach((button) => {
+          button.disabled = true;
+        });
+        inputElements.forEach((input) => {
+          input.disabled = true;
+        });
+      }
+      iframeContent.getElementById("save-draft").style.display = "none";
+    }, 3000);
   };
 
   const handleSubmit = async () => {
@@ -620,29 +639,6 @@ const CreateForm = (props) => {
     }
 
     if (window.location.host.includes("applicant.upsmfac")) {
-      if(previewFlag) {
-        const iframeElem = document.getElementById("preview-enketo-form");
-      if (window.location.host.includes("localhost")) {
-        return;
-      }
-      let iframeContent =
-        iframeElem?.contentDocument || iframeElem?.contentWindow.document;
-      if (!iframeContent) return;
-      let section = iframeContent?.getElementsByClassName("or-group");
-      if (!section) return;
-      for (var i = 0; i < section?.length; i++) {
-        var inputElements = section[i].querySelectorAll("input");
-        var buttonElements = section[i].querySelectorAll("button");
-        buttonElements.forEach((button) => {
-          button.disabled = true;
-        });
-        inputElements.forEach((input) => {
-          input.disabled = true;
-        });
-      }
-      iframeContent.getElementById("save-draft").style.display = "none";
-      }
-      else {
       const iframeElem = document.getElementById("enketo-applicant-form");
       var iframeContent =
         iframeElem?.contentDocument || iframeElem?.contentWindow.document;
@@ -775,7 +771,6 @@ const CreateForm = (props) => {
       // iframeContent.getElementById("save-draft").style.display = "none";
       // var draftButton = iframeContent.getElementById("save-draft");
     }
-  }
   };
 
   useEffect(() => {
@@ -809,7 +804,7 @@ const CreateForm = (props) => {
     if (formLoaded === true) {
       checkIframeLoaded();
     }
-  }, [formLoaded, previewFlag]);
+  }, [formLoaded]);
 
   useEffect(() => {
     console.log(paymentStage);
