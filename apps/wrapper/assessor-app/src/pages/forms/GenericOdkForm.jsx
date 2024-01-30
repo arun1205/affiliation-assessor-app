@@ -143,9 +143,6 @@ const GenericOdkForm = (props) => {
     return () => clearInterval(onlineInterval.current);
   },[surveyUrl])
 
-  useEffect(() => {
-
-  })
 
   /* fetch form data from API */
   const fetchFormData = async () => {
