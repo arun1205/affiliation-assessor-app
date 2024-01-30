@@ -530,6 +530,7 @@ const GenericOdkForm = (props) => {
       const data = objectStoreTitleRequest.result;
       let valueToBeUpdated = data[data.length - 1];
       if (valueToBeUpdated) {
+        console.log("value =>", valueToBeUpdated);
         // console.log(valueToBeUpdated.xml)
         // valueToBeUpdated.xml = formDataresp;
         // console.log(valueToBeUpdated.xml)
