@@ -100,9 +100,17 @@ const CreateForm = () => {
   }
 
   const getCourses = async (postData) => {
-    const response = await getCoursesByTypeAndLevel(postData);
-    formData.course_mapping="";
-    setCourseMapping(response?.data?.course_mapping);
+    try {
+      const response = await getCoursesByTypeAndLevel(postData);
+      formData.course_mapping="";
+      if(response?.data){
+        setCourseMapping(response?.data?.course_mapping);
+      }
+     
+    } catch (error) {
+      console.log(error)
+    }
+   
   };
 
   const handleSubmit = (e) => {
