@@ -481,33 +481,34 @@ function _saveRecord(survey, draft = true, recordName, confirmed, errorMsg) {
             let formStr = form.getDataStr(include);
             let modelStr = form.model.data.modelStr;
 
-            // dynamic changes
+            // // dynamic changes
 
-            let indexValue;
-            let templateElements;
-            let parser = new DOMParser();
-            const docString = parser.parseFromString(form.model.data.modelStr, 'text/xml');
-            let formString1 = form.getDataStr(include);
-            let modelString1 = form.model.data.modelStr;
-            let splitModelStr = modelString1.split("\n");
-            // No input in institue code or 0 input
-            const splitString = formString1.split("\n");
-            for(let i = 0; i < splitString.length;i++) {
-                console.log(splitString[i]);
-                if(splitString[i].includes('count/')) {
-                    indexValue = splitModelStr.findIndex(a => {return a.indexOf("count/") !== -1});
-                    if(splitModelStr[indexValue + 1] && splitModelStr[indexValue + 1].includes('template')) {
-                        let elem = splitModelStr[indexValue]?.trim();
-                        console.log(elem);
-                        let subElem = elem.substring(1, elem.length - 2);
-                        console.log("subElem =>", elem);
-                        let element = docString.getElementsByTagName(subElem);
-                        let templateElem = element[0].nextElementSibling;
-                        templateElements.push(templateElem);
-                    }
-                }
-                console.log("tempElements =>", templateElements);
-            }
+            // let indexValue;
+            // let templateElements;
+            // let parser = new DOMParser();
+            // const docString = parser.parseFromString(form.model.data.modelStr, 'text/xml');
+            // let formString1 = form.getDataStr(include);
+            // let modelString1 = form.model.data.modelStr;
+            // let splitModelStr = modelString1.split("\n");
+            // // No input in institue code or 0 input
+            // const splitString = formString1.split("\n");
+            // for(let i = 0; i < splitString.length;i++) {
+            //     console.log(splitString[i]);
+            //     if(splitString[i].includes('count/')) {
+            //         indexValue = splitModelStr.findIndex(a => {return a.indexOf("count/") !== -1});
+            //         if(splitModelStr[indexValue + 1] && splitModelStr[indexValue + 1].includes('template')) {
+            //             let elem = splitModelStr[indexValue]?.trim();
+            //             console.log(elem);
+            //             let subElem = elem.substring(1, elem.length - 2);
+            //             let partialElem = elem.
+            //             console.log("subElem =>", elem);
+            //             let element = docString.getElementsByTagName(subElem);
+            //             let templateElem = element[0].nextElementSibling;
+                        
+            //         }
+            //     }
+            //     console.log("tempElements =>", templateElements);
+            // }
 
             // No input in institue code or 0 input
             if (formStr.includes('<R1_count/>')) {
