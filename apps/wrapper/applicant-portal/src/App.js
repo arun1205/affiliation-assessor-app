@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import "./App.css";
 
 import APPLICANT_ROUTE_MAP from "./routes/ApplicantRoute";
@@ -76,6 +76,7 @@ function App() {
 
       <BrowserRouter>
         <Routes>
+        {<Route path="/" element={<Navigate to="/auth/login" />} />}
           <Route path={APPLICANT_ROUTE_MAP.auth} element={<Authenticate />}>
             <Route
               path={APPLICANT_ROUTE_MAP.loginModule.login}
