@@ -69,6 +69,7 @@ const API_URL = {
     deleteUser: `${rest}deleteUser`,
     editUser: `${rest}editUser`,
     viewSchedule: `${rest}viewSchedule`,
+    getAllInstitutes:  `${rest}getAllInstitutes`,
   },
   manageRoles: {
     getAll: `${rest}getAllRolesWithPermissions`,

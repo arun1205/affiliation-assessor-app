@@ -18,7 +18,8 @@ import {
   sendEmailNotification,
   fetchAllDeskTopAssessors,
   handleActiveRegulatorUser,
-  handleInctiveRegulatorUser
+  handleInctiveRegulatorUser,
+  fetchAllInstitutes
 } from "../../api";
 
 import { userService } from "../../api/userService";
@@ -656,6 +657,32 @@ export default function ManageUsersList({
     }
   };
 
+  const getAllInstitutes = async () => {
+    const pagination = {
+      offsetNo: paginationInfo.offsetNo,
+      limit: paginationInfo.limit,
+      role: 'Desktop-Assessor'
+    };
+    try {
+      setSpinner(true);
+      const res = await fetchAllInstitutes(pagination);
+      setPaginationInfo((prevState) => ({
+        ...prevState,
+        totalCount: res.data.regulator_aggregate.aggregate.totalCount,
+      }));
+      console.log(res?.data?.regulator)
+     // setUsersList(res?.data?.regulator);
+      const data = res?.data?.regulator;
+      data.forEach(setTableData);
+      console.log(resUserData);
+      setUserTableList(resUserData);
+    } catch (error) {
+      console.log("error - ", error);
+    } finally {
+      setSpinner(false);
+    }
+  };
+
   const searchApiCall = async (searchData) => {
     const pagination = {
       offsetNo: paginationInfo.offsetNo,
@@ -761,7 +788,7 @@ export default function ManageUsersList({
       if (response.status === 200) {
         hasuraResponse = await handleDeleteUser(hasuraPostData);
       }
-      if (state.menu_selected === "Assessor") {
+     /*  if (state.menu_selected === "Assessor") {
         await fetchAllAssessors();
       }
       if (state.menu_selected === "Desktop-Admin") {
@@ -769,7 +796,8 @@ export default function ManageUsersList({
       }
       if (state.menu_selected === "Desktop-Assessor") {
         await getAllDeskTopAssessors();
-      }
+      } */
+      getUsersBasedOnMenuSelected();
       setDeleteFlag(false);
       setSelectedUserId([]);
 
@@ -912,9 +940,29 @@ export default function ManageUsersList({
     }
   }, [bulkDeleteFlag]);
 
+  const getUsersBasedOnMenuSelected = () =>{
+    switch (state.menu_selected) {
+      case 'Assessor':
+        fetchAllAssessors();
+        break;
+       case 'Desktop-Admin':
+        fetchAllRegulators();
+        break;
+      case 'Desktop-Assessor':
+        getAllDeskTopAssessors();
+        break;
+      case 'Applicant':
+        getAllInstitutes();
+        break;
+      default:
+       // return null
+    }
+  }
+
   useEffect(() => {
     if (!isSearchOpen && !isFilterOpen) {
-      if (state.menu_selected === "Assessor") {
+      console.log(state.menu_selected)
+      /* if (state.menu_selected === "Assessor") {
         fetchAllAssessors();
       }
       if (state.menu_selected === "Desktop-Admin") {
@@ -922,13 +970,14 @@ export default function ManageUsersList({
       }
       if (state.menu_selected === "Desktop-Assessor") {
         getAllDeskTopAssessors();
-      }
+      } */
+      getUsersBasedOnMenuSelected();
     }
   }, [paginationInfo.offsetNo, paginationInfo.limit, state.menu_selected]);
 
   useEffect(() => {
     if (usersCreated) {
-      if (state.menu_selected === "Assessor") {
+   /*    if (state.menu_selected === "Assessor") {
         fetchAllAssessors();
       }
       if (state.menu_selected === "Desktop-Admin") {
@@ -936,7 +985,8 @@ export default function ManageUsersList({
       }
       if (state.menu_selected === "Desktop-Assessor") {
         getAllDeskTopAssessors();
-      }
+      } */
+      getUsersBasedOnMenuSelected();
     }
     setUsersCreated(false);
   }, [usersCreated]);
@@ -1058,22 +1108,60 @@ export default function ManageUsersList({
                     Desktop Assessor
                   </a>
                 </li>
-               {/*  <li
+                <li
+             //  style={{display:'none'}}
                   className="mr-2"
-                  onClick={() => handleSelectMenu("Super-Admin")}
+                  onClick={() => handleSelectMenu("Applicant")}
                 >
-                  <a
+                  <a 
                     href="#"
                     className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
-                      state.menu_selected === "Super-Admin"
+                      state.menu_selected === "Applicant"
                         ? "text-blue-600 border-b-2 border-blue-600"
                         : ""
                     }`}
                     aria-current="page"
                   >
-                    Super Admin
+                    Applicant
                   </a>
-                </li> */}
+                </li>
+
+                <li
+             //  style={{display:'none'}}
+                  className="mr-2"
+                  onClick={() => handleSelectMenu("OGA Scheduler")}
+                >
+                  <a 
+                    href="#"
+                    className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
+                      state.menu_selected === "OGA Scheduler"
+                        ? "text-blue-600 border-b-2 border-blue-600"
+                        : ""
+                    }`}
+                    aria-current="page"
+                  >
+                    OGA Scheduler
+                  </a>
+                </li>
+
+                <li
+             //  style={{display:'none'}}
+                  className="mr-2"
+                  onClick={() => handleSelectMenu("Report Analyst")}
+                >
+                  <a 
+                    href="#"
+                    className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
+                      state.menu_selected === "Report Analyst"
+                        ? "text-blue-600 border-b-2 border-blue-600"
+                        : ""
+                    }`}
+                    aria-current="page"
+                  >
+                    Report Analyst
+                  </a>
+                </li>
+                
               </ul>
               {/* filtering table here */}
               {state.menu_selected === "Assessor" && (
@@ -1140,7 +1228,7 @@ export default function ManageUsersList({
                   />
                 </div>
               )}
-              {state.menu_selected === "Super-Admin" && (
+              {state.menu_selected === "Applicant" && (
                 <div className="flex flex-col gap-3">
                   <FilteringTable
                     dataList={userTableList}
