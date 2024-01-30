@@ -662,7 +662,7 @@ const GenericOdkForm = (props) => {
         </div>
       )}
 
-      {(surveyUrl !=="" && date === undefined && dbInstantitated === true) && (
+      {(surveyUrl !=="" && date === undefined) && (
         <>
           <iframe
             id="offline-enketo-form"
