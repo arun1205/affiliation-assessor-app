@@ -135,12 +135,12 @@ const GenericOdkForm = (props) => {
       // if(surveyUrl !== "") {
       // await updateFormDataInEnketoIndexedDB();}
     // }, 6000);
-    onlineInterval.current = setInterval(async () => {
+    // onlineInterval.current = setInterval(async () => {
       if(surveyUrl !== "") {
-      await updateFormDataInEnketoIndexedDB();
+       updateFormDataInEnketoIndexedDB();
       }
-    }, 1000);
-    return () => clearInterval(onlineInterval.current);
+    // }, 1000);
+    // return () => clearInterval(onlineInterval.current);
   },[surveyUrl])
 
 
