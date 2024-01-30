@@ -494,7 +494,6 @@ const GenericOdkForm = (props) => {
   };
 
   const updateFormDataInEnketoIndexedDB = async () => {
-    setDBInstantiated(false);
     // fetch form data only if there is no drafted entry in DB 
     let formDataresp = await fetchFormData();
     
@@ -532,7 +531,6 @@ const GenericOdkForm = (props) => {
       let valueToBeUpdated = data[data.length - 1];
       if (valueToBeUpdated) {
         console.log("value =>", valueToBeUpdated);
-        setDBInstantiated(true);
         // console.log(valueToBeUpdated.xml)
         // valueToBeUpdated.xml = formDataresp;
         // console.log(valueToBeUpdated.xml)
@@ -663,7 +661,7 @@ const GenericOdkForm = (props) => {
         </div>
       )}
 
-      {surveyUrl !=="" && date === undefined && dbInstantitated === true (
+      {surveyUrl !=="" && date === undefined && (
         <>
           <iframe
             id="offline-enketo-form"
