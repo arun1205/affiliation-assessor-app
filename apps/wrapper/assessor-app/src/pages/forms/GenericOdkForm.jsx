@@ -46,6 +46,7 @@ const GenericOdkForm = (props) => {
   const userId = user?.userRepresentation?.id;
   const [formDataFromApi, setFormDataFromApi] = useState();
   const [formStatus, setFormStatus] = useState("");
+  const onlineInterval = useRef();
   let formSpec = {
     forms: {
       [formName]: {
@@ -130,11 +131,17 @@ const GenericOdkForm = (props) => {
   };
 
   useEffect(() => {
-    setTimeout(async () => {
-      if(surveyUrl !== "") {
-      await updateFormDataInEnketoIndexedDB();}
-    }, 6000);
-  },[surveyUrl])
+    // setTimeout(async () => {
+    //   if(surveyUrl !== "") {
+    //   await updateFormDataInEnketoIndexedDB();}
+    // }, 6000);
+    onlineInterval.current = setInterval(async () => {
+      if(surveyUrl !== "" && dbInstantitated === true) {
+        await updateFormDataInEnketoIndexedDB();
+      }
+    }, 1000);
+    return () => clearInterval(onlineInterval.current);
+  },[surveyUrl, dbInstantitated])
 
   /* fetch form data from API */
   const fetchFormData = async () => {
