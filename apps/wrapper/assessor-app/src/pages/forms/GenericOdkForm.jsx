@@ -131,14 +131,14 @@ const GenericOdkForm = (props) => {
   };
 
   useEffect(() => {
-    // setTimeout(async () => {
-      // if(surveyUrl !== "") {
-      // await updateFormDataInEnketoIndexedDB();}
-    // }, 6000);
-    // onlineInterval.current = setInterval(async () => {
+    setTimeout(async () => {
       if(surveyUrl !== "") {
-       updateFormDataInEnketoIndexedDB();
-      }
+      await updateFormDataInEnketoIndexedDB();}
+    }, 6000);
+    // onlineInterval.current = setInterval(async () => {
+      // if(surveyUrl !== "") {
+      //  updateFormDataInEnketoIndexedDB();
+      // }
     // }, 1000);
     // return () => clearInterval(onlineInterval.current);
   },[surveyUrl])
