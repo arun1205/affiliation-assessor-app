@@ -489,12 +489,12 @@ function _saveRecord(survey, draft = true, recordName, confirmed, errorMsg) {
             const docString = parser.parseFromString(form.model.data.modelStr, 'text/xml');
             let formString1 = form.getDataStr(include);
             let modelString1 = form.model.data.modelStr;
-            let splitModelStr = formString1.split("\n");
+            let splitModelStr = modelString1.split("\n");
             // No input in institue code or 0 input
             const splitString = formString1.split("\n");
             for(let i = 0; i < splitString.length;i++) {
                 console.log(splitString[i]);
-                if(splitString[i].includes('count/') === true) {
+                if(splitString[i].includes('count/')) {
                     indexValue = splitModelStr.findIndex(a => {return a.indexOf("count/") !== -1});
                     if(splitModelStr[indexValue + 1] && splitModelStr[indexValue + 1].includes('template')) {
                         let elem = splitModelStr[indexValue]?.trim();
