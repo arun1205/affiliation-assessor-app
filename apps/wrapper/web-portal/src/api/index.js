@@ -229,6 +229,13 @@ export const fetchAllDeskTopAssessors = async (postData) => {
   return res;
 };
 
+export const fetchAllInstitutes = async (postData) => {
+  return await adminCustomPost.post(
+    API_URL.manageUsers.getAllInstitutes,
+    postData
+  );
+};
+
 
 export const getUsersForScheduling = async (postData) => {
   const res = await adminCustomPost.post(

@@ -88,11 +88,9 @@ function App() {
   useEffect(() => {
     getPermissionForToken();
 
-setTimeout(() => {
-  console.log("checking conn")
-  console.log("REACT_APP_WEB_PORTAL_USER_SERVICE_URL-->", process.env.REACT_APP_WEB_PORTAL_USER_SERVICE_URL )
-
-  if(!isOnline){
+setInterval(() => {
+  console.log("checking conn",navigator.onLine)
+  if(!navigator.onLine){
     setToast((prevState) => ({
       ...prevState,
       toastOpen: true,
@@ -100,7 +98,7 @@ setTimeout(() => {
       toastType: "error",
     }));
   }
-}, 3000);
+}, 5000);
 
   }, []);
 
