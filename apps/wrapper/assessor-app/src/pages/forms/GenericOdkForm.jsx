@@ -530,9 +530,10 @@ const GenericOdkForm = (props) => {
       const data = objectStoreTitleRequest.result;
       let valueToBeUpdated = data[data.length - 1];
       if (valueToBeUpdated) {
-        console.log(valueToBeUpdated.xml)
-        valueToBeUpdated.xml = formDataresp;
-        console.log(valueToBeUpdated.xml)
+        console.log("value =>", valueToBeUpdated);
+        // console.log(valueToBeUpdated.xml)
+        // valueToBeUpdated.xml = formDataresp;
+        // console.log(valueToBeUpdated.xml)
         // Create another request that inserts the item back into the database
         const updateTitleRequest = objectStore.put(valueToBeUpdated);
         
