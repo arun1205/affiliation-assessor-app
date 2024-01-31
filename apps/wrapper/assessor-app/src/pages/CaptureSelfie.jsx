@@ -84,8 +84,8 @@ const CaptureSelfie = () => {
           ? ROUTE_MAP.assessment_type
           : ROUTE_MAP.medical_assessments
       }
-      logoutDisabled
-      iconType="close"
+      // logoutDisabled
+      // iconType="close"
       pageTitle="2. Capture Selfie"
       pageDesc="Please ensure that all the assessors are getting captured in the selfie."
     >
