@@ -370,6 +370,7 @@ const CreateForm = (props) => {
         // console.log(response);
         // if the application is drafted, remove it's entry post form submission
         if (response) {
+          // form submission success message 
           const draft = await getFromLocalForage("draft");
           console.log("draft ===>", draft);
           if (draft && draft.draftId !== "") {
@@ -380,6 +381,21 @@ const CreateForm = (props) => {
             try {
               await deleteApplicationDraft(request);
               removeItemFromLocalForage("draft");
+              isFormInPreview = false;
+              setOnSubmit(false);
+              setToast((prevState) => ({
+                ...prevState,
+                toastOpen: true,
+                toastMsg: "Form Submitted Successfully!.",
+                toastType: "success",
+              }));
+        
+              setTimeout(
+                () =>
+                  navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.my_applications}`),
+                1500
+              );
+              
             } catch (error) {
               console.log("error =>", error);
             }
