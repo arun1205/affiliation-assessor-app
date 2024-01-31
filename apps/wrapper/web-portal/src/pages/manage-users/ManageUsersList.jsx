@@ -911,19 +911,76 @@ export default function ManageUsersList({
     }
   };
   const handleUserStatus = async (selectedRows) => {
-    for (let x in selectedRows) {
-      if (selectedRows[x].status.toLowerCase() === "active") {
-        const postData = { assessorId: selectedRows[x].user_id };
-        const validResponse = await handleInctiveUser(postData);
-
-        
-      } else if (selectedRows[x].status.toLowerCase() === "inactive") {
-        const postData = { assessorId: selectedRows[x].user_id };
-        const validResponse = await handleActiveUser(postData);
-        
+    console.log("menuSelected =>", state.menu_selected);
+    switch(state.menu_selected) {
+      case 'Assessor': 
+      for (let x in selectedRows) {
+        if (selectedRows[x].status.toLowerCase() === "active") {
+          const postData = { assessorId: selectedRows[x].user_id };
+          const validResponse = await handleInctiveUser(postData);  
+        } else if (selectedRows[x].status.toLowerCase() === "inactive") {
+          const postData = { assessorId: selectedRows[x].user_id };
+          const validResponse = await handleActiveUser(postData);
+        }
       }
+      await fetchAllAssessors();
+      break;
+      case 'Desktop-Admin': 
+      for (let x in selectedRows) {
+        if (selectedRows[x].status.toLowerCase() === "active") {
+          const postData = { requlatorId: selectedRows[x].user_id };
+          const validResponse = await handleInctiveRegulatorUser(postData);  
+        } else if (selectedRows[x].status.toLowerCase() === "inactive") {
+          const postData = { requlatorId: selectedRows[x].user_id };
+          const validResponse = await handleActiveRegulatorUser(postData);
+        }
+      }
+      await getAllRegulators();
+      break;
+      case 'Desktop-Assessor': 
+      for (let x in selectedRows) {
+        if (selectedRows[x].status.toLowerCase() === "active") {
+          const postData = { requlatorId: selectedRows[x].user_id };
+          const validResponse = await handleInctiveRegulatorUser(postData);  
+        } else if (selectedRows[x].status.toLowerCase() === "inactive") {
+          const postData = { requlatorId: selectedRows[x].user_id };
+          const validResponse = await handleActiveRegulatorUser(postData);
+        }
+      }
+      await getAllDeskTopAssessors();
+      break;
+      case 'Applicant': 
+      alert('query to be added');
+      await getAllInstitutes();
+      break;
+      case 'OGA Scheduler': 
+      for (let x in selectedRows) {
+        if (selectedRows[x].status.toLowerCase() === "active") {
+          const postData = { requlatorId: selectedRows[x].user_id };
+          const validResponse = await handleInctiveRegulatorUser(postData);  
+        } else if (selectedRows[x].status.toLowerCase() === "inactive") {
+          const postData = { requlatorId: selectedRows[x].user_id };
+          const validResponse = await handleActiveRegulatorUser(postData);
+        }
+      }
+      // await getAllRegulators();
+      break;
+      case 'Report Analyst':
+        for (let x in selectedRows) {
+          if (selectedRows[x].status.toLowerCase() === "active") {
+            const postData = { requlatorId: selectedRows[x].user_id };
+            const validResponse = await handleInctiveRegulatorUser(postData);  
+          } else if (selectedRows[x].status.toLowerCase() === "inactive") {
+            const postData = { requlatorId: selectedRows[x].user_id };
+            const validResponse = await handleActiveRegulatorUser(postData);
+          }
+        }
+        // await getAllRegulators();
+      break;
+      default: 
+      return;
     }
-    await fetchAllAssessors();
+    
    
   };
 
@@ -952,7 +1009,7 @@ export default function ManageUsersList({
         getAllDeskTopAssessors();
         break;
       case 'Applicant':
-        getAllInstitutes();
+        // getAllInstitutes();
         break;
       default:
        // return null
@@ -1004,7 +1061,7 @@ export default function ManageUsersList({
               </div>
               <div className="flex justify-end">
                 <span className="flex gap-4">
-                  {state.menu_selected === "Assessor" && (
+                  {/* {state.menu_selected === "Assessor" && ( */}
                     <Button
                       otherProps={{
                         disabled: listArray == 0 ? true : false,
@@ -1021,8 +1078,8 @@ export default function ManageUsersList({
                       }}
                       text="Make Active/Inactive"
                     ></Button>
-                  )}
-                  <Button
+                  {/* )} */}
+                  {/* <Button
                     // moreClass="text-white"
                     otherProps={{
                       disabled: listArray == 0 ? true : false,
@@ -1038,7 +1095,7 @@ export default function ManageUsersList({
                         : setDeleteBulkUsersModel(false)
                     }
                     text="Delete user"
-                  ></Button>
+                  ></Button> */}
                   <button
                     onClick={() => setBulkUploadUsersModel(true)}
                     className="flex flex-wrap items-center justify-center gap-2 border border-gray-500 text-gray-900 bg-white w-[200px] h-[45px] text-md font-medium rounded-[4px]"

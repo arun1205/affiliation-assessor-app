@@ -204,13 +204,13 @@ const ApplicantLogin = () => {
                     type="submit"
                   ></Button>
                   <p className="flex justify-center my-6">
-                    <span className="text-gray-400">Create an account, </span>
+                    <span className="text-gray-400">Not registered yet?, </span>
                     &nbsp;
                     <Link
                       to={APPLICANT_ROUTE_MAP.dashboardModule.register}
                       className="text-primary-700"
                     >
-                      Sign up
+                      Register here
                     </Link>
                   </p>
                 </form>
