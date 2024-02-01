@@ -380,8 +380,12 @@ const CreateForm = (props) => {
             console.log("req", request);
             try {
               await deleteApplicationDraft(request);
-              removeItemFromLocalForage("draft");
-              isFormInPreview = false;
+              removeItemFromLocalForage("draft");        
+            } catch (error) {
+              console.log("error =>", error);
+            }
+          }
+          isFormInPreview = false;
               setOnSubmit(false);
               setToast((prevState) => ({
                 ...prevState,
@@ -395,11 +399,6 @@ const CreateForm = (props) => {
                   navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.my_applications}`),
                 1500
               );
-              
-            } catch (error) {
-              console.log("error =>", error);
-            }
-          }
           //  await removeAllFromLocalForage();
         }
         console.log(

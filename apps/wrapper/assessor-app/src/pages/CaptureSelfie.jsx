@@ -79,11 +79,11 @@ const CaptureSelfie = () => {
 
   return (
     <CommonLayout
-      back={
-        role == "Medical"
-          ? ROUTE_MAP.assessment_type
-          : ROUTE_MAP.medical_assessments
-      }
+    back={
+      role == "Medical"
+        ? ROUTE_MAP.medical_assessments
+        : ROUTE_MAP.assessment_type
+    }
       logoutDisabled
       // iconType="close"
       pageTitle="2. Capture Selfie"
