@@ -478,43 +478,38 @@ function _saveRecord(survey, draft = true, recordName, confirmed, errorMsg) {
 
     return fileManager.getCurrentFiles()
         .then(files => {
+            let indexValue = [];
+            let templateElements = [];
+            let parser = new DOMParser();
+            let elem;
+            let subElem;
+            let element;
+            let templateElem;
+            const docString = parser.parseFromString(form.model.data.modelStr, 'text/xml');
             let formStr = form.getDataStr(include);
             let modelStr = form.model.data.modelStr;
-
-            // // dynamic changes
-
-            // let indexValue;
-            // let templateElements;
-            // let parser = new DOMParser();
-            // const docString = parser.parseFromString(form.model.data.modelStr, 'text/xml');
-            // let formString1 = form.getDataStr(include);
-            // let modelString1 = form.model.data.modelStr;
-            // let splitModelStr = modelString1.split("\n");
-            // // No input in institue code or 0 input
-            // const splitString = formString1.split("\n");
-            // for(let i = 0; i < splitString.length;i++) {
-            //     console.log(splitString[i]);
-            //     if(splitString[i].includes('count/')) {
-            //         indexValue = splitModelStr.findIndex(a => {return a.indexOf("count/") !== -1});
-            //         if(splitModelStr[indexValue + 1] && splitModelStr[indexValue + 1].includes('template')) {
-            //             let elem = splitModelStr[indexValue]?.trim();
-            //             console.log(elem);
-            //             let subElem = elem.substring(1, elem.length - 2);
-            //             let partialElem = elem.
-            //             console.log("subElem =>", elem);
-            //             let element = docString.getElementsByTagName(subElem);
-            //             let templateElem = element[0].nextElementSibling;
-                        
-            //         }
-            //     }
-            //     console.log("tempElements =>", templateElements);
-            // }
-
+            let splitModelStr = modelStr.split("\n");
             // No input in institue code or 0 input
-            if (formStr.includes('<R1_count/>')) {
-                const strToAdd = modelStr.slice(modelStr.lastIndexOf("<R1_count/>") + 11, modelStr.lastIndexOf("</R1>") + 5)
-                formStr = formStr.replace("<R1_count/>", `<R1_count/>${strToAdd}`);
-            } else {
+            const splitString = formStr.split("\n");
+            let countElements = [];
+            indexValue = splitModelStr.findIndex(a => {return a.indexOf("count/") !== -1});
+            for(let i = 0; i < splitString.length;i++) {
+                console.log(splitString[i]);
+                if(splitString[i].includes('count/')) {
+                    countElements.push(splitString[i]);
+                }
+            }
+            if(countElements.length > 0) {
+                for(let j = 0; j < countElements.length; j++) {
+                    let elem = countElements[j].trim();
+                    let subElem = elem.substring(1, elem.length - 2);
+                        if (formStr.includes(elem)) {
+                            const newElem = "</" + elem.substring(1,3) + ">";
+                            const strToAdd = modelStr.slice(modelStr.lastIndexOf(elem) + 11, modelStr.lastIndexOf(newElem) + 5);
+                            console.log("strToAdd =>", strToAdd);
+                            formStr = formStr.replace(`${elem}`, `${elem}${strToAdd}`);
+                    }
+             else {
                 let xmlDoc;
                 let parser;
             
@@ -529,13 +524,16 @@ function _saveRecord(survey, draft = true, recordName, confirmed, errorMsg) {
                     xmlDoc.loadXML(form.getDataStr(include));
                 }
             
-                let repeatCount = xmlDoc.getElementsByTagName("R1_count")[0].childNodes[0].nodeValue;
+                let repeatCount = xmlDoc.getElementsByTagName(subElem)[0].childNodes[0].nodeValue;
             
                 if (repeatCount == 0 || repeatCount == "") {
-                    const strToAdd = modelStr.slice(modelStr.lastIndexOf("<R1_count/>") + 11, modelStr.lastIndexOf("</R1>") + 5)
-                    formStr = formStr.replace("</R1_count>", `</R1_count>${strToAdd}`);
+                    const newElem = "</" + elem.substring(1,3) + ">";
+                    const strToAdd = modelStr.slice(modelStr.lastIndexOf(elem) + 11, modelStr.lastIndexOf(newElem) + 5)
+                    formStr = formStr.replace(`${elem}`, `${elem}${strToAdd}`);
                 } 
             }
+        }
+    }
             const record = {
                 'draft': draft,
                 'xml': formStr,
