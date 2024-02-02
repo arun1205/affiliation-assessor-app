@@ -348,6 +348,8 @@ const GenericOdkForm = (props) => {
   
   const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
     const user = getCookie("userData");
+    const eventFormData =
+    typeof e.data === "string" ? JSON.parse(e.data) : e.data;
     const event = e;
     if (
       ((ENKETO_URL === `${event.origin}/enketo`) || (ENKETO_URL === `${event.origin}/enketo/`)) &&
@@ -371,6 +373,20 @@ const GenericOdkForm = (props) => {
           }
         );
       }
+    }
+    if(eventFormData?.formData?.draft !== "" &&
+    eventFormData?.formData?.draft === true) {
+        let db;
+        const DBOpenRequest = window.indexedDB.open("enketo", 3);
+        DBOpenRequest.onsuccess = (event) => {
+          db = DBOpenRequest.result;
+        
+          // Clear all the data from the object store
+          clearData(db);
+        };
+  
+        //alert("Hello world!");
+  
     }
     afterFormSubmit(event);
   };
@@ -415,20 +431,9 @@ const GenericOdkForm = (props) => {
       // iframeContent.getElementById("submit-form").style.display = "none";
       // iframeContent.getElementById("save-draft").style.display = "none";
     }
-    var draftButton = iframeContent.getElementById("save-draft");
-    draftButton?.addEventListener("click", function () {
-      let db;
-      const DBOpenRequest = window.indexedDB.open("enketo", 3);
-      DBOpenRequest.onsuccess = (event) => {
-        db = DBOpenRequest.result;
-      
-        // Clear all the data from the object store
-        clearData(db);
-      };
-
-      //alert("Hello world!");
-
-    });
+  }
+    // var draftButton = iframeContent.getElementById("save-draft");
+    
 
     const clearData = (db) => {
       // open a read/write db transaction, ready for clearing the data
@@ -446,13 +451,6 @@ const GenericOdkForm = (props) => {
         console.log("cleared entry");
       };
     }
-
-    var optionElements = iframeContent.getElementsByClassName('option-label');
-    if (!optionElements) return;
-    for(var k = 0; k < optionElements.length; k++ ) {
-      optionElements[k].style.color = '#333333';
-    }
-  };
 
   const handleRenderPreview = () => {
     setPreviewModal(true);
