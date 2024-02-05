@@ -504,7 +504,7 @@ function _saveRecord(survey, draft = true, recordName, confirmed, errorMsg) {
                     let elem = countElements[j].trim();
                     let subElem = elem.substring(1, elem.length - 2);
                         if (formStr.includes(elem)) {
-                            const newElem = "</" + elem.substring(1,3) + ">";
+                            const newElem = "</" + elem.substring(0, str.indexOf("_")) + ">";
                             const strToAdd = modelStr.slice(modelStr.lastIndexOf(elem) + 11, modelStr.lastIndexOf(newElem) + 5);
                             console.log("strToAdd =>", strToAdd);
                             formStr = formStr.replace(`${elem}`, `${elem}${strToAdd}`);
