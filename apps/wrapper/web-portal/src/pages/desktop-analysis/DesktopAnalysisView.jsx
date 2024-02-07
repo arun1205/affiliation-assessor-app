@@ -472,21 +472,31 @@ export default function DesktopAnalysisView() {
       const iframeElem = document?.getElementById("enketo_DA_preview");
       var iframeContent =
         iframeElem?.contentDocument || iframeElem?.contentWindow.document;
+        // append icon element to DOM after iframeload 
+        var section = iframeContent?.getElementsByClassName("or-group");
+        if (!section) return;
+        for (let j = 0; j < section?.length; j++) {
+          const labelElements = section[j].getElementsByClassName("question");
+          for(let i = 0; i < labelElements.length; i++) {
+            let element = document.createElement("i");
+            element.setAttribute("class","fa fa-comment");
+            labelElements[i].insertBefore(element, labelElements[i].childNodes[2]);
+        }
+      }
       if (
         formDataFromApi &&
         formDataFromApi?.form_status?.toLowerCase() !==
           "application submitted" &&
         formDataFromApi?.form_status?.toLowerCase() !== "resubmitted"
       ) {
-        var section = iframeContent?.getElementsByClassName("or-group");
         if (!section) return;
-        for (var i = 0; i < section?.length; i++) {
-          const labelElements = section[i].getElementsByClassName("question");
-          for(let i = 0; i < labelElements.length; i++) {
-            let element = document.createElement("i");
-            element.setAttribute("class","fa fa-comment");
-            labelElements[i].insertBefore(element, labelElements[i].childNodes[2]);
-        }
+        for (let i = 0; i < section?.length; i++) {
+        //   const labelElements = section[i].getElementsByClassName("question");
+        //   for(let i = 0; i < labelElements.length; i++) {
+        //     let element = document.createElement("i");
+        //     element.setAttribute("class","fa fa-comment");
+        //     labelElements[i].insertBefore(element, labelElements[i].childNodes[2]);
+        // }
           var inputElements = section[i].querySelectorAll("input");
           var buttonElements = section[i].querySelectorAll("button");
           
