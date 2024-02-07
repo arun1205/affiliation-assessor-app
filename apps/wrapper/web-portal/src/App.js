@@ -89,7 +89,7 @@ function App() {
     getPermissionForToken();
 
 setInterval(() => {
-  console.log("checking conn",navigator.onLine)
+ // console.log("checking conn",navigator.onLine)
   if(!navigator.onLine){
     setToast((prevState) => ({
       ...prevState,

@@ -86,3 +86,7 @@ body, .react-calendar {
 .flex-child-element:first-child {
   margin-right: 20px;
 }
+
+.overflow{
+  overflow: scroll;
+}

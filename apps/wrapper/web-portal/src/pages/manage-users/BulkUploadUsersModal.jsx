@@ -5,7 +5,7 @@ import { Switch } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components";
 import {
-  createBulkUsersKeyCloak,
+  createBulkUsers,
 } from "../../api";
 import { userService } from "../../api/userService";
 import { getCookie } from "../../utils/common";
@@ -224,80 +224,22 @@ function BulkUploadUsersModal({ closeBulkUploadUsersModal, setUsersCreated }) {
         userCreationList: updatedReqBody,
         email: getCookie("userData")?.userRepresentation?.email
       }
-      const keycloakRes = await createBulkUsersKeyCloak(postDataKeyCloak);
+      const keycloakRes = await createBulkUsers(postDataKeyCloak);
       //keycloak API call
       if (keycloakRes?.data) {
           setToast((prevState) => ({
             ...prevState,
             toastOpen: true,
-            toastMsg: "User(s) creation request acknoledged. You would be intimidated via email",
+            toastMsg: "User(s) creation request aknowledged. You would be intimidated via email",
             toastType: "success",
           }));
           closeBulkUploadUsersModal(false);
       }
-     /*  selectedRows.map(async (item) => {
-        postDataKeyCloak = {
-          request: {
-            firstName: item.values.firstName,
-            lastName: item.values.lastName,
-            email: item.values.email,
-            username: item.values.email,
-            enabled: true,
-            emailVerified: false,
-            credentials: [
-              {
-                type: "password",
-                value: `${item.values.phoneNumber}`,
-                temporary: "false",
-              },
-            ],
-            attributes: {
-              Role: item.values.role,
-            },
-          },
-        };
-
-        const keycloakRes = await createBulkUsersKeyCloak(postDataKeyCloak);
-        console.log("keycloak response - ", keycloakRes);
-        if (keycloakRes?.data) {
-          if (item.values.role === "Assessor") {
-            postDataHasura["assessors"].push({
-              code: `${Math.floor(1000 + Math.random() * 9000)}`,
-              user_id: keycloakRes.data,
-              email: item.values.email,
-              name: item.values.full_name,
-              phonenumber: item.values.phoneNumber,
-              firstName: item.values.firstName,
-              lastName: item.values.lastName,
-              role: item.values.role,
-            });
-          }
-          if (item.values.role === "Desktop-Admin") {
-            postDataHasura["regulators"].push({
-              user_id: keycloakRes.data,
-              email: item.values.email,
-              full_name: item.values.full_name,
-              phonenumber: item.values.phoneNumber,
-              firstName: item.values.firstName,
-              lastName: item.values.lastName,
-              role: item.values.role,
-            });
-          }
-        }
-      });
-      setTimeout(async () => {
-        console.log(postDataHasura);
-        //Hasura API call
-        const hasuraRes = await createBulkUserHasura(postDataHasura);
-        setUsersCreated(true);
-        if (hasuraRes.status !== 200) {
-          errorFlag = true;
-        }
-      }, 3000); */
-
+  
      
     } catch (error) {
-      const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage
+      console.log(error)
+      const errorMessage = JSON.parse(error?.config?.data).regulators[0]?.user_id?.errorMessage || "Something went wrong. Please try again later."
         setToast((prevState) => ({
           ...prevState,
           toastOpen: true,
