@@ -468,7 +468,7 @@ export default function DesktopAnalysisView() {
 
   const checkIframeLoaded = () => {
     console.log(formDataFromApi.reverted_count)
-    if (window.location.host.includes("regulator.upsmfac")) {
+    if (!window.location.host.includes("localhost")) {
       const iframeElem = document?.getElementById("enketo_DA_preview");
       var iframeContent =
         iframeElem?.contentDocument || iframeElem?.contentWindow.document;
@@ -481,6 +481,12 @@ export default function DesktopAnalysisView() {
         var section = iframeContent?.getElementsByClassName("or-group");
         if (!section) return;
         for (var i = 0; i < section?.length; i++) {
+          const labelElements = section[i].getElementsByClassName("question");
+          for(let i = 0; i < labelElements.length; i++) {
+            let element = document.createElement("i");
+            element.setAttribute("class","fa fa-comment");
+            labelElements[i].insertBefore(element, labelElements[i].childNodes[2]);
+        }
           var inputElements = section[i].querySelectorAll("input");
           var buttonElements = section[i].querySelectorAll("button");
           

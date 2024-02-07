@@ -504,7 +504,7 @@ function _saveRecord(survey, draft = true, recordName, confirmed, errorMsg) {
                     let elem = countElements[j].trim();
                     let subElem = elem.substring(1, elem.length - 2);
                         if (formStr.includes(elem)) {
-                            const newElem = "</" + elem.substring(1,3) + ">";
+                            const newElem = "</" + elem.substring(0, elem.indexOf("_")) + ">";
                             const strToAdd = modelStr.slice(modelStr.lastIndexOf(elem) + 11, modelStr.lastIndexOf(newElem) + 5);
                             console.log("strToAdd =>", strToAdd);
                             formStr = formStr.replace(`${elem}`, `${elem}${strToAdd}`);
@@ -648,6 +648,25 @@ function _setEventHandlers(survey) {
                 .then(valid => {
                     if (valid) {
                         if (settings.offline) {
+                            let db;
+        const DBOpenRequest = window.indexedDB.open("enketo", 3);
+        DBOpenRequest.onsuccess = (event) => {
+          db = DBOpenRequest.result;
+        
+          const transaction = db?.transaction(["records"], "readwrite");
+    
+      // report on the success of the transaction completing, when everything is done
+      // create an object store on the transaction
+      const objectStore = transaction?.objectStore("records");
+    
+      // Make a request to clear all the data out of the object store
+      const objectStoreRequest = objectStore?.clear();
+    
+      objectStoreRequest.onsuccess = (event) => {
+        // report the success of our request
+        console.log("cleared entry");
+      };
+        };
                             return _saveRecord(survey, false);
                         } else {
                             return _submitRecord(survey);
@@ -673,6 +692,25 @@ function _setEventHandlers(survey) {
             if (!event.target.matches('.save-draft-info')) {
                 const $button = $(draftButton);
                 $button.btnBusyState(true);
+                let db;
+        const DBOpenRequest = window.indexedDB.open("enketo", 3);
+        DBOpenRequest.onsuccess = (event) => {
+          db = DBOpenRequest.result;
+        
+          const transaction = db?.transaction(["records"], "readwrite");
+    
+      // report on the success of the transaction completing, when everything is done
+      // create an object store on the transaction
+      const objectStore = transaction?.objectStore("records");
+    
+      // Make a request to clear all the data out of the object store
+      const objectStoreRequest = objectStore?.clear();
+    
+      objectStoreRequest.onsuccess = (event) => {
+        // report the success of our request
+        console.log("cleared entry");
+      };
+        };
                 setTimeout(() => {
                     _saveRecord(survey, true)
                         .then(() => {
@@ -682,7 +720,7 @@ function _setEventHandlers(survey) {
                             $button.btnBusyState(false);
                             throw e;
                         });
-                }, 100);
+                }, 500);
             }
         });
     }
