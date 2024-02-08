@@ -59,12 +59,12 @@ const ForgotPassword = () => {
     }
 
     const postData = {
-      userName: details.userRepresentation.id,
+      userName: details?.id,
       request: {
-        firstName: details.userRepresentation.firstName,
-        lastName: details.userRepresentation.lastName,
+        firstName: details?.firstName,
+        lastName: details?.lastName,
         enabled: true,
-        email: details.userRepresentation?.email,
+        email: details?.email,
         emailVerified: false,
         credentials: [
           {

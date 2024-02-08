@@ -52,8 +52,9 @@ const LoginMedical = ({ handleStepChangeForLogin }) => {
       }
 
       const loginRes = await login(username, password);
+      console.log(loginRes)
       if (loginRes?.accessToken) {
-        setCookie("userData", loginRes);
+        setCookie("userData", loginRes?.userRepresentation);
         navigate(ROUTE_MAP.root_star);
       }
       if (loginRes?.errors?.length > 0) {
