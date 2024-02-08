@@ -51,6 +51,7 @@ export default function SelfRegistration() {
         ],
         attributes: {
           Role: applicantType,
+          module: "affiliation",
         },
       },
     };

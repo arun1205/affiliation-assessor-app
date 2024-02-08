@@ -71,11 +71,11 @@ export default function Profile() {
     try {
 
       const postDataKeyCloak = {
-        userName: userData?.userRepresentation?.id,
+        userName: userData?.id,
         request: {
           firstName: formData?.first_name,
           lastName: formData?.last_name,
-          email: userData?.userRepresentation?.email,
+          email: userData?.email,
           enabled: true,
           emailVerified: false,
           credentials: [
@@ -145,7 +145,7 @@ export default function Profile() {
         first_name: formDetail?.institute_pocs[0]?.fname,
         last_name: formDetail?.institute_pocs[0]?.lname,
         phone_number: formDetail?.institute_pocs[0]?.number,
-        email: userData?.userRepresentation?.email,
+        email: userData?.email,
         name: formDetail?.institute_pocs[0]?.name,
         // applicant_type: [applicantType],
         course_type: formDetail?.course_applied,
