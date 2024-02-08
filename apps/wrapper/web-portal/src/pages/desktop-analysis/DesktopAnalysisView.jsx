@@ -41,12 +41,16 @@ import { ContextAPI } from "../../utils/ContextAPI";
 import { StrictMode } from "react";
 import ReturnToInstituteModal from "./ReturnToInstituteModal";
 
+
+import CommentsModal from "../../components/CommentsModal";
+
 import {
   FaFileDownload,
 } from "react-icons/fa";
 
 const ENKETO_URL = process.env.REACT_APP_ENKETO_URL;
 let isFormSubmittedForConfiirmation = false;
+
 
 export default function DesktopAnalysisView() {
   const [returnToInstituteModal, setReturnToInstituteModal] = useState(false);
@@ -67,8 +71,18 @@ export default function DesktopAnalysisView() {
   const [rejectStatus, setRejectStatus] = useState(false);
   const [formLoaded, setFormLoaded] = useState(false);
   let [isDownloading, setIsDownloading] = useState(false);
+  
+  
+  const [showAlert, setShowAlert] = useState(false);
+  const [state, setState] = useState({
+    alertContent: {
+      alertTitle: "",
+      alertMsg: "",
+      actionButtonLabel: "",
+    },
+  });
 
-  const loggedInUserRole = getCookie("userData").userRepresentation.attributes.Role[0];
+  const loggedInUserRole = getCookie("userData").attributes.Role[0];
 
   const formSpec = {
     skipOnSuccessMessage: true,
@@ -97,7 +111,7 @@ export default function DesktopAnalysisView() {
   );
 
   const userDetails = getCookie("userData");
-  const userId = userDetails?.userRepresentation?.id;
+  const userId = userDetails?.id;
 
   const fetchFormData = async () => {
     let formData = {};
@@ -203,7 +217,7 @@ export default function DesktopAnalysisView() {
         entity_id: formId.toString(),
         entity_type: "form",
         event_name: formSubmissionStatus, // "Returned",
-        remarks: `${userDetails?.userRepresentation?.username} has ${formSubmissionStatus} application with remarks`,
+        remarks: `${userDetails?.username} has ${formSubmissionStatus} application with remarks`,
       });
 
       //notifications
@@ -345,11 +359,24 @@ export default function DesktopAnalysisView() {
   };
 
   const handleEventTrigger = async (e) => {
+   // console.log(e)
+    //setShowAlert(true);
+    setState((prevState) => ({
+      ...prevState,
+      alertContent: {
+        quesContent: "Is your institute's Principal graduate?",
+        alertMsg: "Are you sure to publish the form ? ",
+        actionButtonLabel: "Save",
+        actionProps: [e],
+      },
+    }));
+
     handleFormEvents(startingForm, afterFormSubmit, e);
   };
 
   const bindEventListener = () => {
     window.addEventListener("message", handleEventTrigger);
+  
   };
   const otherInfo = {
     form_name: formDataFromApi?.form_name,
@@ -574,6 +601,10 @@ export default function DesktopAnalysisView() {
 
   return (
     <StrictMode>
+       
+        {showAlert && (
+          <CommentsModal showAlert={setShowAlert} {...state.alertContent} />
+        )}
       <div className="h-[48px] bg-white flex justify-start drop-shadow-sm">
         <div className="container mx-auto flex px-3">
           <div className="flex flex-row font-bold gap-2 items-center">
@@ -648,7 +679,7 @@ export default function DesktopAnalysisView() {
                     </span>
                   </button>
                 )}
-             { console.log(paymentStatus)}
+           {/*   { console.log(paymentStatus)} */}
                  {paymentStatus?.toLowerCase() === "initiated" && formDataFromApi?.round === 2 &&
                 formDataFromApi?.form_status?.toLowerCase() ===
                   "da completed" && loggedInUserRole !== "Desktop-Assessor" && (

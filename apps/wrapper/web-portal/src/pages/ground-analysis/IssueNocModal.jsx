@@ -35,7 +35,7 @@ function IssueNocModal({
   let nocorCertificateFileName = "";
   const { setSpinner, setToast } = useContext(ContextAPI);
   const userDetails = getCookie("userData");
-  const user_details = userDetails?.userRepresentation;
+  //const user_details = userDetails?.userRepresentation;
   const hiddenFileInput = React.useRef(null);
   let selectedRound = "";
   if (selectRound === "1") {
@@ -127,7 +127,7 @@ function IssueNocModal({
         entity_id: formId.toString(),
         entity_type: "form",
         event_name: "Approved",
-        remarks: `${user_details?.firstName} ${user_details?.lastName} has approved the form  has approved the form with the following remarks ${comment}.`,
+        remarks: `${userDetails?.firstName} ${userDetails?.lastName} has approved the form  has approved the form with the following remarks ${comment}.`,
       });
 
       updateFormStatus({
@@ -226,7 +226,7 @@ function IssueNocModal({
         entity_id: formId,
         entity_type: "form",
         event_name: "R2 form approved",
-        remarks: `${user_details?.firstName} ${user_details?.lastName} has approved the form with the following remarks ${comment}.`,
+        remarks: `${userDetails?.firstName} ${userDetails?.lastName} has approved the form with the following remarks ${comment}.`,
       });
 
       updateFormStatus({

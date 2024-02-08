@@ -205,7 +205,7 @@ function BulkUploadUsersModal({ closeBulkUploadUsersModal, setUsersCreated }) {
     try {
       setSpinner(true);
       const updatedReqBody = []
-      //const emailID = getCookie("userData")?.userRepresentation?.email;
+      //const emailID = getCookie("userData")?.email;
       tableUserList.forEach((user) => {
         updatedReqBody.push(
           {
@@ -222,7 +222,7 @@ function BulkUploadUsersModal({ closeBulkUploadUsersModal, setUsersCreated }) {
       })
       const postDataKeyCloak = {
         userCreationList: updatedReqBody,
-        email: getCookie("userData")?.userRepresentation?.email
+        email: getCookie("userData")?.email
       }
       const keycloakRes = await createBulkUsers(postDataKeyCloak);
       //keycloak API call

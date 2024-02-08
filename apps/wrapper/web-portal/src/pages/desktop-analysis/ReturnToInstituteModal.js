@@ -25,7 +25,6 @@ function ReturnToInstituteModal({
   const userDetails = getCookie("userData");
   const navigate = useNavigate();
 
-  const user_details = userDetails?.userRepresentation;
 
   const handleChange = (e) => {
     setComment(e.target.value);
@@ -57,7 +56,7 @@ function ReturnToInstituteModal({
           entity_id: formId.toString(),
           entity_type: "form",
           event_name: "Rejected",
-          remarks: `${user_details?.firstName} ${user_details?.lastName} has rejected the form with the following remarks ${rejectedRemarks}.`,
+          remarks: `${userDetails?.firstName} ${userDetails?.lastName} has rejected the form with the following remarks ${rejectedRemarks}.`,
         });
 
         updateFormStatus({

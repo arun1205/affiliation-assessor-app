@@ -70,7 +70,6 @@ export default function ApplicationPage({
   let isFormSubmittedForConfiirmation = false;
   const navigation = useNavigate();
 
-  const user_details = userDetails?.userRepresentation;
 
   const userId = "427d473d-d8ea-4bb3-b317-f230f1c9b2f7";
   const formSpec = {
@@ -212,7 +211,7 @@ export default function ApplicationPage({
         entity_id: formSelected.form_id.toString(),
         entity_type: "form",
         event_name: "Rejected",
-        remarks: `${user_details?.firstName} ${user_details?.lastName} has rejected the form!`,
+        remarks: `${userDetails?.firstName} ${userDetails?.lastName} has rejected the form!`,
       });
 
       updateFormStatus({
@@ -279,7 +278,7 @@ export default function ApplicationPage({
         entity_id: formSelected.form_id.toString(),
         entity_type: "form",
         event_name: "R2 form approved",
-        remarks: `${user_details?.firstName} ${user_details?.lastName} has approved the form!`,
+        remarks: `${userDetails?.firstName} ${userDetails?.lastName} has approved the form!`,
       });
 
       updateFormStatus({

@@ -38,7 +38,7 @@ export const getPermissionForToken = () => {
           setCookie("firebase_client_token", currentToken);
           if (getCookie("userData") !== undefined) {
             updateRegulatorDeviceId({
-              user_id: getCookie("userData")?.userRepresentation?.id,
+              user_id: getCookie("userData")?.id,
               device_id: JSON.stringify([getCookie("firebase_client_token")]),
             });
           }

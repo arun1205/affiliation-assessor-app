@@ -38,7 +38,7 @@ const DesktopAnalysisList = () => {
     limit: 10,
     totalCount: 0,
   });
-  const loggedInUserRole = getCookie("userData").userRepresentation.attributes.Role[0];
+  const loggedInUserRole = getCookie("userData").attributes.Role[0];
 
   const [paymentModal, setPaymentModal] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
