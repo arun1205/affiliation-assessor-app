@@ -43,7 +43,7 @@ const GenericOdkForm = (props) => {
   const scheduleId = useRef();
   const [isPreview, setIsPreview] = useState(false);
   const [surveyUrl, setSurveyUrl] = useState("");
-  const userId = user?.userRepresentation?.id;
+  const userId = user?.id;
   const [formDataFromApi, setFormDataFromApi] = useState();
   const [formStatus, setFormStatus] = useState("");
   const onlineInterval = useRef();
@@ -113,7 +113,7 @@ const GenericOdkForm = (props) => {
 
 
   const getDataFromLocal = async () => {
-    const id = user?.userRepresentation?.id;
+    const id = user?.id;
     let formData = await getFromLocalForage(
       `${formName}_${new Date().toISOString().split("T")[0]}`
     );
@@ -217,7 +217,7 @@ const GenericOdkForm = (props) => {
           entity_id: courseObj?.applicant_form_id.toString(),
           entity_type: "form",
           event_name: "OGA Completed",
-          remarks: `${user?.userRepresentation?.firstName} ${user?.userRepresentation?.lasttName} has completed the On Ground Inspection Analysis`,
+          remarks: `${user?.firstName} ${user?.lasttName} has completed the On Ground Inspection Analysis`,
         });
   
         await updateFormStatus({
@@ -364,7 +364,7 @@ const GenericOdkForm = (props) => {
           `${startingForm}_${new Date().toISOString().split("T")[0]}`
         );
         await setToLocalForage(
-          `${user?.userRepresentation?.id}_${startingForm}_${
+          `${user?.id}_${startingForm}_${
             new Date().toISOString().split("T")[0]
           }`,
           {
@@ -640,7 +640,7 @@ const GenericOdkForm = (props) => {
     <>
     <CommonLayout
       {...props.commonLayoutProps}
-     // formUrl={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
+     // formUrl={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.id}`}
      formUrl = {surveyUrl} 
      formPreview={true}
       setIsPreview={setIsPreview}
@@ -652,7 +652,7 @@ const GenericOdkForm = (props) => {
               <iframe
                 title="form"
                 id="enketo-form"
-                src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
+                src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.id}`}
                 style={{ height: "80vh", width: "100%" }}
               />
             </>
@@ -722,7 +722,7 @@ const GenericOdkForm = (props) => {
             <iframe
               title="form"
               id="preview-enketo-form"
-              src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
+              src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.id}`}
               style={{ height: "80vh", width: "100%", marginTop: "20px" }}
             />
           )}

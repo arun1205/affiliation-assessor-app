@@ -50,7 +50,7 @@ const AssessmentType = () => {
 
   const getFormStatus = async () => {
     const user = getCookie("userData");
-    const id = user?.userRepresentation?.id;
+    const id = user?.id;
     const postData = {
       date: new Date().toJSON().slice(0, 10),
       assessor_id: id,

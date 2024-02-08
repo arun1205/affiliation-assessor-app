@@ -48,10 +48,11 @@ const MedicalAssessor = () => {
   };
 
   useEffect(() => {
+    console.log("MMMMMMMMMMMMMMMMMMMMM")
     const user = getCookie("userData");
-    const email = user?.userRepresentation?.email;
+    const email = user?.email;
     getAssessorDetails(email);
-    const roles = user?.userRepresentation?.attributes?.Role?.[0];
+    const roles = user?.attributes?.Role?.[0];
     setRole(roles);
   }, []);
 
