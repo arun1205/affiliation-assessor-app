@@ -52,7 +52,7 @@ export default function PaymentResult() {
 
   const sendEmailNotification= async () =>{
     const emailData = {
-      recipientEmail: [`${getCookie("userData")?.userRepresentation?.email}`],
+      recipientEmail: [`${getCookie("userData")?.email}`],
       emailSubject: `Payment Details`,
       emailBody:
         params.get("transaction_amount") && params.get("transaction_id")

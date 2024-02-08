@@ -50,6 +50,7 @@ const ApplicantLogin = () => {
 
     try {
       const res = await userService.isUserActive(data);
+      console.log(res)
       if (res?.data[0]?.enabled && res?.data[0]?.attributes.Role[0] === "Institute") {
         login(data);
         //setSpinner(false);
@@ -128,8 +129,10 @@ const ApplicantLogin = () => {
 
       const role = loginRes?.data?.userRepresentation?.attributes?.Role?.[0];
 
+      console.log(loginRes?.data)
+
       if (role === "Institute") {
-        setCookie("userData", loginRes.data);
+        setCookie("userData", loginRes?.data?.userRepresentation);
         setCookie("institutes", applicantDetailsRes.data.institutes);
         navigate(APPLICANT_ROUTE_MAP.dashboardModule.my_applications);
       } else {

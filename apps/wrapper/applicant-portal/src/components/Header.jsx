@@ -73,7 +73,7 @@ const Header = () => {
                 </div>
               )}
 
-              {userData?.userRepresentation && (
+              {userData && (
                 <div className="flex flex-row gap-8 items-center">
                   <Overlay className="text-3xl text-gray-500" />
                   <Menu placement="bottom-end">
@@ -84,7 +84,7 @@ const Header = () => {
                         aria-haspopup="true"
                       >
                         {getInitials(
-                          `${userData?.userRepresentation?.firstName?.trim()} ${userData?.userRepresentation?.lastName?.trim()}`
+                          `${userData?.firstName?.trim()} ${userData?.lastName?.trim()}`
                         )}
                       </button>
                     </MenuHandler>

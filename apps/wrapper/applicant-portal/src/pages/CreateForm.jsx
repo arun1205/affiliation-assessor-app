@@ -82,8 +82,7 @@ const CreateForm = (props) => {
   const [onSubmit, setOnSubmit] = useState(false);
   const [reloadForm, setReloadForm] = useState(true);
 
-  const { userRepresentation } = getCookie("userData");
-  const userId = userRepresentation?.id;
+  const userId = getCookie("userData")?.id;
   const instituteDetails = getCookie("institutes");
   const [openStatusModel, setOpenStatusModel] = useState(false);
 
