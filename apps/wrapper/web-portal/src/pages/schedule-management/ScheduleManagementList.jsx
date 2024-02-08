@@ -366,7 +366,7 @@ const ScheduleManagementList = () => {
     if(file){
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("userId", getCookie("userData")?.userRepresentation?.id);
+      formData.append("userId", getCookie("userData")?.id);
      console.log(formData)
       submitAssessmentSchedule(formData);
     }

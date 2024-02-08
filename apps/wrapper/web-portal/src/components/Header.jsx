@@ -68,7 +68,7 @@ export default function Header() {
                         aria-haspopup="true"
                       >
                         {getInitials(
-                          `${userData?.userRepresentation?.firstName?.trim()} ${userData?.userRepresentation?.lastName?.trim()}`
+                          `${userData?.firstName?.trim()} ${userData?.lastName?.trim()}`
                         )}
                       </button>
                     </MenuHandler>

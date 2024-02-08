@@ -57,7 +57,7 @@ const UploadForm = ({
   };
 
   const user_details = getCookie("userData");
-  const userId = user_details?.userRepresentation?.id;
+  const userId = user_details?.id;
   const formSpec = {
     skipOnSuccessMessage: true,
     prefill: {},
