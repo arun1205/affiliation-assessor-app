@@ -494,8 +494,7 @@ export default function DesktopAnalysisView() {
   };
 
   const addAlert = (e) => {
-    alert("1");
-    console.log(e);
+   console.log(e);
   }
 
   const checkIframeLoaded = () => {
