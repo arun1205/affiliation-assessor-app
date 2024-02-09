@@ -497,9 +497,11 @@ export default function DesktopAnalysisView() {
    const element = document.getElementById('comment-section');
    let closestParent = element?.closest('.question');
    if(closestParent !== null) {
-    let spanElement = closestParent.children[0];
+    let spanElement = closestParent?.children[0];
+    if(spanElement!== undefined) {
     let value = spanElement.innerText;
     console.log("valueee =>", value);
+    }
    }
   }
 
