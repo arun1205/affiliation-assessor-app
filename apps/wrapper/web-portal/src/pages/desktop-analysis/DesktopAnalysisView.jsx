@@ -197,7 +197,7 @@ export default function DesktopAnalysisView() {
     const res = await updateFormSubmission({
       form_id: formId,
       form_data: updatedFormData,
-      assessment_type: "applicant",
+      assessment_type: null,
       form_name: formName?.replace("admin", "applicant"),
       submission_status: true,
       course_type: formDataFromApi?.course_type,
@@ -493,6 +493,11 @@ export default function DesktopAnalysisView() {
   
   };
 
+  const addAlert = (e) => {
+    alert("1");
+    console.log(e);
+  }
+
   const checkIframeLoaded = () => {
     console.log(formDataFromApi.reverted_count)
     if (window.location.host.includes("regulator.upsmfac")) {
@@ -507,7 +512,10 @@ export default function DesktopAnalysisView() {
           for(let i = 0; i < labelElements.length; i++) {
             let element = document.createElement("i");
             element.setAttribute("class","fa fa-comment");
+            element.setAttribute('id', 'comment-section');
+            element.addEventListener('click', addAlert());
             labelElements[i].insertBefore(element, labelElements[i].childNodes[2]);
+
         }
       }
       if (
