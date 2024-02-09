@@ -494,13 +494,7 @@ export default function DesktopAnalysisView() {
   };
 
   const addAlert = (e) => {
-   const element = document.getElementById('comment-section');
-   let closestParent = element.closest('.question');
-   if(closestParent) {
-    let spanElement = closestParent.children[0];
-    let value = spanElement.innerText;
-    console.log("valueee =>", value);
-   }
+   console.log(e);
   }
 
   const checkIframeLoaded = () => {
