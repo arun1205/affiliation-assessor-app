@@ -360,7 +360,7 @@ export default function DesktopAnalysisView() {
 
   const handleEventTrigger = async (e) => {
    // console.log(e)
-    setShowCommentsModal(true);
+   // setShowCommentsModal(true);
     setState((prevState) => ({
       ...prevState,
       alertContent: {
