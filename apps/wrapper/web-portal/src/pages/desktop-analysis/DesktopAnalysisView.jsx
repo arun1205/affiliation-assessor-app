@@ -496,6 +496,7 @@ export default function DesktopAnalysisView() {
   const addAlert = (e) => {
    const element = e.target;
    let object = {};
+   let answers = [];
    let closestParent = element?.closest('.question');
    if(closestParent !== null) {
     let spanElement = closestParent?.children[0];
@@ -506,12 +507,13 @@ export default function DesktopAnalysisView() {
       for(let i = 0; i < childrenElem?.length; i++) {
         if(childrenElem[i]?.name !== undefined) {
           if(childrenElem[i]?.name?.toLowerCase().includes('/data/D')) {
-            object['answer'] = childrenElem[i].value;
+            answers.push(childrenElem[i].value);
           }
         }
       }
     }
     // let value = spanElement.innerText;
+    object['answer'] = answers[0];
     console.log("object =>", object);
     }
    }
