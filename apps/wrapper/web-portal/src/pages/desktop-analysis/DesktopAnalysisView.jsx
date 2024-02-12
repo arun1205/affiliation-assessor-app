@@ -70,6 +70,7 @@ export default function DesktopAnalysisView() {
   const [onSubmit, setOnSubmit] = useState(false);
   const [rejectStatus, setRejectStatus] = useState(false);
   const [formLoaded, setFormLoaded] = useState(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
   let [isDownloading, setIsDownloading] = useState(false);
   
   
@@ -197,7 +198,7 @@ export default function DesktopAnalysisView() {
     const res = await updateFormSubmission({
       form_id: formId,
       form_data: updatedFormData,
-      assessment_type: null,
+      assessment_type: "applicant",
       form_name: formName?.replace("admin", "applicant"),
       submission_status: true,
       course_type: formDataFromApi?.course_type,
@@ -505,6 +506,17 @@ export default function DesktopAnalysisView() {
    }
   }
 
+  useEffect(() => {
+    if(iframeLoaded === true) {
+      // setTimeout(() => {
+      const elem = document.getElementById('comment-section');
+      if(elem !== null) {
+      elem.addEventListener('click', addAlert);
+      }
+    // }, 5000);
+    }
+  }, [iframeLoaded])
+
   const checkIframeLoaded = () => {
     console.log(formDataFromApi.reverted_count)
     if (window.location.host.includes("regulator.upsmfac")) {
@@ -573,6 +585,7 @@ export default function DesktopAnalysisView() {
         optionElements[k].style.color = '#333333';
       } 
     }
+    setIframeLoaded(true);
     setSpinner(false);
   };
 
