@@ -361,7 +361,7 @@ export default function DesktopAnalysisView() {
 
   const handleEventTrigger = async (e) => {
    // console.log(e)
-    //setShowAlert(true);
+   // setShowAlert(true);
     setState((prevState) => ({
       ...prevState,
       alertContent: {
