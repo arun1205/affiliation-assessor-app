@@ -70,8 +70,8 @@ export default function DesktopAnalysisView() {
   const [onSubmit, setOnSubmit] = useState(false);
   const [rejectStatus, setRejectStatus] = useState(false);
   const [formLoaded, setFormLoaded] = useState(false);
-  let [isDownloading, setIsDownloading] = useState(false);
   const [iframeLoaded, setIframeLoaded] = useState(false);
+  let [isDownloading, setIsDownloading] = useState(false);
   
   
   const [showAlert, setShowAlert] = useState(false);
@@ -532,6 +532,7 @@ export default function DesktopAnalysisView() {
             let element = document.createElement("i");
             element.setAttribute("class","fa fa-comment");
             element.setAttribute('id', 'comment-section');
+            element.addEventListener('click', addAlert);
             labelElements[i].insertBefore(element, labelElements[i].childNodes[2]);
 
         }
