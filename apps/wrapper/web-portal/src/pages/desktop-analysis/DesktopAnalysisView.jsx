@@ -70,7 +70,6 @@ export default function DesktopAnalysisView() {
   const [onSubmit, setOnSubmit] = useState(false);
   const [rejectStatus, setRejectStatus] = useState(false);
   const [formLoaded, setFormLoaded] = useState(false);
-  const [iframeLoaded, setIframeLoaded] = useState(false);
   let [isDownloading, setIsDownloading] = useState(false);
   
   
@@ -496,29 +495,30 @@ export default function DesktopAnalysisView() {
 
   const addAlert = (e) => {
    const element = e.target;
+   let object = {};
    let closestParent = element?.closest('.question');
    if(closestParent !== null) {
     let spanElement = closestParent?.children[0];
     if(spanElement!== undefined) {
-    let value = spanElement.innerText;
-    console.log("valueee =>", value);
+      let childrenElem = closestParent.children;
+      object['question'] = spanElement.innerText;
+      if(childrenElem.length > 0) {
+      for(let i = 0; i < childrenElem.length; i++) {
+        if(childrenElem[i].name !== undefined) {
+          if(childrenElem[i].name.toLowerCase().includes('/data/D')) {
+            object['answer'] = childrenElem[i].value;
+          }
+        }
+      }
+    }
+    // let value = spanElement.innerText;
+    console.log("object =>", object);
     }
    }
   }
 
-  useEffect(() => {
-    if(iframeLoaded === true) {
-    //   // setTimeout(() => {
-    //   const elem = document.getElementById('comment-section');
-    //   if(elem !== null) {
-    //   elem.
-    //   }
-    // // }, 5000);
-    }
-  }, [iframeLoaded])
 
   const checkIframeLoaded = () => {
-    console.log(formDataFromApi.reverted_count)
     if (window.location.host.includes("regulator.upsmfac")) {
       const iframeElem = document?.getElementById("enketo_DA_preview");
       var iframeContent =
@@ -536,11 +536,6 @@ export default function DesktopAnalysisView() {
             labelElements[i].insertBefore(element, labelElements[i].childNodes[2]);
 
         }
-      }
-      if(section?.length > 0) {
-      //  setTimeout(() => {
-        setIframeLoaded(true);
-      //  }, 2000);   
       }
       if (
         formDataFromApi &&
