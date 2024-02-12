@@ -495,7 +495,7 @@ export default function DesktopAnalysisView() {
   };
 
   const addAlert = (e) => {
-   const element = document.getElementById('comment-section');
+   const element = e.target;
    let closestParent = element?.closest('.question');
    if(closestParent !== null) {
     let spanElement = closestParent?.children[0];
@@ -538,9 +538,9 @@ export default function DesktopAnalysisView() {
         }
       }
       if(section?.length > 0) {
-       setTimeout(() => {
+      //  setTimeout(() => {
         setIframeLoaded(true);
-       }, 2000);   
+      //  }, 2000);   
       }
       if (
         formDataFromApi &&
