@@ -508,12 +508,12 @@ export default function DesktopAnalysisView() {
 
   useEffect(() => {
     if(iframeLoaded === true) {
-      // setTimeout(() => {
-      const elem = document.getElementById('comment-section');
-      if(elem !== null) {
-      elem.addEventListener('click', addAlert);
-      }
-    // }, 5000);
+    //   // setTimeout(() => {
+    //   const elem = document.getElementById('comment-section');
+    //   if(elem !== null) {
+    //   elem.
+    //   }
+    // // }, 5000);
     }
   }, [iframeLoaded])
 
@@ -532,7 +532,7 @@ export default function DesktopAnalysisView() {
             let element = document.createElement("i");
             element.setAttribute("class","fa fa-comment");
             element.setAttribute('id', 'comment-section');
-            // element.addEventListener('click', addAlert);
+            element.addEventListener('click', addAlert);
             labelElements[i].insertBefore(element, labelElements[i].childNodes[2]);
 
         }
