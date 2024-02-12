@@ -506,12 +506,13 @@ export default function DesktopAnalysisView() {
       if(childrenElem?.length > 0) {
       for(let i = 0; i < childrenElem?.length; i++) {
         if(childrenElem[i]?.name !== undefined) {
-          if(childrenElem[i]?.name?.toLowerCase().includes('/data/D')) {
-            answers.push(childrenElem[i].value);
+          if(childrenElem[i]?.name?.toLowerCase().includes('/data/d/')) {
+            answers.push(childrenElem[i]?.value);
           }
         }
       }
     }
+    console.log("answers =>", answers);
     // let value = spanElement.innerText;
     object['answer'] = answers[0];
     console.log("object =>", object);
