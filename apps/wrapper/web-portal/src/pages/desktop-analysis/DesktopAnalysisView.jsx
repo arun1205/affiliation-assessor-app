@@ -71,6 +71,7 @@ export default function DesktopAnalysisView() {
   const [rejectStatus, setRejectStatus] = useState(false);
   const [formLoaded, setFormLoaded] = useState(false);
   let [isDownloading, setIsDownloading] = useState(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
   
   
   const [showAlert, setShowAlert] = useState(false);
@@ -505,6 +506,12 @@ export default function DesktopAnalysisView() {
    }
   }
 
+  useEffect(() => {
+    if(iframeLoaded === true) {
+      document.getElementById('comment-section').addEventListener('click', addAlert);
+    }
+  }, [iframeLoaded])
+
   const checkIframeLoaded = () => {
     console.log(formDataFromApi.reverted_count)
     if (window.location.host.includes("regulator.upsmfac")) {
@@ -520,7 +527,6 @@ export default function DesktopAnalysisView() {
             let element = document.createElement("i");
             element.setAttribute("class","fa fa-comment");
             element.setAttribute('id', 'comment-section');
-            element.addEventListener('click', addAlert);
             labelElements[i].insertBefore(element, labelElements[i].childNodes[2]);
 
         }
@@ -573,6 +579,7 @@ export default function DesktopAnalysisView() {
         optionElements[k].style.color = '#333333';
       } 
     }
+    setIframeLoaded(true);
     setSpinner(false);
   };
 
