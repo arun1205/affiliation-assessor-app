@@ -537,6 +537,11 @@ export default function DesktopAnalysisView() {
 
         }
       }
+      if(section?.length > 0) {
+       setTimeout(() => {
+        setIframeLoaded(true);
+       }, 2000);   
+      }
       if (
         formDataFromApi &&
         formDataFromApi?.form_status?.toLowerCase() !==
@@ -585,7 +590,7 @@ export default function DesktopAnalysisView() {
         optionElements[k].style.color = '#333333';
       } 
     }
-    setIframeLoaded(true);
+    
     setSpinner(false);
   };
 
