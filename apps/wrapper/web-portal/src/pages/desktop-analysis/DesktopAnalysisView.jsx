@@ -500,12 +500,12 @@ export default function DesktopAnalysisView() {
    if(closestParent !== null) {
     let spanElement = closestParent?.children[0];
     if(spanElement!== undefined) {
-      let childrenElem = closestParent.children;
+      let childrenElem = closestParent?.children;
       object['question'] = spanElement.innerText;
-      if(childrenElem.length > 0) {
-      for(let i = 0; i < childrenElem.length; i++) {
-        if(childrenElem[i].name !== undefined) {
-          if(childrenElem[i].name.toLowerCase().includes('/data/D')) {
+      if(childrenElem?.length > 0) {
+      for(let i = 0; i < childrenElem?.length; i++) {
+        if(childrenElem[i]?.name !== undefined) {
+          if(childrenElem[i]?.name?.toLowerCase().includes('/data/D')) {
             object['answer'] = childrenElem[i].value;
           }
         }
